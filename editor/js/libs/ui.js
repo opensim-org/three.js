@@ -166,6 +166,21 @@ UI.Span.prototype = Object.create( UI.Element.prototype );
 UI.Span.prototype.constructor = UI.Span;
 
 
+// Div
+
+UI.Div = function () {
+
+	UI.Element.call( this );
+
+	this.dom = document.createElement( 'div' );
+
+	return this;
+
+};
+
+UI.Div.prototype = Object.create( UI.Element.prototype );
+UI.Div.prototype.constructor = UI.Div;
+
 // Panel
 
 UI.Panel = function () {
@@ -347,6 +362,36 @@ UI.Text.prototype.setValue = function ( value ) {
 
 };
 
+// Image                                                                                                                                                                                                                                                                                                                                                  
+UI.Image = function ( image, width, height, opacity, onresizeCallback ) {
+
+        UI.Element.call( this );
+
+        var dom = document.createElement( 'img' );
+        dom.src = image;
+        dom.style.cursor = 'default';
+        dom.style.display = 'inline-block';
+        dom.style.horizontalAlign = "middle";
+        dom.style.verticalAlign = 'middle';
+        dom.width = width;
+        dom.height = height;
+        dom.style.opacity = opacity;
+        if(onresizeCallback !== undefined) {
+            var thisimg = this;
+            callback = function() {
+                onresizeCallback(thisimg);
+            };
+            window.addEventListener("resize", callback, false);
+        }
+
+        this.dom = dom;
+
+        return this;
+
+};
+
+UI.Image.prototype = Object.create( UI.Element.prototype );
+UI.Image.prototype.constructor = UI.Image;
 
 // Input
 
@@ -986,7 +1031,7 @@ UI.HorizontalRule.prototype.constructor = UI.HorizontalRule;
 
 // Button
 
-UI.Button = function ( value ) {
+UI.Button = function ( value, image ) {
 
 	UI.Element.call( this );
 
@@ -996,7 +1041,14 @@ UI.Button = function ( value ) {
 	dom.className = 'Button';
 
 	this.dom = dom;
+
+    if(value)
 	this.dom.textContent = value;
+    else if(image) {
+        var img = new UI.Image(image);
+        this.add(img);
+    } else
+        console.error('Invalid arguments');
 
 	return this;
 
