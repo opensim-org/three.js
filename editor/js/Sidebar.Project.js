@@ -81,7 +81,7 @@ Sidebar.Project = function ( editor ) {
 	container.add( rendererPropertiesRow );
 
 	// Editable
-
+	/*
 	var editableRow = new UI.Row();
 	var editable = new UI.Checkbox( config.getKey( 'project/editable' ) ).setLeft( '100px' ).onChange( function () {
 
@@ -108,7 +108,7 @@ Sidebar.Project = function ( editor ) {
 	vrRow.add( vr );
 
 	container.add( vrRow );
-
+	*/
 	//
 
 	function updateRenderer() {

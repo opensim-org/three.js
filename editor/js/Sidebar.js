@@ -15,7 +15,7 @@ var Sidebar = function ( editor ) {
 
 	var tabs = new UI.Div();
 	tabs.setId( 'tabs' );
-	tabs.add( sceneTab, projectTab, settingsTab );
+	tabs.add( sceneTab, /* projectTab, */ settingsTab );
 	container.add( tabs );
 
 	function onClick( event ) {
@@ -33,13 +33,14 @@ var Sidebar = function ( editor ) {
 		new Sidebar.Script( editor )
 	);
 	container.add( scene );
-
+	/*
 	var project = new UI.Span().add(
-		new Sidebar.Project( editor )
+		
 	);
-	container.add( project );
+	container.add( project ); */
 
 	var settings = new UI.Span().add(
+		new Sidebar.Project( editor ),
 		new Sidebar.Settings(editor),
 		new Sidebar.SceneSettings(editor),
 		new Sidebar.History( editor )
@@ -51,11 +52,11 @@ var Sidebar = function ( editor ) {
 	function select( section ) {
 
 		sceneTab.setClass( '' );
-		projectTab.setClass( '' );
+		//projectTab.setClass( '' );
 		settingsTab.setClass( '' );
 
 		scene.setDisplay( 'none' );
-		project.setDisplay( 'none' );
+		//project.setDisplay( 'none' );
 		settings.setDisplay( 'none' );
 
 		switch ( section ) {
@@ -64,8 +65,8 @@ var Sidebar = function ( editor ) {
 				scene.setDisplay( '' );
 				break;
 			case 'PROJECT':
-				projectTab.setClass( 'selected' );
-				project.setDisplay( '' );
+				//projectTab.setClass( 'selected' );
+				//project.setDisplay( '' );
 				break;
 			case 'SETTINGS':
 				settingsTab.setClass( 'selected' );
