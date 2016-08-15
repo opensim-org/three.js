@@ -123,15 +123,36 @@ var OpenSimToolbar = function ( editor ) {
 	    newpos.z = bbox.max.z + distance;
 	    updateCamera(newpos, center);
 	};
+
+	var view_zoomin = new UI.Button('+').onClick(function () {
+	    viewZoom(+1);
+	});
+	buttons.add(view_zoomin);
+	var view_zoomout = new UI.Button('-').onClick(function () {
+	    viewZoom(-1);
+	});
+	buttons.add(view_zoomout);
+
+	function viewZoom(in_out) {
+	    var vector = new THREE.Vector3(0, 0, -100 * in_out);
+	    vector.applyQuaternion(camera.quaternion);
+	    var newPos = camera.position.add(vector);
+	    camera.position.copy(newPos);
+	    signals.cameraChanged.dispatch(camera);
+	};
+
 	var snapshot = new UI.Button('Snap').onClick(function () {
             saveAsImage();
 	});
 	buttons.add(snapshot);
 
 	function updateCamera(newposition, viewCenter) {
-	    editor.camera.position.copy(newposition);
-	    editor.camera.lookAt(viewCenter.x, viewCenter.y, viewCenter.z);
-	    editor.camera.updateProjectionMatrix();
+	    camera.position.copy(newposition);
+	    camera.lookAt(viewCenter.x, viewCenter.y, viewCenter.z);
+	    camera.updateProjectionMatrix();
+        //transformControls.update();
+	    signals.cameraChanged.dispatch( this.camera );
+
 
 	};
 	function computeModelBbox() {
