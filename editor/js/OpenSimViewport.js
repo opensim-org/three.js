@@ -19,11 +19,14 @@ var OpenSimViewport = function ( editor ) {
 
 	// helpers
 
-	//var grid = new THREE.GridHelper( 500, 25 );
-	//sceneHelpers.add( grid );
-	//grid.visible = false;
-	
+	var grid = new THREE.GridHelper( 30, 1 );
+	//OPENSIM sceneHelpers.add( grid );
+
+	//
+
 	var camera = editor.camera;
+
+	//
 
 	var selectionBox = new THREE.BoxHelper();
 	selectionBox.material.depthTest = false;
@@ -258,6 +261,7 @@ var OpenSimViewport = function ( editor ) {
 
 	var controls = new THREE.EditorControls( camera, container.dom );
 	controls.addEventListener( 'change', function () {
+
 		transformControls.update();
 		signals.cameraChanged.dispatch( camera );
 
@@ -279,15 +283,15 @@ var OpenSimViewport = function ( editor ) {
 		switch ( value ) {
 
 			case 'css/light.css':
-				//sceneHelpers.remove( grid );
-				//grid = new THREE.GridHelper( 30, 1, 0x444444, 0x888888 );
-				//sceneHelpers.add( grid );
+				//OPENSIM sceneHelpers.remove( grid );
+				//OPENSIM grid = new THREE.GridHelper( 30, 1, 0x444444, 0x888888 );
+				//OPENSIM sceneHelpers.add( grid );
 				clearColor = 0xaaaaaa;
 				break;
 			case 'css/dark.css':
-				//sceneHelpers.remove( grid );
-				//grid = new THREE.GridHelper( 30, 1, 0xbbbbbb, 0x888888 );
-				//sceneHelpers.add( grid );
+				//OPENSIM sceneHelpers.remove( grid );
+				//OPENSIM grid = new THREE.GridHelper( 30, 1, 0xbbbbbb, 0x888888 );
+				//OPENSIM sceneHelpers.add( grid );
 				clearColor = 0x333333;
 				break;
 
@@ -413,8 +417,8 @@ var OpenSimViewport = function ( editor ) {
 
 		if ( editor.selected === object ) {
 
-		selectionBox.update( object );
-		transformControls.update();
+			selectionBox.update( object );
+			transformControls.update();
 
 		}
 
@@ -447,17 +451,11 @@ var OpenSimViewport = function ( editor ) {
 
 	signals.objectRemoved.add( function ( object ) {
 
-		var materialsNeedUpdate = false;
-
 		object.traverse( function ( child ) {
-
-			if ( child instanceof THREE.Light ) materialsNeedUpdate = true;
 
 			objects.splice( objects.indexOf( child ), 1 );
 
 		} );
-
-		if ( materialsNeedUpdate === true ) updateMaterials();
 
 	} );
 
@@ -584,9 +582,10 @@ var OpenSimViewport = function ( editor ) {
 		requestAnimationFrame( animate );
 
 		/*
+
 		// animations
 
-		if ( THREE.AnimationHandler != undefined && THREE.AnimationHandler.animations.length > 0 ) {
+		if ( THREE.AnimationHandler.animations.length > 0 ) {
 
 			THREE.AnimationHandler.update( 0.016 );
 
@@ -625,6 +624,7 @@ var OpenSimViewport = function ( editor ) {
 		}
 
 	}
+
 	return container;
 
 };
