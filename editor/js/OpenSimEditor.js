@@ -25,7 +25,6 @@ var OpenSimEditor = function () {
 		// actions
 
 		showModal: new Signal(),
-		// showDialog: new SIGNALS.Signal(),
 
 		// notifications
 
@@ -114,14 +113,6 @@ OpenSimEditor.prototype = {
 		this.signals.themeChanged.dispatch( value );
 
 	},
-
-	/*
-	showDialog: function ( value ) {
-
-		this.signals.showDialog.dispatch( value );
-
-	},
-	*/
 
 	//
 
@@ -410,12 +401,6 @@ OpenSimEditor.prototype = {
 
 	},
 
-	execute: function ( cmd, optionalName ) {
-
-		this.history.execute( cmd, optionalName );
-
-	},
-
 	deselect: function () {
 
 		this.select( null );
@@ -488,7 +473,6 @@ OpenSimEditor.prototype = {
 
 	},
 
-        
 	addfromJSON: function ( json ) {
 
 		var loader = new THREE.ObjectLoader();
@@ -496,7 +480,7 @@ OpenSimEditor.prototype = {
 		model = loader.parse( json );
 		this.scene.add( model );
 		this.addObject( model );
-		this.scripts = json.scripts;
+		//this.scripts = json.scripts;
 		this.signals.sceneGraphChanged.active = true;
 		this.signals.sceneGraphChanged.dispatch();
 
@@ -540,6 +524,29 @@ OpenSimEditor.prototype = {
 
 	},
 
+	objectByUuid: function ( uuid ) {
+
+		return this.scene.getObjectByProperty( 'uuid', uuid, true );
+
+	},
+
+	execute: function ( cmd, optionalName ) {
+
+		this.history.execute( cmd, optionalName );
+
+	},
+
+	undo: function () {
+
+		this.history.undo();
+
+	},
+
+	redo: function () {
+
+		this.history.redo();
+
+	},
 	createBackground: function(choice) {
 	    // load the cube textures
 	    // you need to create an instance of the loader...
