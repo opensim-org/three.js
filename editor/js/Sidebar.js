@@ -42,8 +42,8 @@ var Sidebar = function ( editor ) {
 	var settings = new UI.Span().add(
 		new Sidebar.Project( editor ),
 		new Sidebar.Settings(editor),
-		new Sidebar.SceneSettings(editor),
-		new Sidebar.History( editor )
+		new Sidebar.SceneSettings(editor)
+		//OPENSIM new Sidebar.History( editor )
 	);
 	container.add( settings );
 
