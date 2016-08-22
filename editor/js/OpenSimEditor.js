@@ -478,7 +478,7 @@ OpenSimEditor.prototype = {
 		var loader = new THREE.ObjectLoader();
                 this.signals.sceneGraphChanged.active = false;
 		model = loader.parse( json );
-		this.scene.add( model );
+		//this.scene.add( model );
 		this.addObject( model );
 		//this.scripts = json.scripts;
 		this.signals.sceneGraphChanged.active = true;
