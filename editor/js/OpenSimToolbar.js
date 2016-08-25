@@ -125,19 +125,39 @@ var OpenSimToolbar = function ( editor ) {
 	};
 
 	var view_zoomin = new UI.Button('+').onClick(function () {
-	    viewZoom(+1);
+	    viewZoom(+100);
 	});
 	buttons.add(view_zoomin);
 	var view_zoomout = new UI.Button('-').onClick(function () {
-	    viewZoom(-1);
+	    viewZoom(-100);
 	});
 	buttons.add(view_zoomout);
+	var view_refit = new UI.Button('R').onClick(function () {
+	    //var modelObject = editor.scene.getObjectByName('OpenSimModel');
+	    var bbox = computeModelBbox();
+	    var center = new THREE.Vector3();
+	    bbox.center(center);
+	    //var newpos = new THREE.Vector3().copy(camera.location);
+	    var fov = camera.fov * (Math.PI / 180);
+	    var objectSize = Math.max(bbox.max.x - bbox.min.x, bbox.max.y - bbox.min.y, bbox.max.z - bbox.min.z);
+	    var distance = Math.abs(objectSize / Math.sin(fov / 2));
+	    //var helper = new THREE.BoundingBoxHelper(modelObject, 0xff0000);
+	    //helper.update();
+	    //editor.scene.add(helper);
+	    // Zoom out only if model is outside view, also zoom in if too small
+	    var curDistance = center.distanceTo(camera.position);
+	    viewZoom(curDistance-distance);
+
+	});
+	buttons.add(view_refit);
 
 	function viewZoom(in_out) {
-	    var vector = new THREE.Vector3(0, 0, -100 * in_out);
+	    // Debug	    
+	    var vector = new THREE.Vector3(0, 0, -1 * in_out);
 	    vector.applyQuaternion(camera.quaternion);
 	    var newPos = camera.position.add(vector);
 	    camera.position.copy(newPos);
+	    
 	    signals.cameraChanged.dispatch(camera);
 	};
 
@@ -151,7 +171,7 @@ var OpenSimToolbar = function ( editor ) {
 	    camera.lookAt(viewCenter.x, viewCenter.y, viewCenter.z);
 	    camera.updateProjectionMatrix();
         //transformControls.update();
-	    signals.cameraChanged.dispatch( this.camera );
+	    signals.cameraChanged.dispatch( camera );
 
 
 	};
@@ -165,7 +185,14 @@ var OpenSimToolbar = function ( editor ) {
             //canvas.children[1].render();
 	    var img    = canvas.children[1].toDataURL("image/jpeg");
 	    saveFile(img, "opensim_snapshot.jpg");
-        }
+        };
+	function addLightAtCamera() {
+	    var sphere = new THREE.SphereGeometry( 0.5, 16, 8 );
+	    light1 = new THREE.PointLight( 0xff0040, 2, 50 );
+	    light1.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xff0040 } ) ) );
+	    light1.position.copy(camera.position);
+	    editor.scene.add( light1 );
+	};
         // Support saving image to file
         var saveFile = function (strData, filename) {
         var link = document.createElement('a');

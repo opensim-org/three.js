@@ -39864,7 +39864,7 @@
                   0.0,
                   1.0
                 ],
-                "castShadow": false
+                "castShadow": true
               },
               {
                 "uuid": "d0560ce2-cbb6-4b9e-b893-1ee70ef89153",
@@ -39890,7 +39890,7 @@
                   0.0,
                   1.0
                 ],
-                "castShadow": false
+                "castShadow": true
               },
               {
                 "uuid": "d7337ec1-b399-47ab-ab66-7d8dcf63d4c8",
@@ -39916,7 +39916,7 @@
                   0.0,
                   1.0
                 ],
-                "castShadow": false
+                "castShadow": true
               },
               {
                 "uuid": "6d2905b0-1c40-4e10-9623-1ac1eddd27bd",
@@ -39942,7 +39942,7 @@
                   0.0,
                   1.0
                 ],
-                "castShadow": false
+                "castShadow": true
               },
               {
                 "uuid": "add56b6f-334d-422d-947b-10bb7b59fc58",
@@ -40124,7 +40124,7 @@
                   0.0,
                   1.0
                 ],
-                "castShadow": false
+                "castShadow": true
               },
               {
                 "uuid": "e73494a1-b84e-4c53-8cf7-de5e22bac59e",
@@ -40280,7 +40280,7 @@
                   0.0,
                   1.0
                 ],
-                "castShadow": false
+                "castShadow": true
               },
               {
                 "uuid": "0caa6a1e-f822-41ba-ab45-d01c9d264eeb",
@@ -40306,7 +40306,7 @@
                   0.0,
                   1.0
                 ],
-                "castShadow": false
+                "castShadow": true
               },
               {
                 "uuid": "7c7c43ab-d5d7-40e3-beee-2d3f137fd909",
@@ -40488,7 +40488,7 @@
                   0.0,
                   1.0
                 ],
-                "castShadow": false
+                "castShadow": true
               }
             ],
             "name": "\/leg6dof9musc\/patella_r",
@@ -40566,7 +40566,7 @@
                   0.0,
                   1.0
                 ],
-                "castShadow": false
+                "castShadow": true
               },
               {
                 "uuid": "6b46f021-4c93-4eeb-90a1-e16713ebf75e",
@@ -40670,7 +40670,7 @@
                   0.0,
                   1.0
                 ],
-                "castShadow": false
+                "castShadow": true
               },
               {
                 "uuid": "dd825f4e-26d0-4270-9bfe-8df453622b0b",
@@ -40852,7 +40852,7 @@
                   0.0,
                   1.0
                 ],
-                "castShadow": false
+                "castShadow": true
               }
             ],
             "name": "\/leg6dof9musc\/toes_r",
