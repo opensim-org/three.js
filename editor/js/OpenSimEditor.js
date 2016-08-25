@@ -101,6 +101,7 @@ var OpenSimEditor = function () {
 	this.createLights();
 	this.createBackground('sky');
 	this.createGroundPlane('redbricks');
+	this.createDefaultDolly();
 
 };
 
@@ -479,7 +480,7 @@ OpenSimEditor.prototype = {
                 this.signals.sceneGraphChanged.active = false;
 		model = loader.parse( json );
 		this.scene.add( model );
-		this.addObject( model );
+		this.addObject(model);
 		//this.scripts = json.scripts;
 		this.signals.sceneGraphChanged.active = true;
 		this.signals.sceneGraphChanged.dispatch();
@@ -618,5 +619,24 @@ OpenSimEditor.prototype = {
 		this.groundPlane.material = this.groundMaterial;
 		this.signals.materialChanged.dispatch( this.groundPlane );
 	},
-
+	createDefaultDolly: function () {
+	    var scene_uuid = this.scene.uuid;
+	    // Create a group under scene call it dolly
+	    // place camera and light in dolly
+	    // create a script that goes around the scene, shining light on an object
+	    dollyCam = new THREE.PerspectiveCamera(50, 1, 0.1, 10000);
+	    dollyCam.name = 'DollyCamera';
+	    dollyCam.position.set(20, 10, 20);
+	    dollyCam.lookAt(new THREE.Vector3());
+	    dolly = new THREE.Group();
+	    dolly.name = 'Dolly';
+	    dolly.add(dollyCam);
+	    this.addObject(dolly);
+	    // Here will add 2 scripts one to move position on dolly, second to set cam to DollyCamera
+	    var dollyCamScript = { name: 'Player Camera', source: 'player.setCamera( this );' };
+	    this.scripts[dollyCam.uuid] = [];
+	    this.scripts[dollyCam.uuid].push(dollyCamScript);
+	    this.scripts[dolly.uuid] = [];
+	    this.scripts[dolly.uuid].push({ name: 'Orbit', source: 'function update( event ) {\n\n\tvar time = event.time * 0.001;\n\n\tthis.position.x = Math.sin( time ) * 400;\n\tthis.position.z = Math.cos( time ) * 400;\n\tthis.lookAt( scene.position );\n\n};' });
+	}
 }
