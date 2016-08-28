@@ -483,7 +483,8 @@ OpenSimEditor.prototype = {
 		//this.scripts = json.scripts;
 		this.signals.sceneGraphChanged.active = true;
 		this.signals.sceneGraphChanged.dispatch();
-
+		this.viewFitAll();
+		//this.signals.windowResize.dispatch();
 	},
 	
 	toJSON: function () {
@@ -618,5 +619,51 @@ OpenSimEditor.prototype = {
 		this.groundPlane.material = this.groundMaterial;
 		this.signals.materialChanged.dispatch( this.groundPlane );
 	},
+	addMarkerAtPosition: function (testPosition) {
+	    var sphere = new THREE.SphereGeometry(20, 20, 20);
+	    var sphereMesh = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xff0040 }));
+	    sphereMesh.position.copy(testPosition);
+	    this.scene.add(sphereMesh);
+	},
+	updateCamera: function (newposition, viewCenter) {
+	    this.camera.position.set(newposition.x, newposition.y, newposition.z);
+	    this.camera.lookAt(viewCenter);
+	    //console.log(viewCenter);
+	    var changeEvent = { type: 'change' };
+	    this.control.dispatchEvent( changeEvent );
+        //this.addMarkerAtPosition(newposition);
+        //this.signals.cameraChanged.dispatch( this.camera );
+	},
+	viewZoom: function(in_out) {
+	    // Debug	    
+	    var vector = new THREE.Vector3(0, 0, -1 * in_out);
+	    vector.applyQuaternion(this.camera.quaternion);
+	    var newPos = this.camera.position.add(vector);
+	    this.camera.position.copy(newPos);
+	    
+	    this.signals.cameraChanged.dispatch(this.camera);
+	},
+	viewFitAll: function () {
+	    var modelObject = this.scene.getObjectByName('OpenSimModel');
+	    var modelbbox = new THREE.Box3().setFromObject(modelObject);
+	    var radius = Math.max(modelbbox.max.x - modelbbox.min.x, modelbbox.max.y - modelbbox.min.y, modelbbox.max.z - modelbbox.min.z) / 2;
+	    var aabbCenter = new THREE.Vector3();
+	    modelbbox.center(aabbCenter);
 
-}
+	    // Compute offset needed to move the camera back that much needed to center AABB (approx: better if from BB front face)
+	    var offset = radius / Math.tan(Math.PI / 180.0 * 25 * 0.5);
+
+	    // Compute new camera direction and position
+	    var dir = new THREE.Vector3(0.0, 0.0, 1.0);
+	    if (this.camera != undefined){
+	        dir.x = this.camera.matrix.elements[8];
+	        dir.y = this.camera.matrix.elements[9];
+	        dir.z = this.camera.matrix.elements[10];
+        }
+	    dir.multiplyScalar(offset);
+	    var newPos = new THREE.Vector3();
+	    newPos.add(aabbCenter, dir);
+	    this.camera.position.set(newPos.x, newPos.y, newPos.z);
+	    this.camera.lookAt(aabbCenter);
+	},
+};

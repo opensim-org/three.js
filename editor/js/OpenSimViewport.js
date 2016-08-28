@@ -38,7 +38,9 @@ var OpenSimViewport = function ( editor ) {
 	var objectRotationOnDown = null;
 	var objectScaleOnDown = null;
 
-	var transformControls = new THREE.TransformControls( camera, container.dom );
+	var transformControls = new THREE.TransformControls(camera, container.dom);
+	editor.control = transformControls;
+
 	transformControls.addEventListener( 'change', function () {
 
 		var object = transformControls.object;
@@ -415,7 +417,8 @@ var OpenSimViewport = function ( editor ) {
 
 	signals.objectChanged.add( function ( object ) {
 
-		if ( editor.selected === object ) {
+	    if (object === null) return;
+	    if (editor.selected === object) {
 
 			selectionBox.update( object );
 			transformControls.update();
