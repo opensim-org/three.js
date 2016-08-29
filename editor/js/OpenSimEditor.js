@@ -484,7 +484,7 @@ OpenSimEditor.prototype = {
 		this.signals.sceneGraphChanged.active = true;
 		this.signals.sceneGraphChanged.dispatch();
 		this.viewFitAll();
-		//this.signals.windowResize.dispatch();
+		this.signals.windowResize.dispatch();
 	},
 	
 	toJSON: function () {
@@ -629,6 +629,8 @@ OpenSimEditor.prototype = {
 	    this.camera.position.set(newposition.x, newposition.y, newposition.z);
 	    this.camera.lookAt(viewCenter);
 	    //console.log(viewCenter);
+	    //this.control.target = viewCenter;
+	    //this.control.update();
 	    var changeEvent = { type: 'change' };
 	    this.control.dispatchEvent( changeEvent );
         //this.addMarkerAtPosition(newposition);
@@ -662,8 +664,10 @@ OpenSimEditor.prototype = {
         }
 	    dir.multiplyScalar(offset);
 	    var newPos = new THREE.Vector3();
-	    newPos.add(aabbCenter, dir);
+	    newPos.addVectors(aabbCenter, dir);
 	    this.camera.position.set(newPos.x, newPos.y, newPos.z);
 	    this.camera.lookAt(aabbCenter);
+	    //this.control.target = new THREE.Vector3(aabbCenter);
+	    //this.control.update();
 	},
 };
