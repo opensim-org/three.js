@@ -24,10 +24,10 @@ Sidebar.Animation = function ( editor ) {
 	var animationsRow = new UI.Row();
 	container.add( animationsRow );
 
-	/*
+	
 
-	var animations = {};
-
+	var animations = { };
+    /*
 	signals.objectAdded.add( function ( object ) {
 
 		object.traverse( function ( child ) {
@@ -76,12 +76,12 @@ Sidebar.Animation = function ( editor ) {
 		} );
 
 	} );
-
+    */
 	signals.objectSelected.add( function ( object ) {
 
 		container.setDisplay( 'none' );
 
-		if ( object instanceof THREE.SkinnedMesh || object instanceof THREE.MorphAnimMesh ) {
+		if ( object instanceof THREE.PerspectiveCamera  ) {
 
 			animationsRow.clear();
 
@@ -89,14 +89,21 @@ Sidebar.Animation = function ( editor ) {
 
 			var playButton = new UI.Button( 'Play' ).onClick( function () {
 
-				animation.play();
-
+			    var position = { x: 0, y: 0, z: 0 };
+			    var target = { x: 500, y: 0, z: 0 };
+			    var tween = new TWEEN.Tween(position).to(target, 2000);
+			    var dModel = editor.getModel();
+			    tween.onUpdate(function () {
+			        dModel.position.x = position.x;
+			        dModel.position.y = position.y;
+			        dModel.position.z = position.z;
+			        //dModel.updateMatrix();
+			    });
+			    tween.start();
 			} );
 			animationsRow.add( playButton );
 
 			var pauseButton = new UI.Button( 'Stop' ).onClick( function () {
-
-				animation.stop();
 
 			} );
 			animationsRow.add( pauseButton );
@@ -107,7 +114,6 @@ Sidebar.Animation = function ( editor ) {
 
 	} );
 
-	*/
 
 	return container;
 

@@ -619,6 +619,9 @@ OpenSimEditor.prototype = {
 		this.groundPlane.material = this.groundMaterial;
 		this.signals.materialChanged.dispatch( this.groundPlane );
 	},
+	getModel: function () {
+	    return this.scene.getObjectByName('OpenSimModel');
+	},
 	addMarkerAtPosition: function (testPosition) {
 	    var sphere = new THREE.SphereGeometry(20, 20, 20);
 	    var sphereMesh = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xff0040 }));
@@ -646,7 +649,7 @@ OpenSimEditor.prototype = {
 	    this.signals.cameraChanged.dispatch(this.camera);
 	},
 	viewFitAll: function () {
-	    var modelObject = this.scene.getObjectByName('OpenSimModel');
+	    var modelObject = this.getModel();
 	    var modelbbox = new THREE.Box3().setFromObject(modelObject);
 	    var radius = Math.max(modelbbox.max.x - modelbbox.min.x, modelbbox.max.y - modelbbox.min.y, modelbbox.max.z - modelbbox.min.z) / 2;
 	    var aabbCenter = new THREE.Vector3();

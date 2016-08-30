@@ -582,7 +582,9 @@ var OpenSimViewport = function ( editor ) {
 
 	function animate() {
 
-		requestAnimationFrame( animate );
+	    render();
+	    requestAnimationFrame(animate);
+	    TWEEN.update();
 
 		/*
 
@@ -617,15 +619,16 @@ var OpenSimViewport = function ( editor ) {
 		sceneHelpers.updateMatrixWorld();
 		scene.updateMatrixWorld();
 		stats.update();
-		renderer.clear();
-		renderer.render( scene, camera );
+		if (renderer != null) {
+		    renderer.clear();
+		    renderer.render(scene, camera);
 
-		if ( renderer instanceof THREE.RaytracingRenderer === false ) {
+		    if (renderer instanceof THREE.RaytracingRenderer === false) {
 
-			renderer.render( sceneHelpers, camera );
+		        renderer.render(sceneHelpers, camera);
 
+		    }
 		}
-
 	}
 
 	return container;
