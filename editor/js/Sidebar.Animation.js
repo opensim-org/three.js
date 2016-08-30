@@ -16,7 +16,7 @@ Sidebar.Animation = function ( editor ) {
 		editor.config.setKey( 'ui/sidebar/animation/collapsed', boolean );
 
 	} );
-	container.setDisplay( 'none' );
+	//container.setDisplay( 'none' );
 
 	container.addStatic( new UI.Text( 'Animation' ).setTextTransform( 'uppercase' ) );
 	container.add( new UI.Break() );
