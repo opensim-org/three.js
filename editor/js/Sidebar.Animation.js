@@ -91,7 +91,7 @@ Sidebar.Animation = function ( editor ) {
 
 			    var position = { x: 0, y: 0, z: 0 };
 			    var target = { x: 500, y: 0, z: 0 };
-			    var tween = new TWEEN.Tween(position).to(target, 2000);
+			    var tween = new TWEEN.Tween(position).to(target, 20000);
 			    var dModel = editor.getModel();
 			    tween.onUpdate(function () {
 			        dModel.position.x = position.x;
@@ -99,6 +99,10 @@ Sidebar.Animation = function ( editor ) {
 			        dModel.position.z = position.z;
 			        //dModel.updateMatrix();
 			    });
+			    tween.onComplete(function () {
+			        signals.animationStopped.dispatch();
+			    });
+			    signals.animationStarted.dispatch();
 			    tween.start();
 			} );
 			animationsRow.add( playButton );

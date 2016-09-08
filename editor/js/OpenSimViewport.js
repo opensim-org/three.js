@@ -25,7 +25,7 @@ var OpenSimViewport = function ( editor ) {
 	//
 
 	var camera = editor.camera;
-
+	var dollyCamera = editor.dolly_camera;
 	//
 
 	var selectionBox = new THREE.BoxHelper();
@@ -41,6 +41,7 @@ var OpenSimViewport = function ( editor ) {
 	var transformControls = new THREE.TransformControls(camera, container.dom);
 	editor.control = transformControls;
 
+	var animating = false;
 	transformControls.addEventListener( 'change', function () {
 
 		var object = transformControls.object;
@@ -359,6 +360,17 @@ var OpenSimViewport = function ( editor ) {
 
 	} );
 
+	signals.animationStarted.add(function () {
+	    this.animating = true;
+	    render();
+
+	});
+	signals.animationStopped.add(function () {
+	    this.animating = false;
+	    render();
+
+	});
+
 	signals.objectSelected.add( function ( object ) {
 
 		selectionBox.visible = false;
@@ -621,7 +633,22 @@ var OpenSimViewport = function ( editor ) {
 		stats.update();
 		if (renderer != null) {
 		    renderer.clear();
-		    renderer.render(scene, camera);
+
+		    if (this.animating) {
+		        currentCamera = dollyCamera;
+		        var time = Date.now();
+		        var looptime = 20 * 1000;
+		        var t = (time % looptime) / looptime;
+
+		        var pos = editor.dollyPath.getPointAt(t);
+		        console.log('t='+t);
+		        currentCamera.position.copy(pos);
+		        //currentCamera.lookAt(new THREE.Vector3(0, 0, 0));
+		    }
+		    else
+		        currentCamera = camera;
+
+		    renderer.render(scene, currentCamera);
 
 		    if (renderer instanceof THREE.RaytracingRenderer === false) {
 

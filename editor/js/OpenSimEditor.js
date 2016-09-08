@@ -9,6 +9,14 @@ var OpenSimEditor = function () {
 	this.DEFAULT_CAMERA.position.set( 20, 10, 20 );
 	this.DEFAULT_CAMERA.lookAt( new THREE.Vector3() );
 
+	this.dolly_camera = new THREE.PerspectiveCamera(50, 1, 0.1, 10000);
+	this.dolly_camera.name = 'DollyCamera';
+	this.dolly_camera.position.set(0, 0, 0);
+	this.dolly_camera.lookAt(new THREE.Vector3());
+
+	this.dolly_object = new THREE.Object3D();
+	this.dolly_object.position.y = 0;
+
 	var Signal = signals.Signal;
 
 	this.signals = {
@@ -70,8 +78,10 @@ var OpenSimEditor = function () {
 		showGridChanged: new Signal(),
 		refreshSidebarObject3D: new Signal(),
 		historyChanged: new Signal(),
-		refreshScriptEditor: new Signal()
+		refreshScriptEditor: new Signal(),
 
+	    animationStarted: new Signal(),
+	    animationStopped: new Signal()
 	};
 
 	this.config = new Config( 'threejs-editor' );
@@ -80,6 +90,17 @@ var OpenSimEditor = function () {
 	this.loader = new Loader( this );
 
 	this.camera = this.DEFAULT_CAMERA.clone();
+	this.dollyPath = new THREE.ClosedSplineCurve3([
+			new THREE.Vector3(-700, 0, -700),
+			new THREE.Vector3(0, 0, -1000),
+			new THREE.Vector3(700, 0, -700),
+			new THREE.Vector3(1000, 0, 0),
+			new THREE.Vector3(700, 0, 700),
+			new THREE.Vector3(0, 0, 1000),
+			new THREE.Vector3(-700, 0, 700),
+			new THREE.Vector3(-1000, 0, 0),
+	]);
+
 
 	this.scene = new THREE.Scene();
 	this.scene.name = 'Scene';
@@ -101,6 +122,7 @@ var OpenSimEditor = function () {
 	this.createLights();
 	this.createBackground('sky');
 	this.createGroundPlane('redbricks');
+	this.createDollyPath();
 
 };
 
@@ -425,6 +447,7 @@ OpenSimEditor.prototype = {
 		this.storage.clear();
 
 		this.camera.copy( this.DEFAULT_CAMERA );
+		this.dolly_camera.copy(this.DEFAULT_CAMERA);
 
 		var objects = this.scene.children;
 
@@ -548,7 +571,9 @@ OpenSimEditor.prototype = {
 		this.history.redo();
 
 	},
+
 	createBackground: function(choice) {
+
 	    // load the cube textures
 	    // you need to create an instance of the loader...
 	    var textureloader = new THREE.CubeTextureLoader();
@@ -564,6 +589,7 @@ OpenSimEditor.prototype = {
 	},
 	
 	createGroundPlane: function(choice) {
+
 		var textureLoader = new THREE.TextureLoader();
 		var texture1 = textureLoader.load( "textures/"+choice+".jpg" );
 		var material1 = new THREE.MeshPhongMaterial( { color: 0xffffff, map: texture1 } );
@@ -579,22 +605,26 @@ OpenSimEditor.prototype = {
 		this.addObject(groundPlane);
 		this.groundPlane = groundPlane;
 	},
+
 	createLights: function () {
+
 		amb = new THREE.AmbientLight(0x000000);
 		amb.name = 'AmbientLight';
 		this.addObject(amb);
 		directionalLight =  new THREE.DirectionalLight( {color: 16777215});
 		directionalLight.castShadow = true;
 		directionalLight.name = 'DirectionalLight';
-                directionalLight.shadow.camera.bottom = -1000;
-                directionalLight.shadow.camera.far = 2000;
-                directionalLight.shadow.camera.left = -1000;
-                directionalLight.shadow.camera.right = 1000;
-                directionalLight.shadow.camera.top = 1000;
-                
+		directionalLight.shadow.camera.bottom = -1000;
+		directionalLight.shadow.camera.far = 2000;
+		directionalLight.shadow.camera.left = -1000;
+		directionalLight.shadow.camera.right = 1000;
+		directionalLight.shadow.camera.top = 1000;
+		
 		this.addObject(directionalLight);
 	},
+
 	updateBackground: function (choice) {
+
 		if (choice == 'nobackground') {
 		    //this.skyboxMesh.visible = false;
 		    this.scene.background = null;
@@ -605,6 +635,7 @@ OpenSimEditor.prototype = {
 	},
 
 	updateGroundPlane: function (choice) {
+
 		if (choice == 'nofloor') {
 		    this.groundPlane.visible = false;
 		    this.signals.objectChanged.dispatch( groundPlane );
@@ -619,16 +650,42 @@ OpenSimEditor.prototype = {
 		this.groundPlane.material = this.groundMaterial;
 		this.signals.materialChanged.dispatch( this.groundPlane );
 	},
+
+	createDollyPath: function () {
+
+	    this.scene.add(this.dolly_object);
+	    tube = new THREE.TubeGeometry(this.dollyPath, 5, 2, 8, false);
+	    tubemat = new THREE.MeshLambertMaterial({
+	        color: 0xff00ff
+	    });
+	    tubeMesh = new THREE.Mesh(tube, tubemat);
+	    tubeMesh.name = "dolly_path";
+	    // evaluate dollyPath at t=0 and use that to place dolly_camera
+	    this.dolly_camera.position = this.dollyPath.getPoint(0);
+	    cameraEye = new THREE.Mesh(new THREE.SphereGeometry(50), new THREE.MeshBasicMaterial({ color: 0xdddddd }));
+	    cameraEye.name = 'cameraEye';
+	    this.dolly_object.add(this.dolly_camera);
+	    this.dolly_object.add(tubeMesh);
+	    this.dolly_object.add(cameraEye);
+	    dcameraHelper = new THREE.CameraHelper(this.dolly_camera);
+	    this.scene.add(dcameraHelper);
+
+	},
+
 	getModel: function () {
 	    return this.scene.getObjectByName('OpenSimModel');
 	},
+
 	addMarkerAtPosition: function (testPosition) {
+
 	    var sphere = new THREE.SphereGeometry(20, 20, 20);
 	    var sphereMesh = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xff0040 }));
 	    sphereMesh.position.copy(testPosition);
 	    this.scene.add(sphereMesh);
 	},
+
 	updateCamera: function (newposition, viewCenter) {
+
 	    this.camera.position.set(newposition.x, newposition.y, newposition.z);
 	    this.camera.lookAt(viewCenter);
 	    //console.log(viewCenter);
@@ -639,6 +696,7 @@ OpenSimEditor.prototype = {
         //this.addMarkerAtPosition(newposition);
         //this.signals.cameraChanged.dispatch( this.camera );
 	},
+
 	viewZoom: function(in_out) {
 	    // Debug	    
 	    var vector = new THREE.Vector3(0, 0, -1 * in_out);
@@ -648,7 +706,9 @@ OpenSimEditor.prototype = {
 	    
 	    this.signals.cameraChanged.dispatch(this.camera);
 	},
+
 	viewFitAll: function () {
+
 	    var modelObject = this.getModel();
 	    var modelbbox = new THREE.Box3().setFromObject(modelObject);
 	    var radius = Math.max(modelbbox.max.x - modelbbox.min.x, modelbbox.max.y - modelbbox.min.y, modelbbox.max.z - modelbbox.min.z) / 2;
@@ -672,5 +732,5 @@ OpenSimEditor.prototype = {
 	    this.camera.lookAt(aabbCenter);
 	    //this.control.target = new THREE.Vector3(aabbCenter);
 	    //this.control.update();
-	},
+	}
 };
