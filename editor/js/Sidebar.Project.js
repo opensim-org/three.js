@@ -12,8 +12,8 @@ Sidebar.Project = function ( editor ) {
 		'WebGLRenderer': THREE.WebGLRenderer,
 		'CanvasRenderer': THREE.CanvasRenderer,
 		'SVGRenderer': THREE.SVGRenderer,
-		'SoftwareRenderer': THREE.SoftwareRenderer,
-		'RaytracingRenderer': THREE.RaytracingRenderer
+		//'SoftwareRenderer': THREE.SoftwareRenderer,
+		//'RaytracingRenderer': THREE.RaytracingRenderer
 
 	};
 
@@ -80,7 +80,7 @@ Sidebar.Project = function ( editor ) {
 
 	container.add( rendererPropertiesRow );
 
-	// Editable
+    // Editable
 	/*
 	var editableRow = new UI.Row();
 	var editable = new UI.Checkbox( config.getKey( 'project/editable' ) ).setLeft( '100px' ).onChange( function () {
