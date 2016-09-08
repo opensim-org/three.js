@@ -108,9 +108,9 @@ Sidebar.Animation = function ( editor ) {
 			animationsRow.add( playButton );
 
 			var pauseButton = new UI.Button( 'Stop' ).onClick( function () {
-
-			} );
-			animationsRow.add( pauseButton );
+			    signals.animationStopped.dispatch();
+			});
+			animationsRow.add(pauseButton);
 
 			container.setDisplay( 'block' );
 

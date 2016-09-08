@@ -14,7 +14,8 @@ var OpenSimViewport = function ( editor ) {
 
 	var scene = editor.scene;
 	var sceneHelpers = editor.sceneHelpers;
-
+	var showHelpers = editor.showHelpers;
+	var dollyCameraEye = editor.cameraEye;
 	var objects = [];
 
 	// helpers
@@ -635,15 +636,16 @@ var OpenSimViewport = function ( editor ) {
 		    renderer.clear();
 
 		    if (this.animating) {
-		        currentCamera = dollyCamera;
 		        var time = Date.now();
 		        var looptime = 20 * 1000;
 		        var t = (time % looptime) / looptime;
 
 		        var pos = editor.dollyPath.getPointAt(t);
 		        console.log('t='+t);
+		        currentCamera = dollyCamera;
 		        currentCamera.position.copy(pos);
-		        //currentCamera.lookAt(new THREE.Vector3(0, 0, 0));
+		        //dollyCameraEye.position.copy(pos);
+		        currentCamera.lookAt(new THREE.Vector3(0, 0, 0));
 		    }
 		    else
 		        currentCamera = camera;

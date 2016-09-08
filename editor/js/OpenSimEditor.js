@@ -15,7 +15,11 @@ var OpenSimEditor = function () {
 	this.dolly_camera.lookAt(new THREE.Vector3());
 
 	this.dolly_object = new THREE.Object3D();
+	this.dolly_object.name = 'Dolly';
 	this.dolly_object.position.y = 0;
+
+	this.cameraEye = new THREE.Mesh(new THREE.SphereGeometry(50), new THREE.MeshBasicMaterial({ color: 0xdddddd }));
+	this.cameraEye.name = 'CameraEye';
 
 	var Signal = signals.Signal;
 
@@ -101,7 +105,7 @@ var OpenSimEditor = function () {
 			new THREE.Vector3(-1000, 0, 0),
 	]);
 
-
+	this.dollyPath.type = 'catmullrom';
 	this.scene = new THREE.Scene();
 	this.scene.name = 'Scene';
 
@@ -654,19 +658,17 @@ OpenSimEditor.prototype = {
 	createDollyPath: function () {
 
 	    this.scene.add(this.dolly_object);
-	    tube = new THREE.TubeGeometry(this.dollyPath, 5, 2, 8, false);
+	    tube = new THREE.TubeGeometry(this.dollyPath, 8, 5, 8, true);
 	    tubemat = new THREE.MeshLambertMaterial({
 	        color: 0xff00ff
 	    });
 	    tubeMesh = new THREE.Mesh(tube, tubemat);
-	    tubeMesh.name = "dolly_path";
+	    tubeMesh.name = "DollyPath";
 	    // evaluate dollyPath at t=0 and use that to place dolly_camera
 	    this.dolly_camera.position = this.dollyPath.getPoint(0);
-	    cameraEye = new THREE.Mesh(new THREE.SphereGeometry(50), new THREE.MeshBasicMaterial({ color: 0xdddddd }));
-	    cameraEye.name = 'cameraEye';
 	    this.dolly_object.add(this.dolly_camera);
 	    this.dolly_object.add(tubeMesh);
-	    this.dolly_object.add(cameraEye);
+	    this.dolly_object.add(this.cameraEye);
 	    dcameraHelper = new THREE.CameraHelper(this.dolly_camera);
 	    this.scene.add(dcameraHelper);
 
