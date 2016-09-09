@@ -95,14 +95,14 @@ var OpenSimEditor = function () {
 
 	this.camera = this.DEFAULT_CAMERA.clone();
 	this.dollyPath = new THREE.ClosedSplineCurve3([
-			new THREE.Vector3(-700, 0, -700),
-			new THREE.Vector3(0, 0, -1000),
-			new THREE.Vector3(700, 0, -700),
-			new THREE.Vector3(1000, 0, 0),
-			new THREE.Vector3(700, 0, 700),
-			new THREE.Vector3(0, 0, 1000),
-			new THREE.Vector3(-700, 0, 700),
-			new THREE.Vector3(-1000, 0, 0),
+			new THREE.Vector3(-1400, 0, -1400),
+			new THREE.Vector3(0, 0, -2000),
+			new THREE.Vector3(1400, 0, -1400),
+			new THREE.Vector3(2000, 0, 0),
+			new THREE.Vector3(1400, 0, 1400),
+			new THREE.Vector3(0, 0, 2000),
+			new THREE.Vector3(-1400, 0, 1400),
+			new THREE.Vector3(-2000, 0, 0),
 	]);
 
 	this.dollyPath.type = 'catmullrom';
