@@ -1,65 +1,20 @@
-three.js
-========
+OpenSim Viewer base don three.js
+================================
 
 #### JavaScript 3D library ####
+The library three.js a lightweight 3D library with a very low level of complexity. This fork utilizes three.js as the library behind the OpenSim visualizer.
 
-The aim of the project is to create a lightweight 3D library with a very low level of complexity — in other words, for dummies. The library provides &lt;canvas&gt;, &lt;svg&gt;, CSS3D and WebGL renderers.
-
-[Examples](http://threejs.org/examples/) — [Documentation](http://threejs.org/docs/) — [Migrating](https://github.com/mrdoob/three.js/wiki/Migration) — [Help](http://stackoverflow.com/questions/tagged/three.js)
+Please refer to [Examples](http://threejs.org/examples/) — [Documentation](http://threejs.org/docs/) — [Migrating](https://github.com/mrdoob/three.js/wiki/Migration) — [Help](http://stackoverflow.com/questions/tagged/three.js) for three.js related usage.
 
 
 ### Usage ###
 
-Download the [minified library](http://threejs.org/build/three.min.js) and include it in your html.
-Alternatively see [how to build the library yourself](https://github.com/mrdoob/three.js/wiki/build.py,-or-how-to-generate-a-compressed-Three.js-file).
+Download the master branch of this repo or a distribution. This includes a fixed OpenSim model visuals, embedded in a scene. To launch the visualizer standalone you need the following:
 
-```html
-<script src="js/three.min.js"></script>
-```
+1. Installation of Python 
+2. Open a shell and navigate to the top level folder of repo.
+3. type python -m SimpleHTTPServer 8000
+4. Open google chrome to page localhost:8000/editor
 
-This code creates a scene, a camera, and a geometric cube, and it adds the cube to the scene. It then creates a `WebGL` renderer for the scene and camera, and it adds that viewport to the document.body element. Finally it animates the cube within the scene for the camera.
 
-```javascript
-var scene, camera, renderer;
-var geometry, material, mesh;
 
-init();
-animate();
-
-function init() {
-
-	scene = new THREE.Scene();
-
-	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
-	camera.position.z = 1000;
-
-	geometry = new THREE.BoxGeometry( 200, 200, 200 );
-	material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
-
-	mesh = new THREE.Mesh( geometry, material );
-	scene.add( mesh );
-
-	renderer = new THREE.WebGLRenderer();
-	renderer.setSize( window.innerWidth, window.innerHeight );
-
-	document.body.appendChild( renderer.domElement );
-
-}
-
-function animate() {
-
-	requestAnimationFrame( animate );
-
-	mesh.rotation.x += 0.01;
-	mesh.rotation.y += 0.02;
-
-	renderer.render( scene, camera );
-
-}
-```
-
-If everything went well you should see [this](http://jsfiddle.net/hfj7gm6t/).
-
-### Change log ###
-
-[releases](https://github.com/mrdoob/three.js/releases)
