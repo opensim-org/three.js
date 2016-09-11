@@ -68,6 +68,19 @@ Sidebar.SceneSettings = function (editor) {
 
     container.add(floorTypeRow);
 
+    // Helper /Debug visuals
+
+    var debugRow = new UI.Panel();
+    var debug = new UI.Checkbox(config.getKey('render/debug')).setLeft('100px').onChange(function () {
+
+        config.setKey('render/debug', this.getValue());
+        signals.renderDebugChanged.dispatch(this.getValue());
+    });
+
+    debugRow.add(new UI.Text('Debug').setWidth('90px'));
+    debugRow.add(debug);
+
+    container.add(debugRow);
     // shadow
     /*
         var rendererShadowsSpan = new UI.Span();

@@ -84,6 +84,7 @@ var OpenSimEditor = function () {
 		historyChanged: new Signal(),
 		refreshScriptEditor: new Signal(),
 
+		renderDebugChanged: new Signal(),
 	    animationStarted: new Signal(),
 	    animationStopped: new Signal()
 	};
@@ -503,7 +504,7 @@ OpenSimEditor.prototype = {
 	addfromJSON: function ( json ) {
 
 		var loader = new THREE.ObjectLoader();
-                this.signals.sceneGraphChanged.active = false;
+		this.signals.sceneGraphChanged.active = false;
 		model = loader.parse( json );
 		//this.scene.add( model );
 		this.addObject( model );

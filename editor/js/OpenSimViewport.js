@@ -14,7 +14,7 @@ var OpenSimViewport = function ( editor ) {
 
 	var scene = editor.scene;
 	var sceneHelpers = editor.sceneHelpers;
-	var showHelpers = editor.showHelpers;
+	//var showHelpers = editor.showDebug();
 	var dollyCameraEye = editor.cameraEye;
 	var objects = [];
 
@@ -280,6 +280,10 @@ var OpenSimViewport = function ( editor ) {
 
 	} );
 
+	signals.renderDebugChanged.add(function (show) {
+	    sceneHelpers.visible = show;
+	    render();
+	});
 	var clearColor;
 
 	signals.themeChanged.add( function ( value ) {
@@ -653,8 +657,8 @@ var OpenSimViewport = function ( editor ) {
 		    renderer.render(scene, currentCamera);
 
 		    if (renderer instanceof THREE.RaytracingRenderer === false) {
-
-		        renderer.render(sceneHelpers, camera);
+		        if (sceneHelpers.visible)
+		            renderer.render(sceneHelpers, camera);
 
 		    }
 		}

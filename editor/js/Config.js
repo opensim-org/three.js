@@ -13,6 +13,7 @@ var Config = function ( name ) {
 		'project/renderer/shadows': true,
 		'project/editable': false,
 		'project/vr': false,
+		'render/debug': true,
 
 		'settings/history': false,
 
