@@ -14,7 +14,8 @@ var OpenSimViewport = function ( editor ) {
 
 	var scene = editor.scene;
 	var sceneHelpers = editor.sceneHelpers;
-
+	//var showHelpers = editor.showDebug();
+	var dollyCameraEye = editor.cameraEye;
 	var objects = [];
 
 	// helpers
@@ -25,7 +26,7 @@ var OpenSimViewport = function ( editor ) {
 	//
 
 	var camera = editor.camera;
-
+	var dollyCamera = editor.dolly_camera;
 	//
 
 	var selectionBox = new THREE.BoxHelper();
@@ -38,7 +39,10 @@ var OpenSimViewport = function ( editor ) {
 	var objectRotationOnDown = null;
 	var objectScaleOnDown = null;
 
-	var transformControls = new THREE.TransformControls( camera, container.dom );
+	var transformControls = new THREE.TransformControls(camera, container.dom);
+	editor.control = transformControls;
+
+	var animating = false;
 	transformControls.addEventListener( 'change', function () {
 
 		var object = transformControls.object;
@@ -276,6 +280,10 @@ var OpenSimViewport = function ( editor ) {
 
 	} );
 
+	signals.renderDebugChanged.add(function (show) {
+	    sceneHelpers.visible = show;
+	    render();
+	});
 	var clearColor;
 
 	signals.themeChanged.add( function ( value ) {
@@ -357,6 +365,17 @@ var OpenSimViewport = function ( editor ) {
 
 	} );
 
+	signals.animationStarted.add(function () {
+	    this.animating = true;
+	    render();
+
+	});
+	signals.animationStopped.add(function () {
+	    this.animating = false;
+	    render();
+
+	});
+
 	signals.objectSelected.add( function ( object ) {
 
 		selectionBox.visible = false;
@@ -415,7 +434,8 @@ var OpenSimViewport = function ( editor ) {
 
 	signals.objectChanged.add( function ( object ) {
 
-		if ( editor.selected === object ) {
+	    if (object === null) return;
+	    if (editor.selected === object) {
 
 			selectionBox.update( object );
 			transformControls.update();
@@ -579,7 +599,9 @@ var OpenSimViewport = function ( editor ) {
 
 	function animate() {
 
-		requestAnimationFrame( animate );
+	    render();
+	    requestAnimationFrame(animate);
+	    TWEEN.update();
 
 		/*
 
@@ -614,15 +636,32 @@ var OpenSimViewport = function ( editor ) {
 		sceneHelpers.updateMatrixWorld();
 		scene.updateMatrixWorld();
 		stats.update();
-		renderer.clear();
-		renderer.render( scene, camera );
+		if (renderer != null) {
+		    renderer.clear();
 
-		if ( renderer instanceof THREE.RaytracingRenderer === false ) {
+		    if (this.animating) {
+		        var time = Date.now();
+		        var looptime = 20 * 1000;
+		        var t = (time % looptime) / looptime;
 
-			renderer.render( sceneHelpers, camera );
+		        var pos = editor.dollyPath.getPointAt(t);
+		        console.log('t='+t);
+		        currentCamera = dollyCamera;
+		        currentCamera.position.copy(pos);
+		        //dollyCameraEye.position.copy(pos);
+		        currentCamera.lookAt(new THREE.Vector3(0, 0, 0));
+		    }
+		    else
+		        currentCamera = camera;
 
+		    renderer.render(scene, currentCamera);
+
+		    if (renderer instanceof THREE.RaytracingRenderer === false) {
+		        if (sceneHelpers.visible)
+		            renderer.render(sceneHelpers, camera);
+
+		    }
 		}
-
 	}
 
 	return container;
