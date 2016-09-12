@@ -737,6 +737,8 @@ OpenSimEditor.prototype = {
 	    //this.control.target = new THREE.Vector3(aabbCenter);
 	    //this.control.update();
 	},
+    // Fix scene after loading a model by placing directional light at the corner
+    // of bounding box and dolly at half hight.
 	adjustSceneAfterModelLoading: function () {
 	    var modelObject = this.getModel();
 	    var modelbbox = new THREE.Box3().setFromObject(modelObject);
