@@ -749,6 +749,7 @@ OpenSimEditor.prototype = {
 	    builtinLight.position.copy(new THREE.Vector3(modelbbox.max.x, modelbbox.max.y, modelbbox.min.z));
 	    // Move dolly to middle hight of bbox and make it invisible
 	    this.dolly_object.position.y = (modelbbox.max.y + modelbbox.min.y) / 2;
-	    this.dolly_object.visible = false;
+	    path = this.scene.getObjectByName('DollyPath');
+	    path.visible = false;
 	}
 };
