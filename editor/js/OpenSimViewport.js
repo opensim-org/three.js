@@ -391,8 +391,8 @@ var OpenSimViewport = function ( editor ) {
 				selectionBox.visible = true;
 
 			}
-
-			transformControls.attach( object );
+            if (object.userData !== "NonEditable")
+			    transformControls.attach( object );
 
 		}
 
