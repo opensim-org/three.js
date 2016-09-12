@@ -507,7 +507,8 @@ OpenSimEditor.prototype = {
 		this.signals.sceneGraphChanged.active = false;
 		model = loader.parse( json );
 		//this.scene.add( model );
-		this.addObject( model );
+		this.addObject(model);
+		this.adjustSceneAfterModelLoading();
 		//this.scripts = json.scripts;
 		this.signals.sceneGraphChanged.active = true;
 		this.signals.sceneGraphChanged.dispatch();
@@ -735,5 +736,17 @@ OpenSimEditor.prototype = {
 	    this.camera.lookAt(aabbCenter);
 	    //this.control.target = new THREE.Vector3(aabbCenter);
 	    //this.control.update();
+	},
+	adjustSceneAfterModelLoading: function () {
+	    var modelObject = this.getModel();
+	    var modelbbox = new THREE.Box3().setFromObject(modelObject);
+	    var helper = new THREE.BoundingBoxHelper(modelObject, 0xff0000);
+	    helper.update();
+	    //this.sceneHelpers.add(helper);
+	    builtinLight = this.scene.getObjectByName('DirectionalLight');
+	    builtinLight.position.copy(new THREE.Vector3(modelbbox.max.x, modelbbox.max.y, modelbbox.min.z));
+	    // Move dolly to middle hight of bbox and make it invisible
+	    this.dolly_object.position.y = (modelbbox.max.y + modelbbox.min.y) / 2;
+	    this.dolly_object.visible = false;
 	}
 };
