@@ -367,6 +367,8 @@ var OpenSimViewport = function ( editor ) {
 
 	signals.animationStarted.add(function () {
 	    this.animating = true;
+	    dollyCamera.aspect = camera.aspect;
+	    dollyCamera.updateProjectionMatrix();
 	    render();
 
 	});

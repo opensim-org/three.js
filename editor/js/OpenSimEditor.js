@@ -18,8 +18,8 @@ var OpenSimEditor = function () {
 	this.dolly_object.name = 'Dolly';
 	this.dolly_object.position.y = 0;
 
-	this.cameraEye = new THREE.Mesh(new THREE.SphereGeometry(50), new THREE.MeshBasicMaterial({ color: 0xdddddd }));
-	this.cameraEye.name = 'CameraEye';
+	//this.cameraEye = new THREE.Mesh(new THREE.SphereGeometry(50), new THREE.MeshBasicMaterial({ color: 0xdddddd }));
+	//this.cameraEye.name = 'CameraEye';
 
 	var Signal = signals.Signal;
 
@@ -669,9 +669,9 @@ OpenSimEditor.prototype = {
 	    this.dolly_camera.position = this.dollyPath.getPoint(0);
 	    this.dolly_object.add(this.dolly_camera);
 	    this.dolly_object.add(tubeMesh);
-	    this.dolly_object.add(this.cameraEye);
+	    //this.dolly_object.add(this.cameraEye);
 	    dcameraHelper = new THREE.CameraHelper(this.dolly_camera);
-	    this.scene.add(dcameraHelper);
+	    this.sceneHelpers.add(dcameraHelper);
 
 	},
 
