@@ -660,7 +660,7 @@ OpenSimEditor.prototype = {
 	createDollyPath: function () {
 
 	    this.scene.add(this.dolly_object);
-	    tube = new THREE.TubeGeometry(this.dollyPath, 8, 5, 8, true);
+	    tube = new THREE.TubeGeometry(this.dollyPath, 100, 5, 8, true);
 	    tubemat = new THREE.MeshLambertMaterial({
 	        color: 0xff00ff
 	    });
