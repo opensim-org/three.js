@@ -154,7 +154,8 @@ var OpenSimToolbar = function ( editor ) {
 	    //editor.scene.add(helper);
 	    // Zoom out only if model is outside view, also zoom in if too small
 	    var curDistance = center.distanceTo(camera.position);
-	    editor.viewZoom(curDistance-distance);
+	    editor.viewZoom(curDistance - distance);
+	    editor.signals.defaultCameraApplied.dispatch(center);
 
 	});
 	buttons.add(view_refit);
