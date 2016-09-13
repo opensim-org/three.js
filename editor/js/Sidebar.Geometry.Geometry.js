@@ -36,8 +36,21 @@ Sidebar.Geometry.Geometry = function ( editor ) {
 		if ( object === undefined ) return;
 
 		var geometry = object.geometry;
-
-		if ( geometry instanceof THREE.Geometry ) {
+                if ( geometry instanceof THREE.TubeGeometry ) {
+                    container.add( new UI.Text( 'Control Points:' ).setWidth( '90px' ) );
+                    var path = geometry.parameters.path;
+                    var points = path.points;
+                    for ( var index = 0; index < points.length; index ++ ){
+                        var nextPoint = points[index];
+                        var nextPointPositionRow = new UI.Row();
+                        var nextPointPositionX = new UI.Number(nextPoint.x).setWidth( '50px' ).onChange( update );
+                        var nextPointPositionY = new UI.Number(nextPoint.y).setWidth( '50px' ).onChange( update );
+                        var nextPointPositionZ = new UI.Number(nextPoint.z).setWidth( '50px' ).onChange( update );
+                        nextPointPositionRow.add( nextPointPositionX, nextPointPositionY, nextPointPositionZ );
+                        container.add(nextPointPositionRow);
+                    }
+                }
+                else if ( geometry instanceof THREE.Geometry ) {
 
 			container.setDisplay( 'block' );
 

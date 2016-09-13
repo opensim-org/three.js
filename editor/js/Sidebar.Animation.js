@@ -6,6 +6,7 @@ Sidebar.Animation = function ( editor ) {
 
 	var signals = editor.signals;
 
+        var period = 20000;
 	var options = {};
 	var possibleAnimations = {};
 
@@ -111,7 +112,14 @@ Sidebar.Animation = function ( editor ) {
 			    signals.animationStopped.dispatch();
 			});
 			animationsRow.add(pauseButton);
+                        // Cycle time
+                        var cycleTimeRow = new UI.Row();
+                        var cycleTime = new UI.Number(); //.onChange( update );
 
+                        cycleTimeRow.add( new UI.Text( 'Period (s)' ).setWidth( '90px' ) );
+                        cycleTimeRow.add( cycleTime );
+
+                        container.add( cycleTimeRow );
 			container.setDisplay( 'block' );
 
 		}
