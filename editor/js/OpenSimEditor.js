@@ -86,7 +86,8 @@ var OpenSimEditor = function () {
 
 		renderDebugChanged: new Signal(),
 	    animationStarted: new Signal(),
-	    animationStopped: new Signal()
+	    animationStopped: new Signal(),
+        defaultCameraApplied: new Signal()
 	};
 
 	this.config = new Config( 'threejs-editor' );
@@ -698,7 +699,7 @@ OpenSimEditor.prototype = {
 	    var changeEvent = { type: 'change' };
 	    this.control.dispatchEvent( changeEvent );
         //this.addMarkerAtPosition(newposition);
-        //this.signals.cameraChanged.dispatch( this.camera );
+
 	},
 
 	viewZoom: function(in_out) {

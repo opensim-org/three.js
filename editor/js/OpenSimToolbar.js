@@ -29,7 +29,8 @@ var OpenSimToolbar = function ( editor ) {
 	    var distance = Math.abs(objectSize / Math.sin(fov / 2));
 	    newpos.x = bbox.min.x - distance;
 	    editor.updateCamera(newpos, center);
-	};
+	    editor.signals.defaultCameraApplied.dispatch(center);
+    };
     // +X
 	var viewx = new UI.Button('+X').onClick(function () {
 
@@ -54,7 +55,8 @@ var OpenSimToolbar = function ( editor ) {
 	    var distance = Math.abs(objectSize / Math.sin(fov / 2));
 	    newpos.x = bbox.max.x + distance;
 	    editor.updateCamera(newpos, center);
-	};
+	    editor.signals.defaultCameraApplied.dispatch(center);
+    };
     // -Y
 	var viewminy = new UI.Button('-Y').onClick(function () {
 	    viewfromMinusY();
@@ -71,7 +73,8 @@ var OpenSimToolbar = function ( editor ) {
 	    var distance = Math.abs(objectSize / Math.sin(fov / 2));
 	    newpos.y = bbox.min.y - distance;
 	    editor.updateCamera(newpos, center);
-	};
+	    editor.signals.defaultCameraApplied.dispatch(center);
+    };
     // +Y
 	var viewplusy = new UI.Button('+Y').onClick(function () {
 	    viewfromPlusY();
@@ -88,7 +91,8 @@ var OpenSimToolbar = function ( editor ) {
 	    var distance = Math.abs(objectSize / Math.sin(fov / 2));
 	    newpos.y = bbox.max.y + distance;
 	    editor.updateCamera(newpos, center);
-	};
+	    editor.signals.defaultCameraApplied.dispatch(center);
+    };
     // -Z
 	var viewminz = new UI.Button('-Z').onClick(function () {
 	    viewfromMinusZ();
@@ -106,6 +110,7 @@ var OpenSimToolbar = function ( editor ) {
 	    var distance = Math.abs(objectSize / Math.sin(fov / 2));
 	    newpos.z = bbox.min.z - distance;
 	    editor.updateCamera(newpos, center);
+	    editor.signals.defaultCameraApplied.dispatch(center);
 	};
     // +Z
 	var viewplusz = new UI.Button('+Z').onClick(function () {
@@ -124,7 +129,8 @@ var OpenSimToolbar = function ( editor ) {
 	    var distance = Math.abs(objectSize / Math.sin(fov / 2));
 	    newpos.z = bbox.max.z + distance;
 	    editor.updateCamera(newpos, center);
-	};
+	    editor.signals.defaultCameraApplied.dispatch(center);
+    };
 
 	var view_zoomin = new UI.Button('+').onClick(function () {
 	    editor.viewZoom(+100);

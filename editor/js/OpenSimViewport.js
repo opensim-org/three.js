@@ -355,7 +355,11 @@ var OpenSimViewport = function ( editor ) {
 
 		render();
 
-	} );
+	});
+
+	signals.defaultCameraApplied.add(function (newCenter) {
+	    controls.center.copy(newCenter);
+	});
 
 	var saveTimeout;
 
