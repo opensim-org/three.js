@@ -10,7 +10,11 @@ Sidebar.SceneSettings = function (editor) {
     var backgrounds = {
         'nobackground': 'No Background',
         'sky': 'Sky',
-        'desert': 'Desert'
+        'desert': 'Desert',
+        'city': 'City',
+        'dark': 'Dark',
+        'mars': 'Mars',
+        'pastures': 'Pastures'
     };
 
     var floorpatterns = {
