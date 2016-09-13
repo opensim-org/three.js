@@ -699,7 +699,7 @@ OpenSimEditor.prototype = {
 	    var changeEvent = { type: 'change' };
 	    this.control.dispatchEvent( changeEvent );
         //this.addMarkerAtPosition(newposition);
-
+	    this.signals.defaultCameraApplied.dispatch(viewCenter);
 	},
 
 	viewZoom: function(in_out) {
@@ -735,8 +735,8 @@ OpenSimEditor.prototype = {
 	    newPos.addVectors(aabbCenter, dir);
 	    this.camera.position.set(newPos.x, newPos.y, newPos.z);
 	    this.camera.lookAt(aabbCenter);
-	    //this.control.target = new THREE.Vector3(aabbCenter);
-	    //this.control.update();
+	    this.signals.defaultCameraApplied.dispatch(aabbCenter);
+
 	},
     // Fix scene after loading a model by placing directional light at the corner
     // of bounding box and dolly at half hight.
