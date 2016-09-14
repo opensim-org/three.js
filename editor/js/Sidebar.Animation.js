@@ -8,7 +8,7 @@ Sidebar.Animation = function ( editor ) {
 
 	var options = {};
 	var possibleAnimations = {};
-
+	var cycleTime = 20;
 	var container = new UI.CollapsiblePanel();
 	container.setCollapsed( editor.config.getKey( 'ui/sidebar/animation/collapsed' ) );
 	container.onCollapsedChange( function ( boolean ) {
@@ -85,13 +85,22 @@ Sidebar.Animation = function ( editor ) {
 
 			animationsRow.clear();
 
-			var animation = animations[ object.id ];
+			var animation = animations[object.id];
+
+			var cycleRow = new UI.Row();
+			var cycle = new UI.Integer(cycleTime).setRange(1, 60).onChange(update);
+
+			cycleRow.add(new UI.Text('Cycle (s)').setWidth('90px'));
+			cycleRow.add(cycle);
+
+			container.add(cycleRow);
+
 
 			var playButton = new UI.Button( 'Play' ).onClick( function () {
 
 			    var position = { x: 0, y: 0, z: 0 };
-			    var target = { x: 200, y: 0, z: 0 };
-			    var tween = new TWEEN.Tween(position).to(target, 20000);
+			    var target = { x: 500, y: 0, z: 0 };
+			    var tween = new TWEEN.Tween(position).to(target, cycleTime*1000);
 			    var dModel = editor.getModel();
 			    tween.onUpdate(function () {
 			        dModel.position.x = position.x;
@@ -102,7 +111,7 @@ Sidebar.Animation = function ( editor ) {
 			    tween.onComplete(function () {
 			        signals.animationStopped.dispatch();
 			    });
-			    signals.animationStarted.dispatch();
+			    signals.animationStarted.dispatch(cycleTime);
 			    tween.start();
 			} );
 			animationsRow.add( playButton );
@@ -112,9 +121,13 @@ Sidebar.Animation = function ( editor ) {
 			});
 			animationsRow.add(pauseButton);
 
+
 			container.setDisplay( 'block' );
 
 		}
+        function update() {
+            cycleTime = cycle.getValue();
+        }
 
 	} );
 

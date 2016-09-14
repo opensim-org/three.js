@@ -7,6 +7,7 @@ var OpenSimViewport = function ( editor ) {
 	var signals = editor.signals;
 
 	var container = new UI.Panel();
+	var animationCycleTime = 20000;
 	container.setId( 'viewport' );
 	container.setPosition( 'absolute' );
 
@@ -369,8 +370,9 @@ var OpenSimViewport = function ( editor ) {
 
 	} );
 
-	signals.animationStarted.add(function () {
+	signals.animationStarted.add(function (cycleTime) {
 	    this.animating = true;
+	    animationCycleTime = cycleTime*1000;
 	    dollyCamera.aspect = camera.aspect;
 	    dollyCamera.updateProjectionMatrix();
 	    render();
@@ -647,7 +649,7 @@ var OpenSimViewport = function ( editor ) {
 
 		    if (this.animating) {
 		        var time = Date.now();
-		        var looptime = 20 * 1000;
+		        var looptime = animationCycleTime;
 		        var t = (time % looptime) / looptime;
 
 		        var pos = editor.dollyPath.getPointAt(t);
