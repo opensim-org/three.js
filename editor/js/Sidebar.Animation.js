@@ -90,7 +90,7 @@ Sidebar.Animation = function ( editor ) {
 			var playButton = new UI.Button( 'Play' ).onClick( function () {
 
 			    var position = { x: 0, y: 0, z: 0 };
-			    var target = { x: 500, y: 0, z: 0 };
+			    var target = { x: 200, y: 0, z: 0 };
 			    var tween = new TWEEN.Tween(position).to(target, 20000);
 			    var dModel = editor.getModel();
 			    tween.onUpdate(function () {

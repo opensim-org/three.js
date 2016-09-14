@@ -39843,6 +39843,7 @@
               {
                 "uuid": "8559098f-01d1-4639-90cf-a9be7ecbcce2",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/pelvis\/frame_geometry",
                 "geometry": "db197f28-e813-4fb0-8fc5-fce6643ed4e6",
                 "material": "9c945809-17a4-41d9-a355-a2fb105ea151",
@@ -39869,6 +39870,7 @@
               {
                 "uuid": "d0560ce2-cbb6-4b9e-b893-1ee70ef89153",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/pelvis\/pelvis_geom_1",
                 "geometry": "9e68faba-a299-455f-af6b-a94ccd4e0ef8",
                 "material": "ec3724d8-f6fb-4367-ad47-ef7d6ebd631b",
@@ -39895,6 +39897,7 @@
               {
                 "uuid": "d7337ec1-b399-47ab-ab66-7d8dcf63d4c8",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/pelvis\/pelvis_geom_2",
                 "geometry": "7d3fed25-d394-4469-bef8-90c8319c51a5",
                 "material": "7279fb29-5413-40e9-9a85-ee4941bd66eb",
@@ -39921,6 +39924,7 @@
               {
                 "uuid": "6d2905b0-1c40-4e10-9623-1ac1eddd27bd",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/pelvis\/pelvis_geom_3",
                 "geometry": "dc30cad5-7624-4f8a-8729-4b0761564c8b",
                 "material": "54c5ce92-7881-48d2-8d40-21ae313c9f2c",
@@ -39947,6 +39951,7 @@
               {
                 "uuid": "add56b6f-334d-422d-947b-10bb7b59fc58",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/hip_r\/pelvis_offset\/frame_geometry",
                 "geometry": "e2d8995a-0c2f-4617-8d05-0d980db24b51",
                 "material": "cab8a392-02a3-4e9b-bfbc-f23d8a32d042",
@@ -39973,6 +39978,7 @@
               {
                 "uuid": "1ec14274-c998-4afe-8da0-7a27080d3360",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/R.ASIS",
                 "geometry": "911bf2ca-6c05-4c6a-ada0-c60baa280826",
                 "material": "4d8eea4b-ca0d-4f49-a746-7eb237c49e30",
@@ -39999,6 +40005,7 @@
               {
                 "uuid": "edecbe6b-25a9-41a5-806f-15341f19024d",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/L.ASIS",
                 "geometry": "3c585184-e2c2-4c6e-8708-a4a116c0b26c",
                 "material": "2a7c481b-e2c9-464b-a9ae-b1c146b3ff5a",
@@ -40025,6 +40032,7 @@
               {
                 "uuid": "bc6d6f10-6933-46d4-86f4-5512f1bb4f4c",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/V.Sacral",
                 "geometry": "1b173b7a-7b1b-4db3-8c2f-af0211bb6b21",
                 "material": "5f5a8d65-f587-4cae-80f1-4e6590c2d4e6",
@@ -40051,6 +40059,7 @@
             ],
             "name": "\/leg6dof9musc\/pelvis",
             "opensimtype": "Frame",
+            "userData":  "NonEditable",
             "type": "Group",
             "matrix": [
               0.9997028451896651,
@@ -40077,6 +40086,7 @@
               {
                 "uuid": "1af9699f-eb36-46fb-b463-663ee63085fb",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/femur_r\/frame_geometry",
                 "geometry": "abcdd10e-d835-4dd8-8107-8721d7758f2f",
                 "material": "a24e3d54-30c3-4e10-849d-8c9b9079bee7",
@@ -40103,6 +40113,7 @@
               {
                 "uuid": "9a2756c0-b7e3-431f-b069-be2d0f1ad32b",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/femur_r\/femur_r_geom_1",
                 "geometry": "cd3fe812-b24f-4496-a7cc-cc6b968bddec",
                 "material": "dbf3208b-20fc-4e18-a778-e50677d91e16",
@@ -40207,6 +40218,7 @@
             ],
             "name": "\/leg6dof9musc\/femur_r",
             "opensimtype": "Frame",
+            "userData":  "NonEditable",
             "type": "Group",
             "matrix": [
               0.9842527772610703,
@@ -40233,6 +40245,7 @@
               {
                 "uuid": "fd5409f9-6c9d-4951-87d4-e77f900e9988",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/tibia_r\/frame_geometry",
                 "geometry": "f2ea87e9-c0df-4fdb-9c46-5a3f8a36d233",
                 "material": "76209936-059f-42b0-a9b6-fe3a473b988e",
@@ -40259,6 +40272,7 @@
               {
                 "uuid": "0e1dc610-5164-45c3-9b15-296f7d051893",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/tibia_r\/tibia_r_geom_1",
                 "geometry": "32fc1fc8-cd96-452a-990e-9db55a7faf86",
                 "material": "0612293f-e78c-4e79-975b-ca9e195a2bcf",
@@ -40285,6 +40299,7 @@
               {
                 "uuid": "0caa6a1e-f822-41ba-ab45-d01c9d264eeb",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/tibia_r\/tibia_r_geom_2",
                 "geometry": "6b91173e-e264-459d-a881-e84593e01012",
                 "material": "4eb73b1c-feed-4005-b2e0-05ff84012f29",
@@ -40311,6 +40326,7 @@
               {
                 "uuid": "7c7c43ab-d5d7-40e3-beee-2d3f137fd909",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/ankle_r\/tibia_r_offset\/frame_geometry",
                 "geometry": "ce16e18c-daa8-4c40-a5db-7fe499c031d2",
                 "material": "dda46c2d-88ee-46a9-bc09-4ed55e800e1f",
@@ -40415,6 +40431,7 @@
             ],
             "name": "\/leg6dof9musc\/tibia_r",
             "opensimtype": "Frame",
+            "userData":  "NonEditable",
             "type": "Group",
             "matrix": [
               0.6919533161509749,
@@ -40441,6 +40458,7 @@
               {
                 "uuid": "6d5bfac9-4b6e-46d4-a23f-888cce160a4f",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/patella_r\/frame_geometry",
                 "geometry": "5e18401a-b381-4ea5-99ed-495a228a2b25",
                 "material": "ca6f8db0-2633-44ee-9bf5-318e7e765f44",
@@ -40467,6 +40485,7 @@
               {
                 "uuid": "f58a96c5-d812-4bad-bca6-2492e6eea606",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/patella_r\/patella_r_geom_1",
                 "geometry": "84f2a956-1fe1-4412-b0ee-b3c81e8211e8",
                 "material": "2a7ea4a7-6221-456e-b62d-60792161e0e7",
@@ -40493,6 +40512,7 @@
             ],
             "name": "\/leg6dof9musc\/patella_r",
             "opensimtype": "Frame",
+            "userData":  "NonEditable",
             "type": "Group",
             "matrix": [
               0.8646261250175701,
@@ -40519,6 +40539,7 @@
               {
                 "uuid": "c2710594-af86-47bf-a016-f95f25d918a5",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/talus_r\/frame_geometry",
                 "geometry": "2319183b-d54b-4dbe-9efb-56d375f93cb5",
                 "material": "5217c424-ad5e-40e8-9e95-4eed1856b317",
@@ -40545,6 +40566,7 @@
               {
                 "uuid": "dd2f00ad-2b3c-461d-9f72-1d291846c1e4",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/talus_r\/talus_r_geom_1",
                 "geometry": "b4d69372-2da1-41d8-9f6d-aa5a44abf457",
                 "material": "f07e92d3-a174-4973-8310-e8d0a759045c",
@@ -40571,6 +40593,7 @@
               {
                 "uuid": "6b46f021-4c93-4eeb-90a1-e16713ebf75e",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/subtalar_r\/talus_r_offset\/frame_geometry",
                 "geometry": "3b531a32-91c9-4ab6-a605-7a5a3d25e0be",
                 "material": "c2041920-04d1-4864-badc-839e55019c87",
@@ -40597,6 +40620,7 @@
             ],
             "name": "\/leg6dof9musc\/talus_r",
             "opensimtype": "Frame",
+            "userData":  "NonEditable",
             "type": "Group",
             "matrix": [
               0.7556046260232352,
@@ -40623,6 +40647,7 @@
               {
                 "uuid": "186336d3-624e-403c-81b4-3446c1db97a2",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/calcn_r\/frame_geometry",
                 "geometry": "2ae8468b-eba1-4272-9947-7030087620c8",
                 "material": "ef134d9f-33ee-4fc6-af4c-c36db2d949da",
@@ -40649,6 +40674,7 @@
               {
                 "uuid": "b492ba91-feb2-4355-b4a5-0f05130218d2",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/calcn_r\/calcn_r_geom_1",
                 "geometry": "8fd83f4c-ea38-42e7-834f-633d9dcffe30",
                 "material": "19d6b958-0fda-4c8a-b865-47326b3f3312",
@@ -40675,6 +40701,7 @@
               {
                 "uuid": "dd825f4e-26d0-4270-9bfe-8df453622b0b",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/mtp_r\/calcn_r_offset\/frame_geometry",
                 "geometry": "aa021b08-e20d-47bb-a42a-132e78c10a8a",
                 "material": "bdc9563c-8f18-4e18-9ba0-716a61b2b6c0",
@@ -40779,6 +40806,7 @@
             ],
             "name": "\/leg6dof9musc\/calcn_r",
             "opensimtype": "Frame",
+            "userData":  "NonEditable",
             "type": "Group",
             "matrix": [
               0.7556046260232352,
@@ -40805,6 +40833,7 @@
               {
                 "uuid": "ac9d9d62-c982-4b66-b1dd-da733482bb20",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/toes_r\/frame_geometry",
                 "geometry": "f5d184ca-0fc6-4883-90db-9026b1a40d81",
                 "material": "36eb5151-046a-4100-9367-ff5a50eca6bf",
@@ -40831,6 +40860,7 @@
               {
                 "uuid": "a47bd4e4-61d3-4d54-a7e4-fa73b29a5829",
                 "type": "Mesh",
+                "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/toes_r\/toes_r_geom_1",
                 "geometry": "88fdf974-b530-41aa-8bb1-3f76ddf90f2d",
                 "material": "be83a782-0407-48f4-aaa0-14b0a257ff0b",
@@ -40881,6 +40911,7 @@
           {
             "uuid": "e40dcb6b-50e6-4815-b2bb-9c60aae6183b",
             "type": "Mesh",
+            "userData":  "NonEditable",
             "name": "\/leg6dof9musc\/ground\/frame_geometry",
             "geometry": "31e153db-d5ce-4c15-915b-c92b4ce18b51",
             "material": "4b0acbb1-befd-4dcc-aab9-538f564f49cf",
@@ -40907,6 +40938,7 @@
           {
             "uuid": "39bea408-4c28-4e38-a741-a304ca02c957",
             "type": "Mesh",
+            "userData":  "NonEditable",
             "name": "\/leg6dof9musc\/ground_pelvis\/ground_offset\/frame_geometry",
             "geometry": "0efc1e7c-2829-4515-8649-54da42acce44",
             "material": "6088b624-cde4-4d02-931f-d1b07426ee50",
@@ -40933,12 +40965,14 @@
         ],
         "name": "\/leg6dof9musc\/ground",
         "opensimtype": "Frame",
+        "userData":  "NonEditable",
         "type": "Group",
         "uuid": "9e223208-4288-4fa2-8767-0ac5e793e78d"
       }
     ],
     "name": "OpenSimModel",
-    "type": "Model",
+    "type": "Group",
+    "opensimtype": "Model",
     "matrix": [
       1,
       0,

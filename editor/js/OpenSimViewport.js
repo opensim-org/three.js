@@ -355,7 +355,11 @@ var OpenSimViewport = function ( editor ) {
 
 		render();
 
-	} );
+	});
+
+	signals.defaultCameraApplied.add(function (newCenter) {
+	    controls.center.copy(newCenter);
+	});
 
 	var saveTimeout;
 
@@ -367,6 +371,8 @@ var OpenSimViewport = function ( editor ) {
 
 	signals.animationStarted.add(function () {
 	    this.animating = true;
+	    dollyCamera.aspect = camera.aspect;
+	    dollyCamera.updateProjectionMatrix();
 	    render();
 
 	});
@@ -389,8 +395,8 @@ var OpenSimViewport = function ( editor ) {
 				selectionBox.visible = true;
 
 			}
-
-			transformControls.attach( object );
+            if (object.userData !== "NonEditable")
+			    transformControls.attach( object );
 
 		}
 

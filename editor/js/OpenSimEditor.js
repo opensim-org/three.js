@@ -18,8 +18,8 @@ var OpenSimEditor = function () {
 	this.dolly_object.name = 'Dolly';
 	this.dolly_object.position.y = 0;
 
-	this.cameraEye = new THREE.Mesh(new THREE.SphereGeometry(50), new THREE.MeshBasicMaterial({ color: 0xdddddd }));
-	this.cameraEye.name = 'CameraEye';
+	//this.cameraEye = new THREE.Mesh(new THREE.SphereGeometry(50), new THREE.MeshBasicMaterial({ color: 0xdddddd }));
+	//this.cameraEye.name = 'CameraEye';
 
 	var Signal = signals.Signal;
 
@@ -86,7 +86,8 @@ var OpenSimEditor = function () {
 
 		renderDebugChanged: new Signal(),
 	    animationStarted: new Signal(),
-	    animationStopped: new Signal()
+	    animationStopped: new Signal(),
+        defaultCameraApplied: new Signal()
 	};
 
 	this.config = new Config( 'threejs-editor' );
@@ -507,7 +508,8 @@ OpenSimEditor.prototype = {
 		this.signals.sceneGraphChanged.active = false;
 		model = loader.parse( json );
 		//this.scene.add( model );
-		this.addObject( model );
+		this.addObject(model);
+		this.adjustSceneAfterModelLoading();
 		//this.scripts = json.scripts;
 		this.signals.sceneGraphChanged.active = true;
 		this.signals.sceneGraphChanged.dispatch();
@@ -659,7 +661,7 @@ OpenSimEditor.prototype = {
 	createDollyPath: function () {
 
 	    this.scene.add(this.dolly_object);
-	    tube = new THREE.TubeGeometry(this.dollyPath, 8, 5, 8, true);
+	    tube = new THREE.TubeGeometry(this.dollyPath, 100, 5, 8, true);
 	    tubemat = new THREE.MeshLambertMaterial({
 	        color: 0xff00ff
 	    });
@@ -669,9 +671,9 @@ OpenSimEditor.prototype = {
 	    this.dolly_camera.position = this.dollyPath.getPoint(0);
 	    this.dolly_object.add(this.dolly_camera);
 	    this.dolly_object.add(tubeMesh);
-	    this.dolly_object.add(this.cameraEye);
+	    //this.dolly_object.add(this.cameraEye);
 	    dcameraHelper = new THREE.CameraHelper(this.dolly_camera);
-	    this.scene.add(dcameraHelper);
+	    this.sceneHelpers.add(dcameraHelper);
 
 	},
 
@@ -697,7 +699,7 @@ OpenSimEditor.prototype = {
 	    var changeEvent = { type: 'change' };
 	    this.control.dispatchEvent( changeEvent );
         //this.addMarkerAtPosition(newposition);
-        //this.signals.cameraChanged.dispatch( this.camera );
+	    this.signals.defaultCameraApplied.dispatch(viewCenter);
 	},
 
 	viewZoom: function(in_out) {
@@ -733,7 +735,22 @@ OpenSimEditor.prototype = {
 	    newPos.addVectors(aabbCenter, dir);
 	    this.camera.position.set(newPos.x, newPos.y, newPos.z);
 	    this.camera.lookAt(aabbCenter);
-	    //this.control.target = new THREE.Vector3(aabbCenter);
-	    //this.control.update();
+	    this.signals.defaultCameraApplied.dispatch(aabbCenter);
+
+	},
+    // Fix scene after loading a model by placing directional light at the corner
+    // of bounding box and dolly at half hight.
+	adjustSceneAfterModelLoading: function () {
+	    var modelObject = this.getModel();
+	    var modelbbox = new THREE.Box3().setFromObject(modelObject);
+	    var helper = new THREE.BoundingBoxHelper(modelObject, 0xff0000);
+	    helper.update();
+	    //this.sceneHelpers.add(helper);
+	    builtinLight = this.scene.getObjectByName('DirectionalLight');
+	    builtinLight.position.copy(new THREE.Vector3(modelbbox.max.x, modelbbox.max.y, modelbbox.min.z));
+	    // Move dolly to middle hight of bbox and make it invisible
+	    this.dolly_object.position.y = (modelbbox.max.y + modelbbox.min.y) / 2;
+	    path = this.scene.getObjectByName('DollyPath');
+	    path.visible = false;
 	}
 };
