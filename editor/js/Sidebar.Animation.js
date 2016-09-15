@@ -9,6 +9,8 @@ Sidebar.Animation = function ( editor ) {
 	var options = {};
 	var possibleAnimations = {};
 	var cycleTime = 20;
+	var showCameraOnlyBool = false;
+
 	var container = new UI.CollapsiblePanel();
 	container.setCollapsed( editor.config.getKey( 'ui/sidebar/animation/collapsed' ) );
 	container.onCollapsedChange( function ( boolean ) {
@@ -93,13 +95,21 @@ Sidebar.Animation = function ( editor ) {
 			cycleRow.add(new UI.Text('Cycle (s)').setWidth('90px'));
 			cycleRow.add(cycle);
 
-			container.add(cycleRow);
+			animationsRow.add(cycleRow);
+
+			var showCameraOnlyRow = new UI.Row();
+			var showCameraOnly = new UI.Checkbox(showCameraOnlyBool).setLeft('100px').onChange(function () { showCameraOnlyBool = showCameraOnly.getValue(); });
+
+			showCameraOnlyRow.add(new UI.Text('Preview Camera Only').setWidth('90px'));
+			showCameraOnlyRow.add(showCameraOnly);
+
+			animationsRow.add(showCameraOnlyRow);
 
 
 			var playButton = new UI.Button( 'Play' ).onClick( function () {
 
 			    var position = { x: 0, y: 0, z: 0 };
-			    var target = { x: 500, y: 0, z: 0 };
+			    var target = { x: 100, y: 0, z: 0 };
 			    var tween = new TWEEN.Tween(position).to(target, cycleTime*1000);
 			    var dModel = editor.getModel();
 			    tween.onUpdate(function () {
@@ -111,7 +121,7 @@ Sidebar.Animation = function ( editor ) {
 			    tween.onComplete(function () {
 			        signals.animationStopped.dispatch();
 			    });
-			    signals.animationStarted.dispatch(cycleTime);
+			    signals.animationStarted.dispatch(cycleTime, showCameraOnlyBool);
 			    tween.start();
 			} );
 			animationsRow.add( playButton );
@@ -120,7 +130,6 @@ Sidebar.Animation = function ( editor ) {
 			    signals.animationStopped.dispatch();
 			});
 			animationsRow.add(pauseButton);
-
 
 			container.setDisplay( 'block' );
 

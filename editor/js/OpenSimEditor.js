@@ -97,14 +97,14 @@ var OpenSimEditor = function () {
 
 	this.camera = this.DEFAULT_CAMERA.clone();
 	this.dollyPath = new THREE.ClosedSplineCurve3([
+			new THREE.Vector3(0, 0, 2000),
+			new THREE.Vector3(-1400, 0, 1400),
+			new THREE.Vector3(-2000, 0, 0),
 			new THREE.Vector3(-1400, 0, -1400),
 			new THREE.Vector3(0, 0, -2000),
 			new THREE.Vector3(1400, 0, -1400),
 			new THREE.Vector3(2000, 0, 0),
 			new THREE.Vector3(1400, 0, 1400),
-			new THREE.Vector3(0, 0, 2000),
-			new THREE.Vector3(-1400, 0, 1400),
-			new THREE.Vector3(-2000, 0, 0),
 	]);
 
 	this.dollyPath.type = 'catmullrom';
@@ -693,12 +693,8 @@ OpenSimEditor.prototype = {
 
 	    this.camera.position.set(newposition.x, newposition.y, newposition.z);
 	    this.camera.lookAt(viewCenter);
-	    //console.log(viewCenter);
-	    //this.control.target = viewCenter;
-	    //this.control.update();
 	    var changeEvent = { type: 'change' };
 	    this.control.dispatchEvent( changeEvent );
-        //this.addMarkerAtPosition(newposition);
 	    this.signals.defaultCameraApplied.dispatch(viewCenter);
 	},
 
@@ -752,5 +748,6 @@ OpenSimEditor.prototype = {
 	    this.dolly_object.position.y = (modelbbox.max.y + modelbbox.min.y) / 2;
 	    path = this.scene.getObjectByName('DollyPath');
 	    path.visible = false;
+
 	}
 };

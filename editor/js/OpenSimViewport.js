@@ -7,7 +7,6 @@ var OpenSimViewport = function ( editor ) {
 	var signals = editor.signals;
 
 	var container = new UI.Panel();
-	var animationCycleTime = 20000;
 	container.setId( 'viewport' );
 	container.setPosition( 'absolute' );
 
@@ -17,6 +16,12 @@ var OpenSimViewport = function ( editor ) {
 	var sceneHelpers = editor.sceneHelpers;
 	//var showHelpers = editor.showDebug();
 	var dollyCameraEye = editor.cameraEye;
+    // Animation related
+	var animationCycleTime = 20000;
+	var animationLookAt = new THREE.Vector3(0, 0, 0);
+	var lookAtObject = scene;
+	var showCamOnly = false;
+
 	var objects = [];
 
 	// helpers
@@ -370,11 +375,14 @@ var OpenSimViewport = function ( editor ) {
 
 	} );
 
-	signals.animationStarted.add(function (cycleTime) {
+	signals.animationStarted.add(function (cycleTime, showCameraOnly) {
 	    this.animating = true;
 	    animationCycleTime = cycleTime*1000;
 	    dollyCamera.aspect = camera.aspect;
+	    //lookAtObject = scene.getObjectByName('/leg6dof9musc/toes_r');
 	    dollyCamera.updateProjectionMatrix();
+	    startTime = Date.now();
+	    showCamOnly = showCameraOnly;
 	    render();
 
 	});
@@ -648,17 +656,20 @@ var OpenSimViewport = function ( editor ) {
 		    renderer.clear();
 
 		    if (this.animating) {
-		        var time = Date.now();
+		        var time = Date.now() - startTime;
 		        var looptime = animationCycleTime;
 		        var t = (time % looptime) / looptime;
 
 		        var pos = editor.dollyPath.getPointAt(t);
 		        console.log('t='+t);
-		        currentCamera = dollyCamera;
-		        currentCamera.position.copy(pos);
-		        //dollyCameraEye.position.copy(pos);
-		        currentCamera.lookAt(new THREE.Vector3(0, 0, 0));
-		    }
+		        dollyCamera.position.copy(pos);
+		        animationLookAt.copy(lookAtObject.position);
+		        dollyCamera.lookAt(animationLookAt);
+		        if (showCamOnly === false)
+		            currentCamera = dollyCamera;
+		        else
+		            currentCamera = camera;
+            }
 		    else
 		        currentCamera = camera;
 
