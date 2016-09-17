@@ -8,6 +8,7 @@ Sidebar.Animation = function ( editor ) {
 
 	var options = {};
 	var possibleAnimations = {};
+	var recording = false;
 
 	var container = new UI.CollapsiblePanel();
 	container.setCollapsed( editor.config.getKey( 'ui/sidebar/animation/collapsed' ) );
@@ -112,20 +113,17 @@ Sidebar.Animation = function ( editor ) {
 			});
 			animationsRow.add(pauseButton);
 
-                        var recordButton = new UI.Button( 'Record' ).onClick( function () {
-                            var gif = new GIF({
-                                workers: 2,
-                                quality: 10
-                            });
-                            var canvas = document.getElementById("viewport");    
-                            gif.addFrame(canvas.children[1], {delay: 200});
-
-                            gif.on('finished', function(blob) {
-                              window.open(URL.createObjectURL(blob));
-                            });
-                            gif.render();
-                        });
-                        animationsRow.add(recordButton);
+			var recordButton = new UI.Button('Record').onClick(function () {
+			    if (recording) {
+			        recording = false;
+			        signals.recordingStopped.dispatch();
+			    }
+			    else {
+			        recording = true;
+			        signals.recordingStarted.dispatch();
+			    }
+			});
+			animationsRow.add(recordButton);
 			container.setDisplay( 'block' );
 
 		}
