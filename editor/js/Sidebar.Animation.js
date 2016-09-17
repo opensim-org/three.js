@@ -10,6 +10,7 @@ Sidebar.Animation = function ( editor ) {
 	var possibleAnimations = {};
 	var cycleTime = 20;
 	var showCameraOnlyBool = false;
+	var recording = false;
 
 	var container = new UI.CollapsiblePanel();
 	container.setCollapsed( editor.config.getKey( 'ui/sidebar/animation/collapsed' ) );
@@ -131,6 +132,17 @@ Sidebar.Animation = function ( editor ) {
 			});
 			animationsRow.add(pauseButton);
 
+			var recordButton = new UI.Button('Record').onClick(function () {
+			    if (recording) {
+			        recording = false;
+			        signals.recordingStopped.dispatch();
+			    }
+			    else {
+			        recording = true;
+			        signals.recordingStarted.dispatch();
+			    }
+			});
+			animationsRow.add(recordButton);
 			container.setDisplay( 'block' );
 
 		}

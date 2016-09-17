@@ -24,6 +24,8 @@ var OpenSimViewport = function ( editor ) {
 
 	var objects = [];
 
+    // AnimationRecording
+	var capturer;
 	// helpers
 
 	var grid = new THREE.GridHelper( 30, 1 );
@@ -392,7 +394,35 @@ var OpenSimViewport = function ( editor ) {
 
 	});
 
-	signals.objectSelected.add( function ( object ) {
+	signals.recordingStarted.add(function () {
+	    // add frame to gif
+	    capturer = new CCapture({
+	        verbose: false,
+	        display: true,
+	        framerate: 20,
+	        motionBlurFrames: 3,
+	        quality: 100,
+	        format: 'webm',
+	        workersPath: '../../src/',
+	        timeLimit: 5,
+	        frameLimit: 0,
+	        autoSaveTime: 0,
+	        onProgress: function (p) { progress.style.width = (p * 100) + '%' }
+	    });
+
+	    capturer.start();
+
+	});
+
+	signals.recordingStopped.add(function () {
+	    capturer.stop();
+	    capturer.save();
+	    // add frame to gif
+	    //gif.render();
+	    //gif.finishRendering();
+	});
+
+	signals.objectSelected.add(function (object) {
 
 		selectionBox.visible = false;
 		transformControls.detach();
@@ -680,6 +710,7 @@ var OpenSimViewport = function ( editor ) {
 		            renderer.render(sceneHelpers, camera);
 
 		    }
+		    if (capturer) capturer.capture(renderer.domElement);
 		}
 	}
 
