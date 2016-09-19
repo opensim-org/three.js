@@ -80,7 +80,7 @@ Sidebar.SceneSettings = function (editor) {
         config.setKey('render/debug', this.getValue());
         signals.renderDebugChanged.dispatch(this.getValue());
     });
-
+    debug.setValue(true);
     debugRow.add(new UI.Text('Debug').setWidth('90px'));
     debugRow.add(debug);
 
