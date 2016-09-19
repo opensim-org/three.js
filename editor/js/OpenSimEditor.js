@@ -128,8 +128,8 @@ var OpenSimEditor = function () {
 	this.groundMaterial = null;
 	
 	this.createLights();
-	this.createBackground('sky');
-	this.createGroundPlane('redbricks');
+	this.createBackground(this.config.getKey('skybox'));
+	this.createGroundPlane(this.config.getKey('floor'));
 	this.createDollyPath();
 
 };
