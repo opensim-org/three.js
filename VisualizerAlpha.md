@@ -6,11 +6,17 @@ What's Available:
 =================
 First Alpha release will visualize a fixed model and allow users to test navigation of the 3D view, selection, lights, cameras, helper objects, taking snapshots and creating movies with the goal of zoning in on what functionality meets the needs of our target users. Two possible use cases of the visualizer are: embedded mode where it's embedded inside the Java Application UI, and the second is browser model to show OpenSim models on webpages. Keep both of these options in mind.
 
-What to test:
-==============
+What to test, feedback needed on:
+=================================
 - Variety of Browsers, with focus on Chrome
 - Variety of Platforms (Windows, OSX, Linux)
-- Navigating the view window (pan, zoom, focus, refit.
+- Navigating the view window (pan, zoom, focus, refit).
+- Double click an object selects/focus
+- What lights to include by default (included one directional light)?
+- Would adding more cameras be useful? Switching between them?
+- Orthographic Cameras?
+- Multiple views, same scene?
+- Translate, rotate, scale of Scene Geometry /Add-ons and lights etc.
 - Take static snapshots
 - Record Movies and play them back
 - Control of display of items
@@ -18,6 +24,14 @@ What to test:
 - Adding/removing/manipulating extra geometry, lights and Cameras
 - Background images, floor patterns, and their control.
 - Device specific gestures (pinch-zoom, touch-screen etc.)
+- To record a Movie, select a Camera from scene tree.
+- What clutter/options can be safely removed.
+
+Some Tips:
+==========
+- Mouse left, mid, right to Rotate, Pan, Zoom. Wheel also zooms in/out
+- Text boxes auto convert to spinners when dragging inside them.
+- W,E,R are shortcuts to Translate, rotate, scale
 
 Known Limitations:
 ===================
