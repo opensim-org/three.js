@@ -8,6 +8,9 @@ Sidebar.Animation = function ( editor ) {
 
 	var options = {};
 	var possibleAnimations = {};
+	var cycleTime = 20;
+	var showCameraOnlyBool = false;
+	var recording = false;
 
 	var container = new UI.CollapsiblePanel();
 	container.setCollapsed( editor.config.getKey( 'ui/sidebar/animation/collapsed' ) );
@@ -85,13 +88,30 @@ Sidebar.Animation = function ( editor ) {
 
 			animationsRow.clear();
 
-			var animation = animations[ object.id ];
+			var animation = animations[object.id];
+
+			var cycleRow = new UI.Row();
+			var cycle = new UI.Integer(cycleTime).setRange(1, 60).onChange(update);
+
+			cycleRow.add(new UI.Text('Cycle (s)').setWidth('90px'));
+			cycleRow.add(cycle);
+
+			animationsRow.add(cycleRow);
+
+			var showCameraOnlyRow = new UI.Row();
+			var showCameraOnly = new UI.Checkbox(showCameraOnlyBool).setLeft('100px').onChange(function () { showCameraOnlyBool = showCameraOnly.getValue(); });
+
+			showCameraOnlyRow.add(new UI.Text('Preview Camera Only').setWidth('90px'));
+			showCameraOnlyRow.add(showCameraOnly);
+
+			animationsRow.add(showCameraOnlyRow);
+
 
 			var playButton = new UI.Button( 'Play' ).onClick( function () {
 
 			    var position = { x: 0, y: 0, z: 0 };
-			    var target = { x: 200, y: 0, z: 0 };
-			    var tween = new TWEEN.Tween(position).to(target, 20000);
+			    var target = { x: 100, y: 0, z: 0 };
+			    var tween = new TWEEN.Tween(position).to(target, cycleTime*1000);
 			    var dModel = editor.getModel();
 			    tween.onUpdate(function () {
 			        dModel.position.x = position.x;
@@ -101,20 +121,34 @@ Sidebar.Animation = function ( editor ) {
 			    });
 			    tween.onComplete(function () {
 			        signals.animationStopped.dispatch();
+			        recordButton.setValue(false);
+			        recording = false;
 			    });
-			    signals.animationStarted.dispatch();
+			    signals.animationStarted.dispatch(cycleTime, showCameraOnlyBool, recording);
 			    tween.start();
 			} );
 			animationsRow.add( playButton );
 
 			var pauseButton = new UI.Button( 'Stop' ).onClick( function () {
 			    signals.animationStopped.dispatch();
+			    recordButton.setValue(false);
+			    recording = false;
 			});
 			animationsRow.add(pauseButton);
-
+			animationsRow.add(new UI.Text('  Record: '));
+			var recordButton = new UI.Checkbox('Record').onClick(function () {
+			    if (recording)
+			        signals.recordingStopped.dispatch();
+			    recording = recordButton.getValue();
+			});
+			recordButton.setValue(recording);
+			animationsRow.add(recordButton);
 			container.setDisplay( 'block' );
 
 		}
+        function update() {
+            cycleTime = cycle.getValue();
+        }
 
 	} );
 

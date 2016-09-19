@@ -44,12 +44,12 @@ Sidebar.SceneSettings = function (editor) {
         var value = this.getValue();
 
 
-        config.setKey('background', value);
+        config.setKey('skybox', value);
 
         // change  editor.config
         editor.updateBackground(value);
     });
-    backgroundType.setValue('sky');
+    backgroundType.setValue(config.getKey('skybox'));
     backgroundTypeRow.add(new UI.Text('Background').setWidth('90px'));
     backgroundTypeRow.add(backgroundType);
 
@@ -58,15 +58,12 @@ Sidebar.SceneSettings = function (editor) {
     // Floor
     var floorTypeRow = new UI.Panel();
     var floorType = new UI.Select().setOptions(floorpatterns).setWidth('150px').onChange(function () {
-
         var value = this.getValue();
-
-
         config.setKey('floor', value);
         // change  editor.config
         editor.updateGroundPlane(value);
     });
-    floorType.setValue('redbricks');
+    floorType.setValue(config.getKey('floor'));
     floorTypeRow.add(new UI.Text('Ground').setWidth('90px'));
     floorTypeRow.add(floorType);
 
@@ -80,7 +77,7 @@ Sidebar.SceneSettings = function (editor) {
         config.setKey('render/debug', this.getValue());
         signals.renderDebugChanged.dispatch(this.getValue());
     });
-
+    debug.setValue(true);
     debugRow.add(new UI.Text('Debug').setWidth('90px'));
     debugRow.add(debug);
 

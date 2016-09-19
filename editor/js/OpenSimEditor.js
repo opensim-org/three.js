@@ -87,7 +87,9 @@ var OpenSimEditor = function () {
 		renderDebugChanged: new Signal(),
 	    animationStarted: new Signal(),
 	    animationStopped: new Signal(),
-        defaultCameraApplied: new Signal()
+	    defaultCameraApplied: new Signal(),
+	    recordingStarted: new Signal(),
+        recordingStopped: new Signal()
 	};
 
 	this.config = new Config( 'threejs-editor' );
@@ -97,14 +99,14 @@ var OpenSimEditor = function () {
 
 	this.camera = this.DEFAULT_CAMERA.clone();
 	this.dollyPath = new THREE.ClosedSplineCurve3([
+			new THREE.Vector3(0, 0, 2000),
+			new THREE.Vector3(-1400, 0, 1400),
+			new THREE.Vector3(-2000, 0, 0),
 			new THREE.Vector3(-1400, 0, -1400),
 			new THREE.Vector3(0, 0, -2000),
 			new THREE.Vector3(1400, 0, -1400),
 			new THREE.Vector3(2000, 0, 0),
 			new THREE.Vector3(1400, 0, 1400),
-			new THREE.Vector3(0, 0, 2000),
-			new THREE.Vector3(-1400, 0, 1400),
-			new THREE.Vector3(-2000, 0, 0),
 	]);
 
 	this.dollyPath.type = 'catmullrom';
@@ -126,8 +128,8 @@ var OpenSimEditor = function () {
 	this.groundMaterial = null;
 	
 	this.createLights();
-	this.createBackground('sky');
-	this.createGroundPlane('redbricks');
+	this.createBackground(this.config.getKey('skybox'));
+	this.createGroundPlane(this.config.getKey('floor'));
 	this.createDollyPath();
 
 };
@@ -693,12 +695,8 @@ OpenSimEditor.prototype = {
 
 	    this.camera.position.set(newposition.x, newposition.y, newposition.z);
 	    this.camera.lookAt(viewCenter);
-	    //console.log(viewCenter);
-	    //this.control.target = viewCenter;
-	    //this.control.update();
 	    var changeEvent = { type: 'change' };
 	    this.control.dispatchEvent( changeEvent );
-        //this.addMarkerAtPosition(newposition);
 	    this.signals.defaultCameraApplied.dispatch(viewCenter);
 	},
 
@@ -752,5 +750,6 @@ OpenSimEditor.prototype = {
 	    this.dolly_object.position.y = (modelbbox.max.y + modelbbox.min.y) / 2;
 	    path = this.scene.getObjectByName('DollyPath');
 	    path.visible = false;
+
 	}
 };
