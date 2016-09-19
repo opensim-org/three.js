@@ -21,7 +21,7 @@ Three.js is a WebGL based technology as such there has to be a server running in
 ## Steps to Launch ##
 
 1. Open a shell/command prompt and navigate to the top level folder of the repository
-2. type ```python -m SimpleHTTPServer 8000``` 
+2. type ```python -m SimpleHTTPServer 8000``` (In python 3 the command is ```python -m http.server 8000```)
 3. Open Google Chrome to the URL localhost:8000/editor/
 4. Enjoy!
  
