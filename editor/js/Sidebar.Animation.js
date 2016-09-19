@@ -121,27 +121,27 @@ Sidebar.Animation = function ( editor ) {
 			    });
 			    tween.onComplete(function () {
 			        signals.animationStopped.dispatch();
+			        recordButton.setValue(false);
+			        recording = false;
 			    });
-			    signals.animationStarted.dispatch(cycleTime, showCameraOnlyBool);
+			    signals.animationStarted.dispatch(cycleTime, showCameraOnlyBool, recording);
 			    tween.start();
 			} );
 			animationsRow.add( playButton );
 
 			var pauseButton = new UI.Button( 'Stop' ).onClick( function () {
 			    signals.animationStopped.dispatch();
+			    recordButton.setValue(false);
+			    recording = false;
 			});
 			animationsRow.add(pauseButton);
-
-			var recordButton = new UI.Button('Record').onClick(function () {
-			    if (recording) {
-			        recording = false;
+			animationsRow.add(new UI.Text('  Record: '));
+			var recordButton = new UI.Checkbox('Record').onClick(function () {
+			    if (recording)
 			        signals.recordingStopped.dispatch();
-			    }
-			    else {
-			        recording = true;
-			        signals.recordingStarted.dispatch();
-			    }
+			    recording = recordButton.getValue();
 			});
+			recordButton.setValue(recording);
 			animationsRow.add(recordButton);
 			container.setDisplay( 'block' );
 

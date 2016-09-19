@@ -17,15 +17,16 @@ var OpenSimViewport = function ( editor ) {
 	//var showHelpers = editor.showDebug();
 	var dollyCameraEye = editor.cameraEye;
     // Animation related
-	var animationCycleTime = 20000;
+	var animationCycleTime;
 	var animationLookAt = new THREE.Vector3(0, 0, 0);
 	var lookAtObject = scene;
 	var showCamOnly = false;
+    // AnimationRecording
+	var capturer;
+	var recording = false;
 
 	var objects = [];
 
-    // AnimationRecording
-	var capturer;
 	// helpers
 
 	var grid = new THREE.GridHelper( 30, 1 );
@@ -377,46 +378,57 @@ var OpenSimViewport = function ( editor ) {
 
 	} );
 
-	signals.animationStarted.add(function (cycleTime, showCameraOnly) {
+	signals.animationStarted.add(function (cycleTime, showCameraOnly, isRecording) {
 	    this.animating = true;
 	    animationCycleTime = cycleTime*1000;
 	    dollyCamera.aspect = camera.aspect;
-	    //lookAtObject = scene.getObjectByName('/leg6dof9musc/toes_r');
 	    dollyCamera.updateProjectionMatrix();
 	    startTime = Date.now();
 	    showCamOnly = showCameraOnly;
+	    if (isRecording) {
+	    //    capturer.dispose();
+	        capturer = new CCapture({
+	            verbose: true,
+	            display: true,
+	            framerate: 30,
+	            motionBlurFrames: 3,
+	            quality: 80,
+                name: "opensim_video",
+	            format: 'webm',
+	            workersPath: 'js/',
+	            timeLimit: cycleTime*10,
+	            frameLimit: 0,
+	            onProgress: function (p) { progress.style.width = (p * 100) + '%' }
+	        });
+	        recording = true;
+	        capturer.start();
+	    }
 	    render();
 
 	});
 	signals.animationStopped.add(function () {
 	    this.animating = false;
-	    render();
+        if (recording) {
+	        capturer.stop();
+	        capturer.save();
+	        capturer = undefined;
+	        recording = false;
+	    }
 
 	});
 
 	signals.recordingStarted.add(function () {
 	    // add frame to gif
-	    capturer = new CCapture({
-	        verbose: false,
-	        display: true,
-	        framerate: 20,
-	        motionBlurFrames: 3,
-	        quality: 100,
-	        format: 'webm',
-	        workersPath: '../../src/',
-	        timeLimit: 5,
-	        frameLimit: 0,
-	        autoSaveTime: 0,
-	        onProgress: function (p) { progress.style.width = (p * 100) + '%' }
-	    });
-
-	    capturer.start();
+	    
 
 	});
 
 	signals.recordingStopped.add(function () {
-	    capturer.stop();
-	    capturer.save();
+	    if (capturer !== undefined) {
+	        capturer.stop();
+	        capturer.save();
+	        capturer = undefined;
+	    }
 	    // add frame to gif
 	    //gif.render();
 	    //gif.finishRendering();
@@ -691,7 +703,7 @@ var OpenSimViewport = function ( editor ) {
 		        var t = (time % looptime) / looptime;
 
 		        var pos = editor.dollyPath.getPointAt(t);
-		        console.log('t='+t);
+		        //console.log('t='+t);
 		        dollyCamera.position.copy(pos);
 		        animationLookAt.copy(lookAtObject.position);
 		        dollyCamera.lookAt(animationLookAt);
@@ -710,7 +722,7 @@ var OpenSimViewport = function ( editor ) {
 		            renderer.render(sceneHelpers, camera);
 
 		    }
-		    if (capturer) capturer.capture(renderer.domElement);
+		    if (recording) capturer.capture(renderer.domElement);
 		}
 	}
 
