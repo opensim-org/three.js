@@ -130,6 +130,7 @@ textarea, input { outline: none; } /* osx */
 
 #outliner .Scene {
 	color: #ccccff;
+    margin: 20px;
 }
 
 #outliner .Object3D {
@@ -182,18 +183,16 @@ textarea, input { outline: none; } /* osx */
 	color: #ffaa88;
 }
 
-#opensim_toolbar {
-    background-color: #111;
-    float: left;
-    height: 100px;
-}
-
 #opensim_toolbar span{
     color: white;
+    margin: 5px;
 }
 
 #opensim_toolbar button {
-    margin: 3px;
+    margin: 5px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
 }
 #opensim_toolbar button img {
         width: 25px;

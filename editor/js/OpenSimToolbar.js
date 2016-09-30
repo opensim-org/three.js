@@ -7,14 +7,15 @@ var OpenSimToolbar = function ( editor ) {
 	var signals = editor.signals;
 
 	var container = new UI.Panel();
-	container.setId( 'toolbar' );
+	container.setPaddingTop('20px');
+	container.setId( 'opensim_toolbar' );
 
 	var buttons = new UI.Panel();
 	container.add( buttons );
 
 	var camera = editor.camera;
     // -X
-	var viewminx = new UI.Button('-X').onClick(function () {
+	var viewminx = new UI.Button(false, 'icons/backView_axes.png').onClick(function () {
 		viewfromMinusX();
 	});
 	buttons.add(viewminx);
@@ -32,7 +33,7 @@ var OpenSimToolbar = function ( editor ) {
 	    
     };
     // +X
-	var viewx = new UI.Button('+X').onClick(function () {
+	var viewx = new UI.Button(false, 'icons/frontView_axes.png').onClick(function () {
 
 	    viewfromPlusX();
 
@@ -58,7 +59,7 @@ var OpenSimToolbar = function ( editor ) {
 	    
     };
     // -Y
-	var viewminy = new UI.Button('-Y').onClick(function () {
+	var viewminy = new UI.Button(false, 'icons/bottomView_axes.png').onClick(function () {
 	    viewfromMinusY();
 	});
 	buttons.add(viewminy);
@@ -76,7 +77,7 @@ var OpenSimToolbar = function ( editor ) {
 	    
     };
     // +Y
-	var viewplusy = new UI.Button('+Y').onClick(function () {
+	var viewplusy = new UI.Button(false, 'icons/topView_axes.png').onClick(function () {
 	    viewfromPlusY();
 	});
 	buttons.add(viewplusy);
@@ -94,7 +95,7 @@ var OpenSimToolbar = function ( editor ) {
 	    
     };
     // -Z
-	var viewminz = new UI.Button('-Z').onClick(function () {
+	var viewminz = new UI.Button(false, 'icons/leftView_axes.png').onClick(function () {
 	    viewfromMinusZ();
 	});
 	buttons.add(viewminz);
@@ -113,7 +114,7 @@ var OpenSimToolbar = function ( editor ) {
 	    
 	};
     // +Z
-	var viewplusz = new UI.Button('+Z').onClick(function () {
+	var viewplusz = new UI.Button(false, 'icons/rightView_axes.png').onClick(function () {
 	    viewfromPlusZ();
 	});
 	buttons.add(viewplusz);
@@ -132,11 +133,11 @@ var OpenSimToolbar = function ( editor ) {
 	    
     };
 
-	var view_zoomin = new UI.Button('+').onClick(function () {
+	var view_zoomin = new UI.Button(false, 'icons/zoom-in.png').onClick(function () {
 	    editor.viewZoom(+100);
 	});
 	buttons.add(view_zoomin);
-	var view_zoomout = new UI.Button('-').onClick(function () {
+	var view_zoomout = new UI.Button(false, 'icons/zoom-out.png').onClick(function () {
 	    editor.viewZoom(-100);
 	});
 	buttons.add(view_zoomout);
@@ -160,7 +161,7 @@ var OpenSimToolbar = function ( editor ) {
 	});
 	buttons.add(view_refit);
 
-	var snapshot = new UI.Button('Snap').onClick(function () {
+	var snapshot = new UI.Button(false, 'icons/camera.gif').onClick(function () {
             saveAsImage();
 	});
 	buttons.add(snapshot);
