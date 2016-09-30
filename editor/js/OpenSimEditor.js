@@ -619,6 +619,7 @@ OpenSimEditor.prototype = {
 
 		amb = new THREE.AmbientLight(0x000000);
 		amb.name = 'AmbientLight';
+		amb.intensity = 0.2;
 		this.addObject(amb);
 		directionalLight =  new THREE.DirectionalLight( {color: 16777215});
 		directionalLight.castShadow = true;
