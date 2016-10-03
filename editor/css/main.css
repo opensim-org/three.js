@@ -130,7 +130,6 @@ textarea, input { outline: none; } /* osx */
 
 #outliner .Scene {
 	color: #ccccff;
-    margin: 20px;
 }
 
 #outliner .Object3D {
