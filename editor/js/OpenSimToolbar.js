@@ -141,7 +141,7 @@ var OpenSimToolbar = function ( editor ) {
 	    editor.viewZoom(-100);
 	});
 	buttons.add(view_zoomout);
-	var view_refit = new UI.Button('R').onClick(function () {
+	var view_refit = new UI.Button(false, 'icons/refit.png').onClick(function () {
 	    //var modelObject = editor.scene.getObjectByName('OpenSimModel');
 	    var bbox = computeModelBbox();
 	    var center = new THREE.Vector3();
