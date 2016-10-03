@@ -16,7 +16,7 @@ Viewport.Info = function ( editor ) {
 
         var smallerDim = Math.min(window.innerHeight, window.innerWidth);
         var imgDim = Math.max(smallerDim / 15, 30);
-        var logo = new UI.Image('imgs/OpenSimApplicationIcon.png', imgDim, imgDim, 0.5, 
+        var logo = new UI.Image('icons/OpenSimApplicationIcon.png', imgDim, imgDim, 0.5, 
                                 function(img) {
                                     var smallerDim = Math.min(window.innerHeight, window.innerWidth);
                                     var imgDim = Math.max(smallerDim / 15, 30);
