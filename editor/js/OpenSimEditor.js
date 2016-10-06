@@ -111,6 +111,8 @@ var OpenSimEditor = function () {
 
 	this.dollyPath.type = 'catmullrom';
 	this.scene = new THREE.Scene();
+	this.scene.userData = "NonEditable";
+
 	this.scene.name = 'Scene';
 
 	this.sceneHelpers = new THREE.Scene();
