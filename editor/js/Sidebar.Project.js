@@ -10,8 +10,8 @@ Sidebar.Project = function ( editor ) {
 	var rendererTypes = {
 
 		'WebGLRenderer': THREE.WebGLRenderer,
-		'CanvasRenderer': THREE.CanvasRenderer,
-		'SVGRenderer': THREE.SVGRenderer,
+		//'CanvasRenderer': THREE.CanvasRenderer,
+		//'SVGRenderer': THREE.SVGRenderer,
 		//'SoftwareRenderer': THREE.SoftwareRenderer,
 		//'RaytracingRenderer': THREE.RaytracingRenderer
 
@@ -33,7 +33,8 @@ Sidebar.Project = function ( editor ) {
 
 	}
 
-	var rendererTypeRow = new UI.Row();
+    //OPENSIM var rendererTypeRow = new UI.Row();
+
 	var rendererType = new UI.Select().setOptions( options ).setWidth( '150px' ).onChange( function () {
 
 		var value = this.getValue();
@@ -44,10 +45,10 @@ Sidebar.Project = function ( editor ) {
 
 	} );
 
-	rendererTypeRow.add( new UI.Text( 'Renderer' ).setWidth( '90px' ) );
-	rendererTypeRow.add( rendererType );
+    //rendererTypeRow.add( new UI.Text( 'Renderer' ).setWidth( '90px' ) );
+    //rendererTypeRow.add( rendererType );
 
-	container.add( rendererTypeRow );
+	//container.add( rendererTypeRow );
 
 	if ( config.getKey( 'project/renderer' ) !== undefined ) {
 

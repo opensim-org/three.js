@@ -582,7 +582,8 @@ OpenSimEditor.prototype = {
 	},
 
 	createBackground: function(choice) {
-
+	    if (choice == 'nobackground')
+	        return;
 	    // load the cube textures
 	    // you need to create an instance of the loader...
 	    var textureloader = new THREE.CubeTextureLoader();
@@ -598,7 +599,8 @@ OpenSimEditor.prototype = {
 	},
 	
 	createGroundPlane: function(choice) {
-
+	    if (choice == 'nofloor')
+	        return;
 		var textureLoader = new THREE.TextureLoader();
 		var texture1 = textureLoader.load( "textures/"+choice+".jpg" );
 		var material1 = new THREE.MeshPhongMaterial( { color: 0xffffff, map: texture1 } );
@@ -619,6 +621,7 @@ OpenSimEditor.prototype = {
 
 		amb = new THREE.AmbientLight(0x000000);
 		amb.name = 'AmbientLight';
+		amb.intensity = 0.2;
 		this.addObject(amb);
 		directionalLight =  new THREE.DirectionalLight( {color: 16777215});
 		directionalLight.castShadow = true;
@@ -645,11 +648,17 @@ OpenSimEditor.prototype = {
 
 	updateGroundPlane: function (choice) {
 
-		if (choice == 'nofloor') {
-		    this.groundPlane.visible = false;
-		    this.signals.objectChanged.dispatch( groundPlane );
+	    if (choice == 'nofloor') {
+	        if (this.groundPlane !== null) {
+	            this.groundPlane.visible = false;
+	            this.signals.objectChanged.dispatch(groundPlane);
+	        }
 		    return;
-		}
+	    }
+	    if (this.groundPlane == null) {
+	        this.createGroundPlane(choice);
+	        return;
+	    }
 		this.groundPlane.visible = true;
 		var textureLoader = new THREE.TextureLoader();
 		var texture1 = textureLoader.load("textures/"+choice+".jpg");

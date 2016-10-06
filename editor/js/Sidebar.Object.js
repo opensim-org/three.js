@@ -298,7 +298,7 @@ Sidebar.Object = function ( editor ) {
 	objectUserDataRow.add( new UI.Text( 'User data' ).setWidth( '90px' ) );
 	objectUserDataRow.add( objectUserData );
 
-	container.add( objectUserDataRow );
+	// container.add( objectUserDataRow );
 
 
 	//
