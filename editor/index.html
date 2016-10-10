@@ -13,6 +13,7 @@
 		<script src="../build/three.js"></script>
 		<script src="../examples/js/libs/system.min.js"></script>
 		<script src="websocket.js" type="text/javascript"></script>
+		<script src="../examples/js/Detector.js"></script>
 		<script src="../examples/js/libs/dat.gui.min.js"></script>
 
 		<script src="../examples/js/controls/EditorControls.js"></script>
@@ -134,6 +135,8 @@
 		<!-- <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="qyqgfqd9j8z890t"></script> -->
 
 		<script>
+
+			if (!Detector.webgl) Detector.addGetWebGLMessage();
 
 			window.URL = window.URL || window.webkitURL;
 			window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
