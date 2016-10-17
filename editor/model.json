@@ -39842,30 +39842,29 @@
             "children": [
               {
                 "uuid": "8559098f-01d1-4639-90cf-a9be7ecbcce2",
-                "type": "Mesh",
+                "type": "Frame",
+                "size":  20,
                 "userData":  "NonEditable",
                 "name": "\/leg6dof9musc\/pelvis\/frame_geometry",
-                "geometry": "db197f28-e813-4fb0-8fc5-fce6643ed4e6",
-                "material": "9c945809-17a4-41d9-a355-a2fb105ea151",
                 "matrix": [
-                  0.2,
+                  1.0,
                   0.0,
                   0.0,
                   0.0,
                   0.0,
-                  0.2,
+                  1.0,
                   0.0,
                   0.0,
                   0.0,
                   0.0,
-                  0.2,
+                  1.0,
                   0.0,
                   0.0,
                   0.0,
                   0.0,
                   1.0
                 ],
-                "castShadow": true
+                "castShadow": false
               },
               {
                 "uuid": "d0560ce2-cbb6-4b9e-b893-1ee70ef89153",
