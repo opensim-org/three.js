@@ -95,7 +95,7 @@ var OpenSimEditor = function () {
 	this.config = new Config( 'threejs-editor' );
 	this.history = new History( this );
 	this.storage = new Storage();
-	this.loader = new Loader( this );
+	this.loader = new THREE.OpenSimLoader(this);
 
 	this.camera = this.DEFAULT_CAMERA.clone();
 	this.dollyPath = new THREE.ClosedSplineCurve3([
@@ -508,7 +508,7 @@ OpenSimEditor.prototype = {
 
 	addfromJSON: function ( json ) {
 
-		var loader = new THREE.ObjectLoader();
+		var loader = new THREE.OpenSimLoader();
 		this.signals.sceneGraphChanged.active = false;
 		model = loader.parse( json );
 		//this.scene.add( model );
