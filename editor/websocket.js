@@ -32,19 +32,27 @@ function onMessage(evt) {
     console.log("received: " + evt.data);
     msg = JSON.parse(evt.data);
 
-    if (msg.Op=="Select"){
-        editor.selectByUuid( msg.UUID, true );
-    }
-    else if (msg.Op=="Frame") {
-        //alert("uuid: " + msg.name);
-        var transforms = msg.Transforms;
-        for (var i = 0; i < transforms.length; i ++ ) {
-            var oneBodyTransform = transforms[i];
-            var o = editor.scene.getObjectByName( oneBodyTransform.name);
-            //alert("mat before: " + o.matrix);
-            o.matrixAutoUpdate = false;
-            o.matrix.fromArray(oneBodyTransform.matrix);
-        }
+    switch(msg.Op){
+	case "Select":
+	    editor.selectByUuid( msg.UUID, true );
+	    break;
+	case "Frame":        //alert("uuid: " + msg.name);
+	    var transforms = msg.Transforms;
+	    for (var i = 0; i < transforms.length; i ++ ) {
+		var oneBodyTransform = transforms[i];
+		var o = editor.scene.getObjectByName( oneBodyTransform.name);
+		//alert("mat before: " + o.matrix);
+		o.matrixAutoUpdate = false;
+		o.matrix.fromArray(oneBodyTransform.matrix);
+	    }
+	    onWindowResize();
+	    break;
+	case "CloseModel":
+	    modeluuid = msg.UUID;
+	    editor.removeObject(editor.objectByUuid(modeluuid));
+	    onWindowResize();
+	    break;
+	    
         /*
         var paths = msg.paths;
         for (var i = 0; i < paths.length; i ++ ) {
@@ -63,7 +71,8 @@ function onMessage(evt) {
             o.geometry.verticesNeedUpdate = true;
             o.updateMatrix();
         } */
-        onWindowResize();
+		    
+        
 
    }
 
