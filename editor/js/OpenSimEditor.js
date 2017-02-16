@@ -18,6 +18,10 @@ var OpenSimEditor = function () {
 	this.dolly_object.name = 'Dolly';
 	this.dolly_object.position.y = 0;
 
+	this.models = [];
+	this.currentModel = undefined;
+	this.currentModelColor = new THREE.Color(0xffffff);
+	this.nonCurrentModelColor = new THREE.Color(0x888888);
 	//this.cameraEye = new THREE.Mesh(new THREE.SphereGeometry(50), new THREE.MeshBasicMaterial({ color: 0xdddddd }));
 	//this.cameraEye.name = 'CameraEye';
 
@@ -128,11 +132,13 @@ var OpenSimEditor = function () {
 	
 	this.groundPlane = null;
 	this.groundMaterial = null;
+	this.modelsGroup = undefined;
 	
 	this.createLights();
 	this.createBackground(this.config.getKey('skybox'));
 	this.createGroundPlane(this.config.getKey('floor'));
 	this.createDollyPath();
+	this.createModelsGroup();
 
 };
 
@@ -511,16 +517,67 @@ OpenSimEditor.prototype = {
 		var loader = new THREE.ObjectLoader();
 		this.signals.sceneGraphChanged.active = false;
 		model = loader.parse( json );
-		//this.scene.add( model );
-		this.addObject(model);
-		this.adjustSceneAfterModelLoading();
-		//this.scripts = json.scripts;
-		this.signals.sceneGraphChanged.active = true;
-		this.signals.sceneGraphChanged.dispatch();
-		this.viewFitAll();
-		this.signals.windowResize.dispatch();
+		model.parent = this.modelsGroup;
+		var exist = this.models.indexOf(model.uuid);
+		if (exist == -1){
+		    //this.scene.add( model );
+		    this.currentModel=model;
+		    this.addModelLight(model);
+		    this.addObject(model);
+		    this.adjustSceneAfterModelLoading();
+		    this.models.push(model.uuid);
+		    //this.scripts = json.scripts;
+		    this.signals.sceneGraphChanged.active = true;
+		    this.signals.sceneGraphChanged.dispatch();
+		    this.viewFitAll();
+		    this.signals.windowResize.dispatch();
+	    }
 	},
 	
+	loadModel: function ( modelJsonFileName) {
+		var loader = new THREE.XHRLoader();
+		loader.crossOrigin = '';
+		loader.load( modelJsonFileName, function ( text ) {
+		    var json = JSON.parse( text );
+		    //editor.clear();
+		    editor.addfromJSON( json );
+
+		} );
+		this.signals.sceneGraphChanged.dispatch();
+	},
+	closeModel: function (modeluuid) {
+	    if (this.models.indexOf(modeluuid)!=-1){
+		ndx = this.models.indexOf(modeluuid);
+		this.models.splice(ndx, 1);
+		editor.removeObject(editor.objectByUuid(modeluuid));
+	    }
+	    this.signals.sceneGraphChanged.dispatch();
+	},
+	setCurrentModel: function ( modeluuid ) {
+	    if (this.currentModel == modeluuid) 
+		return; // Nothing to do
+	    this.currentModel = modeluuid;
+	    if (this.currentModel == undefined)
+		return;
+	    newCurrentModel = editor.objectByUuid(modeluuid);
+	    // Dim light for all other models and make the model have shadows, 
+	    // Specififc light
+	    for ( var modindex = 0; modindex < this.models.length; modindex++ ) {
+		if (this.models[modindex] == modeluuid){
+		    modelLight = newCurrentModel.getObjectByName('ModelLight');
+		    modelLight.color = this.currentModelColor;
+		    modelLight.visible = true;
+		}
+		else{
+		    other_uuid = this.models[modindex];
+		    nonCurrentModel = editor.objectByUuid(other_uuid);
+		    modelLight = nonCurrentModel.getObjectByName('ModelLight');
+		    modelLight.color = this.nonCurrentModelColor;
+		    modelLight.visible = false;
+		}
+	    }
+	    this.signals.sceneGraphChanged.dispatch();
+	},
 	toJSON: function () {
 
 		// scripts clean up
@@ -618,22 +675,29 @@ OpenSimEditor.prototype = {
 		this.addObject(groundPlane);
 		this.groundPlane = groundPlane;
 	},
-
+	createModelsGroup: function () {
+	    if (this.modelsGroup == undefined) {
+		modelsGroup = new THREE.Group();
+		modelsGroup.name = "Models";
+		this.addObject(modelsGroup);
+		this.modelsGroup = modelsGroup;
+	    }
+	},
 	createLights: function () {
 
 		amb = new THREE.AmbientLight(0x000000);
 		amb.name = 'AmbientLight';
 		amb.intensity = 0.2;
 		this.addObject(amb);
-		directionalLight =  new THREE.DirectionalLight( {color: 16777215});
+		directionalLight =  new THREE.DirectionalLight( {color: 12040119});
 		directionalLight.castShadow = true;
-		directionalLight.name = 'DirectionalLight';
+		directionalLight.name = 'GlobalLight';
 		directionalLight.shadow.camera.bottom = -1000;
 		directionalLight.shadow.camera.far = 2000;
 		directionalLight.shadow.camera.left = -1000;
 		directionalLight.shadow.camera.right = 1000;
 		directionalLight.shadow.camera.top = 1000;
-		
+		directionalLight.visible = false;
 		this.addObject(directionalLight);
 	},
 
@@ -673,7 +737,7 @@ OpenSimEditor.prototype = {
 
 	createDollyPath: function () {
 
-	    this.scene.add(this.dolly_object);
+	    ///this.scene.add(this.dolly_object);
 	    tube = new THREE.TubeGeometry(this.dollyPath, 100, 5, 8, true);
 	    tubemat = new THREE.MeshLambertMaterial({
 	        color: 0xff00ff
@@ -686,12 +750,14 @@ OpenSimEditor.prototype = {
 	    this.dolly_object.add(tubeMesh);
 	    //this.dolly_object.add(this.cameraEye);
 	    dcameraHelper = new THREE.CameraHelper(this.dolly_camera);
-	    this.sceneHelpers.add(dcameraHelper);
+	    ///this.sceneHelpers.add(dcameraHelper);
 
 	},
 
 	getModel: function () {
-	    return this.scene.getObjectByName('OpenSimModel');
+	    if (this.currentModel == undefined)
+		this.currentModel = this.scene.getObjectByName('OpenSimModel');
+	    return this.currentModel;
 	},
 
 	addMarkerAtPosition: function (testPosition) {
@@ -724,7 +790,9 @@ OpenSimEditor.prototype = {
 	viewFitAll: function () {
 
 	    var modelObject = this.getModel();
-	    var modelbbox = new THREE.Box3().setFromObject(modelObject);
+	    var modelbbox = new THREE.Box3();
+	    if (modelObject != undefined)
+		modelbbox.setFromObject(modelObject);
 	    var radius = Math.max(modelbbox.max.x - modelbbox.min.x, modelbbox.max.y - modelbbox.min.y, modelbbox.max.z - modelbbox.min.z) / 2;
 	    var aabbCenter = new THREE.Vector3();
 	    modelbbox.center(aabbCenter);
@@ -753,14 +821,29 @@ OpenSimEditor.prototype = {
 	    var modelObject = this.getModel();
 	    var modelbbox = new THREE.Box3().setFromObject(modelObject);
 	    var helper = new THREE.BoundingBoxHelper(modelObject, 0xff0000);
+	    helper.name = 'boundingbox';
 	    helper.update();
-	    //this.sceneHelpers.add(helper);
-	    builtinLight = this.scene.getObjectByName('DirectionalLight');
+	    if (modelObject != undefined)
+		modelObject.add(helper);
+	    builtinLight = this.scene.getObjectByName('GlobalLight');
 	    builtinLight.position.copy(new THREE.Vector3(modelbbox.max.x, modelbbox.max.y, modelbbox.min.z));
 	    // Move dolly to middle hight of bbox and make it invisible
 	    this.dolly_object.position.y = (modelbbox.max.y + modelbbox.min.y) / 2;
 	    path = this.scene.getObjectByName('DollyPath');
-	    path.visible = false;
+	    ///path.visible = false;
 
+	},
+	addModelLight: function(model) {
+	    var modelbbox = new THREE.Box3().setFromObject(model);
+	    modelLight =  new THREE.DirectionalLight( {color: this.currentModelColor});
+	    modelLight.castShadow = true;
+	    modelLight.name = 'ModelLight';
+	    modelLight.shadow.camera.bottom = -1000;
+	    modelLight.shadow.camera.far = 2000;
+	    modelLight.shadow.camera.left = -1000;
+	    modelLight.shadow.camera.right = 1000;
+	    modelLight.shadow.camera.top = 1000;
+	    modelLight.position.copy(new THREE.Vector3(modelbbox.max.x, modelbbox.max.y, modelbbox.min.z));
+	    model.add(modelLight);
 	}
 };

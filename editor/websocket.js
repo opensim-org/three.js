@@ -49,10 +49,19 @@ function onMessage(evt) {
 	    break;
 	case "CloseModel":
 	    modeluuid = msg.UUID;
-	    editor.removeObject(editor.objectByUuid(modeluuid));
+	    editor.closeModel(modeluuid);
 	    onWindowResize();
 	    break;
-	    
+	case "OpenModel":
+	    modeluuid = msg.UUID;
+	    editor.loadModel(modeluuid.substring(0,8)+'.json');
+	    onWindowResize();
+	    break;
+	case "SetCurrentModel":
+	    modeluuid = msg.UUID;
+	    editor.setCurrentModel(modeluuid);
+	    onWindowResize();
+	    break;
         /*
         var paths = msg.paths;
         for (var i = 0; i < paths.length; i ++ ) {
