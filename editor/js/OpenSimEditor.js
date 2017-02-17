@@ -22,6 +22,7 @@ var OpenSimEditor = function () {
 	this.currentModel = undefined;
 	this.currentModelColor = new THREE.Color(0xffffff);
 	this.nonCurrentModelColor = new THREE.Color(0x888888);
+	this.sceneBoundingBox = undefined;
 	//this.cameraEye = new THREE.Mesh(new THREE.SphereGeometry(50), new THREE.MeshBasicMaterial({ color: 0xdddddd }));
 	//this.cameraEye.name = 'CameraEye';
 
@@ -524,8 +525,8 @@ OpenSimEditor.prototype = {
 		    this.currentModel=model;
 		    this.addModelLight(model);
 		    this.addObject(model);
-		    this.adjustSceneAfterModelLoading();
 		    this.models.push(model.uuid);
+		    this.adjustSceneAfterModelLoading();
 		    //this.scripts = json.scripts;
 		    this.signals.sceneGraphChanged.active = true;
 		    this.signals.sceneGraphChanged.dispatch();
@@ -541,9 +542,8 @@ OpenSimEditor.prototype = {
 		    var json = JSON.parse( text );
 		    //editor.clear();
 		    editor.addfromJSON( json );
-
-		} );
-		this.signals.sceneGraphChanged.dispatch();
+		    this.signals.sceneGraphChanged.dispatch();
+		} );	
 	},
 	closeModel: function (modeluuid) {
 	    if (this.models.indexOf(modeluuid)!=-1){
@@ -831,19 +831,40 @@ OpenSimEditor.prototype = {
 	    this.dolly_object.position.y = (modelbbox.max.y + modelbbox.min.y) / 2;
 	    path = this.scene.getObjectByName('DollyPath');
 	    ///path.visible = false;
-
+	    // Compute Offset so that models don't overlap
+	    if (this.models.length==1)
+		return; // No need for offset
+	    // Multiple models, compute box bounding all previous models and use to offset
+	    nextModel = editor.objectByUuid(this.models[0]);
+	    sceneBox = new THREE.Box3().setFromObject(nextModel);
+	    for ( var modindex = 1; modindex < this.models.length-1; modindex++ ) {
+		nextModel = editor.objectByUuid(this.models[modindex]);
+		nextModelBox = new THREE.Box3().setFromObject(nextModel);
+		sceneBox.union(nextModelBox);
+	    }
+	    modelObject.position.z = sceneBox.max.z+modelbbox.max.z-modelbbox.min.z;
+	    modelObject.getObjectByName('ModelLight').target.updateMatrixWorld();
 	},
 	addModelLight: function(model) {
 	    var modelbbox = new THREE.Box3().setFromObject(model);
-	    modelLight =  new THREE.DirectionalLight( {color: this.currentModelColor});
+	    var modelCenter = new THREE.Vector3();
+	    modelbbox.center(modelCenter);
+	    modelCenterGroup = new THREE.Group();
+	    modelCenterGroup.name = "ModelCenter";
+	    modelCenterGroup.position.copy(new THREE.Vector3(modelCenter.x, modelCenter.y, modelCenter.z));
+	    model.add(modelCenterGroup);
+	    modelLight =  new THREE.SpotLight( {color: this.currentModelColor});
 	    modelLight.castShadow = true;
+	    modelLight.angle = 0.5;
 	    modelLight.name = 'ModelLight';
 	    modelLight.shadow.camera.bottom = -1000;
 	    modelLight.shadow.camera.far = 2000;
 	    modelLight.shadow.camera.left = -1000;
 	    modelLight.shadow.camera.right = 1000;
 	    modelLight.shadow.camera.top = 1000;
-	    modelLight.position.copy(new THREE.Vector3(modelbbox.max.x, modelbbox.max.y, modelbbox.min.z));
+	    modelLight.position.copy(new THREE.Vector3((modelbbox.max.x+modelbbox.min.x)/2, 
+		modelbbox.max.y+100, (modelbbox.min.z+modelbbox.max.z)/2));
+	    modelLight.target = modelCenterGroup;
 	    model.add(modelLight);
 	}
 };
