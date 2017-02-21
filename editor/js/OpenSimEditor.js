@@ -19,7 +19,7 @@ var OpenSimEditor = function () {
 	this.dolly_object.position.y = 0;
 
 	this.models = [];
-	this.currentModel = undefined;
+	this.currentModel = undefined; //uuid of current model call getCurrentModel for actualobject
 	this.currentModelColor = new THREE.Color(0xffffff);
 	this.nonCurrentModelColor = new THREE.Color(0x888888);
 	this.sceneBoundingBox = undefined;
@@ -526,6 +526,7 @@ OpenSimEditor.prototype = {
 		    this.addModelLight(model);
 		    this.addObject(model);
 		    this.models.push(model.uuid);
+		    this.setCurrentModel(model.uuid);
 		    this.adjustSceneAfterModelLoading();
 		    //this.scripts = json.scripts;
 		    this.signals.sceneGraphChanged.active = true;
@@ -542,14 +543,25 @@ OpenSimEditor.prototype = {
 		    var json = JSON.parse( text );
 		    //editor.clear();
 		    editor.addfromJSON( json );
-		    this.signals.sceneGraphChanged.dispatch();
+		    editor.signals.sceneGraphChanged.dispatch();
 		} );	
+	},
+	enableShadows: function (modeluuid, newSetting) {
+	    modelobject = editor.objectByUuid(modeluuid);
+	    if (modelobject != undefined){
+		modelobject.traverse( function ( child ) {
+		    if (child instanceof THREE.Mesh)
+			child.castShadow = newSetting;
+			child.receiveShadow = newSetting;
+		});
+	    }
 	},
 	closeModel: function (modeluuid) {
 	    if (this.models.indexOf(modeluuid)!=-1){
 		ndx = this.models.indexOf(modeluuid);
 		this.models.splice(ndx, 1);
-		editor.removeObject(editor.objectByUuid(modeluuid));
+		modelObject = editor.objectByUuid(modeluuid);
+		editor.removeObject(modelObject);
 	    }
 	    this.signals.sceneGraphChanged.dispatch();
 	},
@@ -567,6 +579,7 @@ OpenSimEditor.prototype = {
 		    modelLight = newCurrentModel.getObjectByName('ModelLight');
 		    modelLight.color = this.currentModelColor;
 		    modelLight.visible = true;
+		    this.enableShadows(modeluuid, true);
 		}
 		else{
 		    other_uuid = this.models[modindex];
@@ -574,6 +587,7 @@ OpenSimEditor.prototype = {
 		    modelLight = nonCurrentModel.getObjectByName('ModelLight');
 		    modelLight.color = this.nonCurrentModelColor;
 		    modelLight.visible = false;
+		    this.enableShadows(other_uuid, false);
 		}
 	    }
 	    this.signals.sceneGraphChanged.dispatch();
@@ -755,9 +769,7 @@ OpenSimEditor.prototype = {
 	},
 
 	getModel: function () {
-	    if (this.currentModel == undefined)
-		this.currentModel = this.scene.getObjectByName('OpenSimModel');
-	    return this.currentModel;
+	    return editor.objectByUuid(this.currentModel);
 	},
 
 	addMarkerAtPosition: function (testPosition) {
@@ -828,7 +840,7 @@ OpenSimEditor.prototype = {
 		modelObject.add(helper);
 	    */
 	    builtinLight = this.scene.getObjectByName('GlobalLight');
-	    builtinLight.position.copy(new THREE.Vector3(modelbbox.max.x, modelbbox.max.y, modelbbox.min.z));
+	    builtinLight.position.copy(new THREE.Vector3(modelbbox.max.x, modelbbox.max.y+100, modelbbox.min.z));
 	    // Move dolly to middle hight of bbox and make it invisible
 	    this.dolly_object.position.y = (modelbbox.max.y + modelbbox.min.y) / 2;
 	    path = this.scene.getObjectByName('DollyPath');
