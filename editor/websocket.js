@@ -42,8 +42,10 @@ function onMessage(evt) {
 		var oneBodyTransform = transforms[i];
 		var o = editor.scene.getObjectByName( oneBodyTransform.name);
 		//alert("mat before: " + o.matrix);
-		o.matrixAutoUpdate = false;
-		o.matrix.fromArray(oneBodyTransform.matrix);
+		if (o != undefined) {
+		   o.matrixAutoUpdate = false;
+		   o.matrix.fromArray(oneBodyTransform.matrix);
+	        }
 	    }
 	    onWindowResize();
 	    break;
