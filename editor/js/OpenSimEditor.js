@@ -697,7 +697,7 @@ OpenSimEditor.prototype = {
 		directionalLight.shadow.camera.left = -1000;
 		directionalLight.shadow.camera.right = 1000;
 		directionalLight.shadow.camera.top = 1000;
-		directionalLight.visible = false;
+		directionalLight.visible = true;
 		this.addObject(directionalLight);
 	},
 
@@ -820,11 +820,13 @@ OpenSimEditor.prototype = {
 	adjustSceneAfterModelLoading: function () {
 	    var modelObject = this.getModel();
 	    var modelbbox = new THREE.Box3().setFromObject(modelObject);
+	    /*
 	    var helper = new THREE.BoundingBoxHelper(modelObject, 0xff0000);
 	    helper.name = 'boundingbox';
 	    helper.update();
 	    if (modelObject != undefined)
 		modelObject.add(helper);
+	    */
 	    builtinLight = this.scene.getObjectByName('GlobalLight');
 	    builtinLight.position.copy(new THREE.Vector3(modelbbox.max.x, modelbbox.max.y, modelbbox.min.z));
 	    // Move dolly to middle hight of bbox and make it invisible
