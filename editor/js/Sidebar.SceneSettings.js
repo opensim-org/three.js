@@ -78,7 +78,7 @@ Sidebar.SceneSettings = function (editor) {
         signals.renderDebugChanged.dispatch(this.getValue());
     });
     debug.setValue(true);
-    debugRow.add(new UI.Text('Debug').setWidth('90px'));
+    debugRow.add(new UI.Text('Markup (Selection and Lights)').setWidth('200px'));
     debugRow.add(debug);
 
     container.add(debugRow);
