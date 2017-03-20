@@ -18,6 +18,7 @@ var OpenSimToolbar = function ( editor ) {
 	var viewminx = new UI.Button(false, 'icons/backView_axes.png').onClick(function () {
 		viewfromMinusX();
 	});
+	viewminx.dom.title = 'Back';
 	buttons.add(viewminx);
 	function viewfromMinusX() {
 	    var bbox = computeModelBbox();
@@ -38,6 +39,7 @@ var OpenSimToolbar = function ( editor ) {
 	    viewfromPlusX();
 
 	});
+	viewx.dom.title = 'Front';
 	buttons.add(viewx);
 
 	function viewfromPlusX() {
@@ -62,6 +64,7 @@ var OpenSimToolbar = function ( editor ) {
 	var viewminy = new UI.Button(false, 'icons/bottomView_axes.png').onClick(function () {
 	    viewfromMinusY();
 	});
+	viewminy.dom.title = 'Bottom';
 	buttons.add(viewminy);
 	function viewfromMinusY() {
 	    var bbox = computeModelBbox();
@@ -80,6 +83,7 @@ var OpenSimToolbar = function ( editor ) {
 	var viewplusy = new UI.Button(false, 'icons/topView_axes.png').onClick(function () {
 	    viewfromPlusY();
 	});
+	viewplusy.dom.title = 'Top';
 	buttons.add(viewplusy);
 	function viewfromPlusY() {
 	    var bbox = computeModelBbox();
@@ -98,6 +102,7 @@ var OpenSimToolbar = function ( editor ) {
 	var viewminz = new UI.Button(false, 'icons/leftView_axes.png').onClick(function () {
 	    viewfromMinusZ();
 	});
+	viewminz.dom.title = 'Left';
 	buttons.add(viewminz);
 	function viewfromMinusZ() {
 
@@ -117,6 +122,7 @@ var OpenSimToolbar = function ( editor ) {
 	var viewplusz = new UI.Button(false, 'icons/rightView_axes.png').onClick(function () {
 	    viewfromPlusZ();
 	});
+	viewplusz.dom.title = 'Right';
 	buttons.add(viewplusz);
 	function viewfromPlusZ() {
 
@@ -136,10 +142,12 @@ var OpenSimToolbar = function ( editor ) {
 	var view_zoomin = new UI.Button(false, 'icons/zoom-in.png').onClick(function () {
 	    editor.viewZoom(+100);
 	});
+	view_zoomin.dom.title = 'Zoom-in';
 	buttons.add(view_zoomin);
 	var view_zoomout = new UI.Button(false, 'icons/zoom-out.png').onClick(function () {
 	    editor.viewZoom(-100);
 	});
+	view_zoomout.dom.title = 'Zoom-out';
 	buttons.add(view_zoomout);
 	var view_refit = new UI.Button(false, 'icons/refit.png').onClick(function () {
 	    //var modelObject = editor.scene.getObjectByName('OpenSimModel');
@@ -159,11 +167,13 @@ var OpenSimToolbar = function ( editor ) {
 	    
 
 	});
+	view_refit.dom.title = 'Fit';
 	buttons.add(view_refit);
 
 	var snapshot = new UI.Button(false, 'icons/camera.gif').onClick(function () {
             saveAsImage();
 	});
+	snapshot.dom.title = 'Snapshot';
 	buttons.add(snapshot);
 
 	function computeModelBbox() {
