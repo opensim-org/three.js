@@ -102,7 +102,7 @@ var OpenSimToolbar = function ( editor ) {
 	var viewminz = new UI.Button(false, 'icons/leftView_axes.png').onClick(function () {
 	    viewfromMinusZ();
 	});
-	viewminz.dom.title = 'Left';
+	viewminz.dom.title = 'Right';
 	buttons.add(viewminz);
 	function viewfromMinusZ() {
 
@@ -122,7 +122,7 @@ var OpenSimToolbar = function ( editor ) {
 	var viewplusz = new UI.Button(false, 'icons/rightView_axes.png').onClick(function () {
 	    viewfromPlusZ();
 	});
-	viewplusz.dom.title = 'Right';
+	viewplusz.dom.title = 'Left';
 	buttons.add(viewplusz);
 	function viewfromPlusZ() {
 
