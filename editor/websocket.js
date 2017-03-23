@@ -40,7 +40,7 @@ function onMessage(evt) {
 	    var transforms = msg.Transforms;
 	    for (var i = 0; i < transforms.length; i ++ ) {
 		var oneBodyTransform = transforms[i];
-		var o = editor.scene.getObjectByName( oneBodyTransform.name);
+		var o = editor.objectByUuid( oneBodyTransform.uuid);
 		//alert("mat before: " + o.matrix);
 		if (o != undefined) {
 		   o.matrixAutoUpdate = false;
@@ -64,7 +64,12 @@ function onMessage(evt) {
 	    editor.setCurrentModel(modeluuid);
 	    onWindowResize();
 	    break;
-        /*
+        case "execute":
+	    //msg.command.object = editor.objectByUuid(msg.UUID);
+	    cmd = new window[msg.command.type]();
+	    cmd.fromJSON(msg.command);
+            editor.execute(cmd);
+            break;        /*
         var paths = msg.paths;
         for (var i = 0; i < paths.length; i ++ ) {
             var onePathUpdate = paths[i];
