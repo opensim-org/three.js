@@ -1,4 +1,4 @@
-body {
+﻿body {
 	font-family: Helvetica, Arial, sans-serif;
 	font-size: 14px;
 	margin: 0;
@@ -191,11 +191,13 @@ textarea, input { outline: none; } /* osx */
     margin: 5px;
     text-align: center;
     text-decoration: none;
-    font-size: 16px;
+    font-size: 20px;
+    border-radius: 50%;
+    border: 1px solid;
 }
 #opensim_toolbar button img {
-        width: 25px;
-        height: 25px;
+        width: 30px;
+        height: 30px;
     }
 
 #opensim_toolbar .text {
