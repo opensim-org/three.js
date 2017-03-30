@@ -705,7 +705,7 @@ OpenSimEditor.prototype = {
 		this.addObject(amb);
 		directionalLight =  new THREE.DirectionalLight( {color: 12040119});
 		directionalLight.castShadow = true;
-		directionalLight.name = 'GlobalLight';
+		directionalLight.name = 'SceneLight';
 		directionalLight.shadow.camera.bottom = -1000;
 		directionalLight.shadow.camera.far = 2000;
 		directionalLight.shadow.camera.left = -1000;
@@ -839,7 +839,7 @@ OpenSimEditor.prototype = {
 	    if (modelObject != undefined)
 		modelObject.add(helper);
 	    */
-	    builtinLight = this.scene.getObjectByName('GlobalLight');
+	    builtinLight = this.scene.getObjectByName('SceneLight');
 	    builtinLight.position.copy(new THREE.Vector3(modelbbox.max.x, modelbbox.max.y+100, modelbbox.min.z));
 	    // Move dolly to middle hight of bbox and make it invisible
 	    this.dolly_object.position.y = (modelbbox.max.y + modelbbox.min.y) / 2;
@@ -880,5 +880,20 @@ OpenSimEditor.prototype = {
 		modelbbox.max.y+100, (modelbbox.min.z+modelbbox.max.z)/2));
 	    modelLight.target = modelCenterGroup;
 	    model.add(modelLight);
+	},
+	setFloorHeight: function(newHeight) {
+	    if (this.groundPlane !== undefined){
+		this.groundPlane.position.y = newHeight*1000;
+	    }
+	},
+	updateSceneLight: function(coord, val){
+	    sceneLightpos = this.scene.getObjectByName('SceneLight').position;
+	    if (coord === 'x')
+		sceneLightpos.x += val*1000;
+	    else if (coord === 'y')
+		sceneLightpos.y += val*1000;
+	    else
+		sceneLightpos.z += val*1000;
 	}
+
 };

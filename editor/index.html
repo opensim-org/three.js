@@ -145,11 +145,51 @@
 				return this.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 			};
 
+			var VisualizerKnobs = function() {
+			    this.texture = 'nofloor';
+			    this.height = 0.0;
+			    this.backdrop = 'nobackground';
+			    // Define render logic ...
+                            this.sceneLightX = 0.0;
+		            this.sceneLightY = 0.0;
+		            this.sceneLightZ = 0.0;
+			};
 			//
 			stats = new Stats();
 			document.body.appendChild( stats.domElement );
 
 			var editor = new OpenSimEditor();
+			window.onload = function () {
+			    var gui = new dat.GUI(); // create dat.gui 
+			    var knobs = new VisualizerKnobs();
+			    var ground = gui.addFolder('Floor');
+			    var texture = ground.add(knobs, 'texture', ['nofloor', 'redbricks', 'graybricks', 'wood-floor', 'tile']);
+			    var floorHeight = ground.add(knobs, 'height', -2, 2);
+                            floorHeight.onChange(function (value) {
+			        editor.setFloorHeight(value);
+			    });
+			    texture.onChange(function (value) {
+			        editor.updateGroundPlane(value);
+			    });
+			    var world = gui.addFolder('World');
+			    var backdrop = world.add(knobs, 'backdrop', ['nobackground', 'sky', 'desert', 'city', 'dark', 'pastures']);
+                            backdrop.onChange(function (value) {
+			        editor.updateBackground(value);
+			    });
+                            var sceneLight = gui.addFolder('Scene Light');
+                            var sceneLightX = sceneLight.add(knobs, 'sceneLightX', -2, 2);
+                            sceneLightX.onChange(function (value) {
+			        editor.updateSceneLight('x', value);
+			    });
+                            var sceneLightY = sceneLight.add(knobs, 'sceneLightY', -2, 2);
+                            sceneLightY.onChange(function (value) {
+			        editor.updateSceneLight('y', value);
+			    });
+                            var sceneLightZ = sceneLight.add(knobs, 'sceneLightZ', -2, 2);
+                            sceneLightZ.onChange(function (value) {
+			        editor.updateSceneLight('z', value);
+			    });
+			}
 
 			var viewport = new OpenSimViewport( editor );
 			document.body.appendChild( viewport.dom );
