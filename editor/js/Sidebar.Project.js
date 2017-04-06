@@ -114,12 +114,12 @@ Sidebar.Project = function ( editor ) {
 
 	function updateRenderer() {
 
-		createRenderer( rendererType.getValue(), rendererAntialias.getValue(), rendererShadows.getValue() );
+		createRenderer( 'WebGLRenderer', rendererAntialias.getValue(), rendererShadows.getValue() );
 
 	}
 
 	function createRenderer( type, antialias, shadows ) {
-
+		
 		if ( type === 'WebGLRenderer' && System.support.webgl === false ) {
 
 			type = 'CanvasRenderer';
@@ -127,7 +127,9 @@ Sidebar.Project = function ( editor ) {
 		}
 
 		rendererPropertiesRow.setDisplay( type === 'WebGLRenderer' ? '' : 'none' );
-
+		// in case sidebar is not shown (minimal ui mode)
+		if (type === null)
+		    type = 'WebGLRenderer';
 		var renderer = new rendererTypes[ type ]( { antialias: antialias, preserveDrawingBuffer: true } );
 
 		if ( shadows && renderer.shadowMap ) {
