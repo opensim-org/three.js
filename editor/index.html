@@ -154,14 +154,14 @@
 			var VisualizerKnobs = function() {
 				this.texture = editor.config.getKey('floor');
 				this.height = -0.001;
-				this.backdrop = 'nobackground';
+				this.backdrop = editor.config.getKey('skybox');
 				// Define render logic ...
 				this.sceneLightX = -0.01;
 				this.sceneLightY = -0.01;
 				this.sceneLightZ = -0.01;
 				this.sceneLightColor = [255, 255, 255];
 			};
-				window.onload = function () {
+			window.onload = function () {
 			    var gui = new dat.GUI(); // create dat.gui 
 			    var knobs = new VisualizerKnobs();
 			    var ground = gui.addFolder('Floor');
@@ -173,12 +173,12 @@
 			    texture.onChange(function (value) {
 			        editor.updateGroundPlane(value);
 			    });
-				/*
 			    var world = gui.addFolder('World');
-			    var backdrop = world.add(knobs, 'backdrop', ['nobackground', 'sky', 'desert', 'city', 'dark', 'pastures']);
+			    var backdrop = world.add(knobs, 'backdrop', ['nobackground', 'mars', 'sky', 'desert', 'city', 'dark', 'pastures']);
 				backdrop.onChange(function (value) {
 			        editor.updateBackground(value);
 			    });
+			    /*
 				var sceneLight = gui.addFolder('Scene Light');
 				var sceneLightX = sceneLight.add(knobs, 'sceneLightX', -1.01, 1.01, .001);
 				sceneLightX.onChange(function (value) {
