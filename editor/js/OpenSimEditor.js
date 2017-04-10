@@ -789,6 +789,7 @@ OpenSimEditor.prototype = {
 
 	    this.camera.position.set(newposition.x, newposition.y, newposition.z);
 	    this.camera.lookAt(viewCenter);
+	    //this.sceneLight.position.copy(this.camera.position);
 	    var changeEvent = { type: 'change' };
 	    this.control.dispatchEvent( changeEvent );
 	    this.signals.defaultCameraApplied.dispatch(viewCenter);
@@ -912,6 +913,12 @@ OpenSimEditor.prototype = {
 		sceneLightpos.y += val*1000;
 	    else
 		sceneLightpos.z += val*1000;
+	},
+	toggleMarkup: function () {
+	    oldValue = this.config.getKey('render/debug');
+	    newValue = !oldValue;
+	    this.config.setKey('render/debug', newValue);
+	    this.signals.renderDebugChanged.dispatch(newValue);
 	}
 
 };
