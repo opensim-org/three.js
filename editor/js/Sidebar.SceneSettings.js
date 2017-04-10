@@ -8,7 +8,7 @@ Sidebar.SceneSettings = function (editor) {
     var signals = editor.signals;
 
     var backgrounds = {
-        'nobackground': 'No Background',
+        'nobackground': 'NoBackground',
         'sky': 'Sky',
         'desert': 'Desert',
         'city': 'City',
@@ -18,7 +18,7 @@ Sidebar.SceneSettings = function (editor) {
     };
 
     var floorpatterns = {
-        'nofloor': 'No Floor',
+        'nofloor': 'NoFloor',
         'redbricks': 'Red Bricks',
         'graybricks': 'Gray Bricks',
         'wood-floor': 'Wood',
