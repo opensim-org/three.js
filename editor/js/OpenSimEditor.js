@@ -789,6 +789,7 @@ OpenSimEditor.prototype = {
 
 	    this.camera.position.set(newposition.x, newposition.y, newposition.z);
 	    this.camera.lookAt(viewCenter);
+	    //this.sceneLight.position.copy(this.camera.position);
 	    var changeEvent = { type: 'change' };
 	    this.control.dispatchEvent( changeEvent );
 	    this.signals.defaultCameraApplied.dispatch(viewCenter);

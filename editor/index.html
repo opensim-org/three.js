@@ -160,6 +160,7 @@
 				this.sceneLightY = -0.01;
 				this.sceneLightZ = -0.01;
 				this.sceneLightColor = [255, 255, 255];
+				this.sceneLightSelect = function () { editor.select(editor.sceneLight); }
 			};
 			window.onload = function () {
 			    var gui = new dat.GUI(); // create dat.gui 
@@ -177,7 +178,8 @@
 			    var backdrop = world.add(knobs, 'backdrop', ['nobackground', 'mars', 'sky', 'desert', 'city', 'dark', 'pastures']);
 				backdrop.onChange(function (value) {
 			        editor.updateBackground(value);
-			    });
+				});
+				world.add(knobs, 'sceneLightSelect').name('Move Light');
 			    /*
 				var sceneLight = gui.addFolder('Scene Light');
 				var sceneLightX = sceneLight.add(knobs, 'sceneLightX', -1.01, 1.01, .001);
