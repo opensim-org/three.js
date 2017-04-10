@@ -6,6 +6,7 @@
 var wsUri = "ws://" + document.location.host + "/visEndpoint";
 var websocket = new WebSocket(wsUri);
 
+var processing = false;
 websocket.onerror = function(evt) { onError(evt) };
 
 function onError(evt) {
@@ -31,7 +32,7 @@ function sendText(json) {
 function onMessage(evt) {
     console.log("received: " + evt.data);
     msg = JSON.parse(evt.data);
-
+    processing = true;
     switch(msg.Op){
 	case "Select":
 	    editor.selectByUuid( msg.UUID, true );
@@ -88,7 +89,7 @@ function onMessage(evt) {
             o.updateMatrix();
         } */
 		    
-        
+        processing = false;
 
    }
 
