@@ -1,14 +1,14 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>OpenSim 4.0 Visualizer 071816</title>
+		<title>OpenSim 4.0 Visualizer 040417</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<script src="stats.min.js"></script>
 	</head>
 	<body ontouchstart="">
 		<link href="css/main.css" rel="stylesheet" />
-		<link id="theme" href="css/light.css" rel="stylesheet" />
+		<link id="theme" href="css/minimal.css" rel="stylesheet" />
 
 		<script src="../build/three.js"></script>
 		<script src="../examples/js/libs/system.min.js"></script>
@@ -80,7 +80,7 @@
 		<script src="js/Menubar.Status.js"></script>
 		<script src="js/Sidebar.js"></script>
 		<script src="js/Sidebar.Scene.js"></script>
-		<script src="js/Sidebar.SceneSettings.js"></script>                
+		<script src="js/Sidebar.SceneSettings.js"></script>
 		<script src="js/Sidebar.Project.js"></script>
 		<script src="js/Sidebar.Settings.js"></script>
 		<script src="js/Sidebar.Properties.js"></script>
@@ -99,10 +99,10 @@
 		<script src="js/Sidebar.Geometry.TorusKnotGeometry.js"></script>
 		<script src="js/Sidebar.Geometry.LatheGeometry.js"></script>
 		<script src="js/Sidebar.Material.js"></script>
-        <script src="js/libs/Whammy.js"></script>
-        <script src="js/libs/download.js"></script>
-        <script src="js/libs/gif.js"></script>
-        <script src="js/libs/CCapture.js"></script>
+		<script src="js/libs/Whammy.js"></script>
+		<script src="js/libs/download.js"></script>
+		<script src="js/libs/gif.js"></script>
+		<script src="js/libs/CCapture.js"></script>
 		<script src="js/Sidebar.Animation.js"></script>
 		<script src="js/Sidebar.Script.js"></script>
 		<script src="js/Sidebar.History.js"></script>
@@ -144,12 +144,60 @@
 			Number.prototype.format = function (){
 				return this.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 			};
-
 			//
 			stats = new Stats();
 			document.body.appendChild( stats.domElement );
 
 			var editor = new OpenSimEditor();
+			
+			// Minimal ui, should move to a different file to avoid clutter
+			var VisualizerKnobs = function() {
+				this.texture = editor.config.getKey('floor');
+				this.height = -0.001;
+				this.backdrop = editor.config.getKey('skybox');
+				// Define render logic ...
+				this.sceneLightX = -0.01;
+				this.sceneLightY = -0.01;
+				this.sceneLightZ = -0.01;
+				this.sceneLightColor = [255, 255, 255];
+			};
+			window.onload = function () {
+			    var gui = new dat.GUI(); // create dat.gui 
+			    var knobs = new VisualizerKnobs();
+			    var ground = gui.addFolder('Floor');
+			    var texture = ground.add(knobs, 'texture', ['nofloor', 'redbricks', 'graybricks', 'wood-floor', 'tile']);
+			    var floorHeight = ground.add(knobs, 'height').min(-2.01).max(2.02).step(0.01).listen();
+			    floorHeight.onChange(function (value) {
+			        editor.setFloorHeight(value);
+			    });
+			    texture.onChange(function (value) {
+			        editor.updateGroundPlane(value);
+			    });
+			    var world = gui.addFolder('World');
+			    var backdrop = world.add(knobs, 'backdrop', ['nobackground', 'mars', 'sky', 'desert', 'city', 'dark', 'pastures']);
+				backdrop.onChange(function (value) {
+			        editor.updateBackground(value);
+			    });
+			    /*
+				var sceneLight = gui.addFolder('Scene Light');
+				var sceneLightX = sceneLight.add(knobs, 'sceneLightX', -1.01, 1.01, .001);
+				sceneLightX.onChange(function (value) {
+			        editor.updateSceneLight('x', value);
+			    });
+				var sceneLightY = sceneLight.add(knobs, 'sceneLightY', -1.01, 1.01, .001);
+				sceneLightY.onChange(function (value) {
+			        editor.updateSceneLight('y', value);
+			    });
+				var sceneLightZ = sceneLight.add(knobs, 'sceneLightZ', -1.01, 1.01, .001);
+				sceneLightZ.onChange(function (value) {
+			        editor.updateSceneLight('z', value);
+			    });
+				var sceneLightColor = sceneLight.addColor(knobs, 'sceneLightColor');
+				sceneLightColor.onChange(function (value) {
+				editor.updateSceneLight('color', value);
+				});*/
+				gui.remember(knobs);
+			}
 
 			var viewport = new OpenSimViewport( editor );
 			document.body.appendChild( viewport.dom );

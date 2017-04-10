@@ -23,6 +23,7 @@ var OpenSimEditor = function () {
 	this.currentModelColor = new THREE.Color(0xffffff);
 	this.nonCurrentModelColor = new THREE.Color(0x888888);
 	this.sceneBoundingBox = undefined;
+	this.sceneLight = undefined;
 	//this.cameraEye = new THREE.Mesh(new THREE.SphereGeometry(50), new THREE.MeshBasicMaterial({ color: 0xdddddd }));
 	//this.cameraEye.name = 'CameraEye';
 
@@ -703,15 +704,17 @@ OpenSimEditor.prototype = {
 		amb.name = 'AmbientLight';
 		amb.intensity = 0.2;
 		this.addObject(amb);
-		directionalLight =  new THREE.DirectionalLight( {color: 12040119});
+		sceneLightColor = new THREE.Color().setHex(12040119);
+		directionalLight =  new THREE.DirectionalLight( sceneLightColor);
 		directionalLight.castShadow = true;
-		directionalLight.name = 'GlobalLight';
+		directionalLight.name = 'SceneLight';
 		directionalLight.shadow.camera.bottom = -1000;
 		directionalLight.shadow.camera.far = 2000;
 		directionalLight.shadow.camera.left = -1000;
 		directionalLight.shadow.camera.right = 1000;
 		directionalLight.shadow.camera.top = 1000;
 		directionalLight.visible = true;
+		this.sceneLight = directionalLight;
 		this.addObject(directionalLight);
 	},
 
@@ -748,7 +751,9 @@ OpenSimEditor.prototype = {
 		this.groundPlane.material = this.groundMaterial;
 		this.signals.materialChanged.dispatch( this.groundPlane );
 	},
-
+	getGroundSelection: function () {
+	    return this.config.getKey('floor');
+	},
 	createDollyPath: function () {
 
 	    ///this.scene.add(this.dolly_object);
@@ -839,7 +844,7 @@ OpenSimEditor.prototype = {
 	    if (modelObject != undefined)
 		modelObject.add(helper);
 	    */
-	    builtinLight = this.scene.getObjectByName('GlobalLight');
+	    builtinLight = this.scene.getObjectByName('SceneLight');
 	    builtinLight.position.copy(new THREE.Vector3(modelbbox.max.x, modelbbox.max.y+100, modelbbox.min.z));
 	    // Move dolly to middle hight of bbox and make it invisible
 	    this.dolly_object.position.y = (modelbbox.max.y + modelbbox.min.y) / 2;
@@ -880,5 +885,33 @@ OpenSimEditor.prototype = {
 		modelbbox.max.y+100, (modelbbox.min.z+modelbbox.max.z)/2));
 	    modelLight.target = modelCenterGroup;
 	    model.add(modelLight);
+	},
+	setFloorHeight: function(newHeight) {
+	    if (this.groundPlane !== undefined){
+		this.groundPlane.position.y = newHeight*1000;
+	    }
+	},
+	getSceneLightPosition: function(coord) {
+	    sceneLightpos = this.sceneLight.position;
+	    if (coord === 'x')
+		return sceneLightpos.x/1000.0;
+	    else if (coord === 'y')
+		return sceneLightpos.y/1000.0;
+	    else
+		return sceneLightpos.z/1000.0;
+	},
+	updateSceneLight: function(param, val){
+	    if (param==='color'){
+		this.sceneLight.color = new THREE.Color(val);
+		return;
+	    }
+	    sceneLightpos = this.sceneLight.position;
+	    if (param === 'x')
+		sceneLightpos.x += val*1000;
+	    else if (param === 'y')
+		sceneLightpos.y += val*1000;
+	    else
+		sceneLightpos.z += val*1000;
 	}
+
 };
