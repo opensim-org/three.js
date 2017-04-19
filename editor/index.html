@@ -161,8 +161,9 @@
 				this.sceneLightZ = -0.01;
 				this.sceneLightColor = [255, 255, 255];
 				this.sceneLightSelect = function () { editor.select(editor.sceneLight); }
+				this.modelLightSelect = function () { editor.selectCurrentModelLight(); }
 				this.toggleMarkup = function () { editor.toggleMarkup(); }
-				this.experModeSelect = function () { editor.setTheme('css/dark.css'); }
+				this.expertModeSelect = function () { editor.setTheme('css/dark.css'); }
 			};
 			window.onload = function () {
 			    var gui = new dat.GUI(); // create dat.gui 
@@ -181,9 +182,11 @@
 				backdrop.onChange(function (value) {
 			        editor.updateBackground(value);
 				});
-				world.add(knobs, 'sceneLightSelect').name('Move Light');
+				world.add(knobs, 'sceneLightSelect').name('Scene Light');
+				var model_control = gui.addFolder('Model');
+					model_control.add(knobs, 'modelLightSelect').name('Model SpotLight');
 				gui.add(knobs, 'toggleMarkup').name('Toggle Markup');
-				gui.add(knobs, 'experModeSelect').name('Expert Mode');
+				gui.add(knobs, 'expertModeSelect').name('Expert Mode');
 			    /*
 				var sceneLight = gui.addFolder('Scene Light');
 				var sceneLightX = sceneLight.add(knobs, 'sceneLightX', -1.01, 1.01, .001);
