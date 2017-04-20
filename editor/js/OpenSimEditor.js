@@ -919,6 +919,12 @@ OpenSimEditor.prototype = {
 	    newValue = !oldValue;
 	    this.config.setKey('render/debug', newValue);
 	    this.signals.renderDebugChanged.dispatch(newValue);
-	}
+	},
+        selectCurrentModelLight: function () {
+            if (this.currentModel === undefined) return;
+            var modelObject = this.getModel();
+            var modelLight = modelObject.getObjectByName('ModelLight');
+            this.select(modelLight);
+        }
 
 };
