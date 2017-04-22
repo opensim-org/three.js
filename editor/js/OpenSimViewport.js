@@ -14,6 +14,9 @@ var OpenSimViewport = function ( editor ) {
 
 	var scene = editor.scene;
 	var sceneHelpers = editor.sceneHelpers;
+        var sceneOrtho = editor.sceneOrtho;
+        var sceneOrthoCam = editor.sceneOrthoCam;
+        
 	//var showHelpers = editor.showDebug();
 	var dollyCameraEye = editor.cameraEye;
     // Animation related
@@ -716,7 +719,7 @@ var OpenSimViewport = function ( editor ) {
 		        currentCamera = camera;
 
 		    renderer.render(scene, currentCamera);
-
+		    renderer.render(sceneOrtho, sceneOrthoCam);
 		    if (renderer instanceof THREE.RaytracingRenderer === false) {
 		        if (sceneHelpers.visible)
 		            renderer.render(sceneHelpers, camera);
