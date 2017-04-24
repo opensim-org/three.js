@@ -24,7 +24,7 @@ Viewport.Info = function ( editor ) {
                                     img.dom.height = imgDim;
                                 });
         var div = new UI.Div();
-        div.add( logo );
+        //div.add( logo );
         container.add( div );
 
 	var objectsText = new UI.Text( '0' ).setMarginLeft( '6px' );

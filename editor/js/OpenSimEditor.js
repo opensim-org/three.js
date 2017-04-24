@@ -8,7 +8,6 @@ var OpenSimEditor = function () {
 	this.DEFAULT_CAMERA.name = 'Camera';
 	this.DEFAULT_CAMERA.position.set( 20, 10, 20 );
 	this.DEFAULT_CAMERA.lookAt( new THREE.Vector3() );
-
 	this.dolly_camera = new THREE.PerspectiveCamera(50, 1, 0.1, 10000);
 	this.dolly_camera.name = 'DollyCamera';
 	this.dolly_camera.position.set(0, 0, 0);
@@ -117,6 +116,10 @@ var OpenSimEditor = function () {
 
 	this.dollyPath.type = 'catmullrom';
 	this.scene = new THREE.Scene();
+        // Ortho Scene and Camera for Logo and text
+        this.sceneOrtho = new THREE.Scene();
+        this.sceneOrthoCam = new THREE.OrthographicCamera( 0, window.innerWidth, window.innerHeight, 0, - 10, 10 );
+
 	this.scene.userData = "NonEditable";
 
 	this.scene.name = 'Scene';
@@ -141,6 +144,7 @@ var OpenSimEditor = function () {
 	this.createGroundPlane(this.config.getKey('floor'));
 	this.createDollyPath();
 	this.createModelsGroup();
+        this.createLogoSprite();
 
 };
 
@@ -772,7 +776,28 @@ OpenSimEditor.prototype = {
 	    ///this.sceneHelpers.add(dcameraHelper);
 
 	},
+        createLogoSprite: function() {
+            var getLogoTexture = function () {
+                var texture = new THREE.ImageUtils.loadTexture("OpenSimLogoSmall.PNG");
+                return texture;
+            };
+            var spriteMaterial = new THREE.SpriteMaterial({
+                        opacity: 0.5,
+                        color: 0xffffff,
+                        transparent: false,
+                        // useScreenCoordinates: true,
+                        map: getLogoTexture()}
+            );
 
+            spriteMaterial.scaleByViewport = false;
+            spriteMaterial.blending = THREE.AdditiveBlending;
+
+            var sprite = new THREE.Sprite(spriteMaterial);
+            sprite.scale.set(100, 100, 100);
+            sprite.position.set(100, 100, 0);
+
+            this.sceneOrtho.add(sprite);
+        },
 	getModel: function () {
 	    return editor.objectByUuid(this.currentModel);
 	},
