@@ -534,6 +534,9 @@ OpenSimEditor.prototype = {
 		    this.setCurrentModel(model.uuid);
 		    this.adjustSceneAfterModelLoading();
 		    //this.scripts = json.scripts;
+		    // The next 2 line has to be made after helper was added to scene
+		    var modelLight = model.getObjectByName('ModelLight');
+		    this.helpers[modelLight.id].update();
 		    this.signals.sceneGraphChanged.active = true;
 		    this.signals.sceneGraphChanged.dispatch();
 		    this.viewFitAll();
@@ -911,6 +914,7 @@ OpenSimEditor.prototype = {
 		modelbbox.max.y+100, (modelbbox.min.z+modelbbox.max.z)/2));
 	    modelLight.target = modelCenterGroup;
 	    model.add(modelLight);
+           
 	},
 	setFloorHeight: function(newHeight) {
 	    if (this.groundPlane !== undefined){
@@ -950,6 +954,7 @@ OpenSimEditor.prototype = {
             var modelObject = this.getModel();
             var modelLight = modelObject.getObjectByName('ModelLight');
             this.select(modelLight);
+            this.helpers[modelLight.id].update();
         }
 
 };
