@@ -251,6 +251,12 @@ Object.assign( THREE.OpenSimLoader.prototype, {
 
 						break;
 
+				    case 'PathGeometry':
+
+				        geometry = new THREE.Geometry();
+
+				        break;
+
 					default:
 
 						console.warn( 'THREE.OpenSimLoader: Unsupported geometry type "' + data.type + '"' );
@@ -552,6 +558,17 @@ Object.assign( THREE.OpenSimLoader.prototype, {
 			    case 'Frame':
 
 			        object = new THREE.AxisHelper(data.size);
+
+			        break;
+
+			    case 'GeometryPath':
+			        // should create geometry here
+			        var geometry = getGeometry(data.geometry);
+			        for (var i = 0; i < data.points.length; i++) {
+			            geometry.vertices.push(new THREE.Vector3(100 * i, 50, 0));
+			        };
+			        material = getMaterial(data.material);
+			        object = new THREE.Line(geometry, material);
 
 			        break;
 				default:
