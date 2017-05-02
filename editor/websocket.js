@@ -40,13 +40,14 @@ function onMessage(evt) {
 	case "Frame":        //alert("uuid: " + msg.name);
 	    var transforms = msg.Transforms;
 	    for (var i = 0; i < transforms.length; i ++ ) {
-		var oneBodyTransform = transforms[i];
-		var o = editor.objectByUuid( oneBodyTransform.uuid);
-		//alert("mat before: " + o.matrix);
-		if (o != undefined) {
-		   o.matrixAutoUpdate = false;
-		   o.matrix.fromArray(oneBodyTransform.matrix);
-	        }
+			var oneBodyTransform = transforms[i];
+		    var o = editor.objectByUuid( oneBodyTransform.uuid);
+		    //alert("mat before: " + o.matrix);
+		    if (o != undefined) {
+		        o.matrixAutoUpdate = false;
+		        o.matrix.fromArray(oneBodyTransform.matrix);
+		    }
+		    editor.updatePaths();
 	    }
 	    onWindowResize();
 	    break;

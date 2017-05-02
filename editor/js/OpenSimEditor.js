@@ -950,6 +950,21 @@ OpenSimEditor.prototype = {
             var modelObject = this.getModel();
             var modelLight = modelObject.getObjectByName('ModelLight');
             this.select(modelLight);
-        }
+	},
+	updatePaths: function () {
+	    var modelObject = this.getModel();
+	    modelObject.traverse(function (child) {
+
+	        if (child.type === 'Line') {
+	            pathpoints = child.pathpoints;
+	            for (var i = 0; i < pathpoints.length; i++) {
+	                var nextpathpoint = editor.objectByUuid(pathpoints[i]);
+	                nextpathpoint.updateMatrixWorld();
+	                child.geometry.vertices[i].copy(nextpathpoint.position);
+	            }
+	            child.geometry.verticesNeedUpdate = true;
+	        }
+	    } );
+	}
 
 };

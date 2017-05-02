@@ -569,7 +569,7 @@ Object.assign( THREE.OpenSimLoader.prototype, {
 			        };
 			        material = getMaterial(data.material);
 			        object = new THREE.Line(geometry, material);
-
+			        object.pathpoints = data.points;
 			        break;
 				default:
 
