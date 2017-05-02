@@ -960,7 +960,7 @@ OpenSimEditor.prototype = {
 	            for (var i = 0; i < pathpoints.length; i++) {
 	                var nextpathpoint = editor.objectByUuid(pathpoints[i]);
 	                nextpathpoint.updateMatrixWorld();
-	                child.geometry.vertices[i].copy(nextpathpoint.position);
+	                child.geometry.vertices[i].setFromMatrixPosition(nextpathpoint.matrixWorld);
 	            }
 	            child.geometry.verticesNeedUpdate = true;
 	        }
