@@ -47,8 +47,13 @@ function onMessage(evt) {
 		        o.matrixAutoUpdate = false;
 		        o.matrix.fromArray(oneBodyTransform.matrix);
 		    }
-		    editor.updatePaths();
 	    }
+            var paths = msg.paths;
+            if (paths !== undefined){
+                for (var p=0; p < paths.length; p++ ) {
+                    editor.updatePath(paths[p]);
+                }
+            }
 	    onWindowResize();
 	    break;
 	case "CloseModel":

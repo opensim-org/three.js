@@ -951,20 +951,16 @@ OpenSimEditor.prototype = {
             var modelLight = modelObject.getObjectByName('ModelLight');
             this.select(modelLight);
 	},
-	updatePaths: function () {
-	    var modelObject = this.getModel();
-	    modelObject.traverse(function (child) {
-
-	        if (child.type === 'Line') {
-	            pathpoints = child.pathpoints;
-	            for (var i = 0; i < pathpoints.length; i++) {
-	                var nextpathpoint = editor.objectByUuid(pathpoints[i]);
-	                nextpathpoint.updateMatrixWorld();
-	                child.geometry.vertices[i].setFromMatrixPosition(nextpathpoint.matrixWorld);
-	            }
-	            child.geometry.verticesNeedUpdate = true;
-	        }
-	    } );
-	}
+	updatePath: function (pathUpdateJson) {
+	    var pathObject = this.objectByUuid(pathUpdateJson.uuid);
+            pathpoints = pathObject.pathpoints;
+            for (var i = 0; i < pathpoints.length; i++) {
+                var nextpathpoint = this.objectByUuid(pathpoints[i]);
+                nextpathpoint.updateMatrixWorld();
+                pathObject.geometry.vertices[i].setFromMatrixPosition(nextpathpoint.matrixWorld);
+            }
+            pathObject.geometry.verticesNeedUpdate = true;
+            pathObject.material.color.setHex(pathUpdateJson.color);
+        }
 
 };
