@@ -100,7 +100,7 @@ var OpenSimEditor = function () {
 	this.config = new Config( 'threejs-editor' );
 	this.history = new History( this );
 	this.storage = new Storage();
-	this.loader = new Loader( this );
+	this.loader = new THREE.OpenSimLoader(this);
 
 	this.camera = this.DEFAULT_CAMERA.clone();
 	this.dollyPath = new THREE.ClosedSplineCurve3([
@@ -520,7 +520,7 @@ OpenSimEditor.prototype = {
 
 	addfromJSON: function ( json ) {
 
-		var loader = new THREE.ObjectLoader();
+		var loader = new THREE.OpenSimLoader();
 		this.signals.sceneGraphChanged.active = false;
 		model = loader.parse( json );
 		model.parent = this.modelsGroup;
@@ -950,6 +950,17 @@ OpenSimEditor.prototype = {
             var modelObject = this.getModel();
             var modelLight = modelObject.getObjectByName('ModelLight');
             this.select(modelLight);
+	},
+	updatePath: function (pathUpdateJson) {
+	    var pathObject = this.objectByUuid(pathUpdateJson.uuid);
+            pathpoints = pathObject.pathpoints;
+            for (var i = 0; i < pathpoints.length; i++) {
+                var nextpathpoint = this.objectByUuid(pathpoints[i]);
+                nextpathpoint.updateMatrixWorld();
+                pathObject.geometry.vertices[i].setFromMatrixPosition(nextpathpoint.matrixWorld);
+            }
+            pathObject.geometry.verticesNeedUpdate = true;
+            pathObject.material.color.setHex(pathUpdateJson.color);
         }
 
 };
