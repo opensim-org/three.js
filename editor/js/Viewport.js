@@ -19,7 +19,7 @@ var Viewport = function ( editor ) {
 
 	// helpers
 
-	var grid = new THREE.GridHelper( 500, 25 );
+	var grid = new THREE.GridHelper( 30, 1 );
 	sceneHelpers.add( grid );
 
 	//
@@ -75,30 +75,38 @@ var Viewport = function ( editor ) {
 
 		var object = transformControls.object;
 
-		if ( object != null ) {
+		if ( object !== undefined ) {
 
 			switch ( transformControls.getMode() ) {
 
 				case 'translate':
-					if (!objectPositionOnDown.equals(object.position)) {
 
-						editor.execute(new SetPositionCommand( object, object.position, objectPositionOnDown ));
+					if ( ! objectPositionOnDown.equals( object.position ) ) {
+
+						editor.execute( new SetPositionCommand( object, object.position, objectPositionOnDown ) );
 
 					}
+
 					break;
+
 				case 'rotate':
-					if (!objectRotationOnDown.equals(object.rotation)) {
 
-						editor.execute(new SetRotationCommand( object, object.rotation, objectRotationOnDown ));
+					if ( ! objectRotationOnDown.equals( object.rotation ) ) {
+
+						editor.execute( new SetRotationCommand( object, object.rotation, objectRotationOnDown ) );
 
 					}
+
 					break;
-				case 'scale':
-					if (!objectScaleOnDown.equals(object.scale)) {
 
-						editor.execute(new SetScaleCommand( object, object.scale, objectScaleOnDown ));
+				case 'scale':
+
+					if ( ! objectScaleOnDown.equals( object.scale ) ) {
+
+						editor.execute( new SetScaleCommand( object, object.scale, objectScaleOnDown ) );
 
 					}
+
 					break;
 
 			}
@@ -134,7 +142,7 @@ var Viewport = function ( editor ) {
 
 		return raycaster.intersectObjects( objects );
 
-	};
+	}
 
 	var onDownPosition = new THREE.Vector2();
 	var onUpPosition = new THREE.Vector2();
@@ -145,11 +153,11 @@ var Viewport = function ( editor ) {
 		var rect = dom.getBoundingClientRect();
 		return [ ( x - rect.left ) / rect.width, ( y - rect.top ) / rect.height ];
 
-	};
+	}
 
 	function handleClick() {
 
-		if ( onDownPosition.distanceTo( onUpPosition ) == 0 ) {
+		if ( onDownPosition.distanceTo( onUpPosition ) === 0 ) {
 
 			var intersects = getIntersects( onUpPosition, objects );
 
@@ -179,7 +187,7 @@ var Viewport = function ( editor ) {
 
 		}
 
-	};
+	}
 
 	function onMouseDown( event ) {
 
@@ -190,7 +198,7 @@ var Viewport = function ( editor ) {
 
 		document.addEventListener( 'mouseup', onMouseUp, false );
 
-	};
+	}
 
 	function onMouseUp( event ) {
 
@@ -201,7 +209,7 @@ var Viewport = function ( editor ) {
 
 		document.removeEventListener( 'mouseup', onMouseUp, false );
 
-	};
+	}
 
 	function onTouchStart( event ) {
 
@@ -212,7 +220,7 @@ var Viewport = function ( editor ) {
 
 		document.addEventListener( 'touchend', onTouchEnd, false );
 
-	};
+	}
 
 	function onTouchEnd( event ) {
 
@@ -225,7 +233,7 @@ var Viewport = function ( editor ) {
 
 		document.removeEventListener( 'touchend', onTouchEnd, false );
 
-	};
+	}
 
 	function onDoubleClick( event ) {
 
@@ -242,7 +250,7 @@ var Viewport = function ( editor ) {
 
 		}
 
-	};
+	}
 
 	container.dom.addEventListener( 'mousedown', onMouseDown, false );
 	container.dom.addEventListener( 'touchstart', onTouchStart, false );
@@ -275,11 +283,15 @@ var Viewport = function ( editor ) {
 		switch ( value ) {
 
 			case 'css/light.css':
-				grid.setColors( 0x444444, 0x888888 );
+				sceneHelpers.remove( grid );
+				grid = new THREE.GridHelper( 30, 1, 0x444444, 0x888888 );
+				sceneHelpers.add( grid );
 				clearColor = 0xaaaaaa;
 				break;
 			case 'css/dark.css':
-				grid.setColors( 0xbbbbbb, 0x888888 );
+				sceneHelpers.remove( grid );
+				grid = new THREE.GridHelper( 30, 1, 0xbbbbbb, 0x888888 );
+				sceneHelpers.add( grid );
 				clearColor = 0x333333;
 				break;
 
@@ -352,8 +364,7 @@ var Viewport = function ( editor ) {
 
 		if ( object !== null ) {
 
-			if ( object.geometry !== undefined &&
-				 object instanceof THREE.Sprite === false ) {
+			if ( object.geometry !== undefined ) {
 
 				selectionBox.update( object );
 				selectionBox.visible = true;
@@ -376,7 +387,7 @@ var Viewport = function ( editor ) {
 
 	signals.geometryChanged.add( function ( object ) {
 
-		if ( object !== null ) {
+		if ( object !== undefined ) {
 
 			selectionBox.update( object );
 
@@ -499,6 +510,11 @@ var Viewport = function ( editor ) {
 
 	signals.windowResize.add( function () {
 
+		// TODO: Move this out?
+
+		editor.DEFAULT_CAMERA.aspect = container.dom.offsetWidth / container.dom.offsetHeight;
+		editor.DEFAULT_CAMERA.updateProjectionMatrix();
+
 		camera.aspect = container.dom.offsetWidth / container.dom.offsetHeight;
 		camera.updateProjectionMatrix();
 
@@ -587,4 +603,4 @@ var Viewport = function ( editor ) {
 
 	return container;
 
-}
+};
