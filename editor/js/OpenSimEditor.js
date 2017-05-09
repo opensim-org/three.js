@@ -953,13 +953,14 @@ OpenSimEditor.prototype = {
 	},
 	updatePath: function (pathUpdateJson) {
 	    var pathObject = this.objectByUuid(pathUpdateJson.uuid);
+        /*
             pathpoints = pathObject.pathpoints;
             for (var i = 0; i < pathpoints.length; i++) {
                 var nextpathpoint = this.objectByUuid(pathpoints[i]);
                 nextpathpoint.updateMatrixWorld();
                 pathObject.geometry.vertices[i].setFromMatrixPosition(nextpathpoint.matrixWorld);
             }
-            pathObject.geometry.verticesNeedUpdate = true;
+            pathObject.geometry.verticesNeedUpdate = true;*/
             pathObject.material.color.setHex(pathUpdateJson.color);
         }
 
