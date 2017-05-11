@@ -25,12 +25,12 @@ function onOpen() {
 websocket.onmessage = function(evt) { onMessage(evt) };
 
 function sendText(json) {
-    console.log("sending text: " + json);
+    //console.log("sending text: " + json);
     websocket.send(json);
 }
                 
 function onMessage(evt) {
-    console.log("received: " + evt.data);
+    //console.log("received: " + evt.data);
     msg = JSON.parse(evt.data);
     processing = true;
     switch(msg.Op){
