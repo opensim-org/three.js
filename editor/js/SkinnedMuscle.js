@@ -4,6 +4,7 @@
 THREE.SkinnedMuscle = function(geom, points) {
     // Create bones for uuids in geometryPath
     this.pathpoints = points;
+    this.pathpointObjects = [];
     geom.bones = [];
     for (var i=0; i<points.length; i++) {
         var bone = new THREE.Bone();
@@ -31,11 +32,19 @@ THREE.SkinnedMuscle.prototype.updateMatrixWorld = function( force ) {
     if (this.skeleton === undefined)
         return;
     var bones = this.skeleton.bones;
+    if (this.pathpointObjects.length != this.pathpoints.length){
+        for ( var b=0; b < this.pathpoints.length; b++) {
+            var ppt = this.pathpoints[b];
+            var pptObject = editor.objectByUuid(ppt);
+            if (pptObject !== undefined) {
+                this.pathpointObjects.push(pptObject);
+            }
+        }
+    }
     for ( var b=0; b < this.pathpoints.length; b++) {
-        var ppt = this.pathpoints[b];
-        var pptObject = editor.objectByUuid(ppt);
-        if (pptObject !== undefined) {
-            this.children[b].position.setFromMatrixPosition(pptObject.matrixWorld);
+        var nextPathpointObject = this.pathpointObjects[b];
+        if (nextPathpointObject !== undefined) {
+            this.children[b].position.setFromMatrixPosition(nextPathpointObject.matrixWorld);
 
             //bones[b].pos.setFromMatrixPosition(pptObject.matrixWorld);
             //console.warn('bone '+b+' pos ='+bones[b].position.x, bones[b].position.y, bones[b].position.z);
