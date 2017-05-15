@@ -41,11 +41,15 @@ THREE.SkinnedMuscle.prototype.updateMatrixWorld = function( force ) {
             }
         }
     }
+    // Compute reverse transform from Ground to Scene (usually this's inverse translation)
+    // This is necessary since the blending to compute vertices adds offset twice
+    var mat = new THREE.Matrix4().getInverse(this.parent.matrixWorld);
+    var vec = new THREE.Vector3().setFromMatrixPosition(mat);
     for ( var b=0; b < this.pathpoints.length; b++) {
         var nextPathpointObject = this.pathpointObjects[b];
         if (nextPathpointObject !== undefined) {
             this.children[b].position.setFromMatrixPosition(nextPathpointObject.matrixWorld);
-
+            this.children[b].position.add(vec);
             //bones[b].pos.setFromMatrixPosition(pptObject.matrixWorld);
             //console.warn('bone '+b+' pos ='+bones[b].position.x, bones[b].position.y, bones[b].position.z);
             this.children[b].updateMatrixWorld();
