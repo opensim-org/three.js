@@ -1,7 +1,7 @@
 /**
  * @author Ayman Habib 
  */
-THREE.SkinnedMuscle = function(geom, points) {
+THREE.SkinnedMuscle = function(geom, points, material) {
     // Create bones for uuids in geometryPath
     this.pathpoints = points;
     this.pathpointObjects = [];
@@ -21,6 +21,7 @@ THREE.SkinnedMuscle = function(geom, points) {
     }
     geom.dynamic = true;
     THREE.SkinnedMesh.call( this, geom );
+    this.material = material;
     this.material.skinning = true;
 };
 THREE.SkinnedMuscle.prototype = Object.create( THREE.SkinnedMesh.prototype );
