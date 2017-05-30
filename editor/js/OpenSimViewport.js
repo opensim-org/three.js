@@ -315,7 +315,7 @@ var OpenSimViewport = function ( editor ) {
 				clearColor = 0x333333;
 				break;
 			case 'css/minimal.css':
-				clearColor = 0xffffff;
+			    clearColor = 0xf0f5f5;
 				break;
 
 		}
