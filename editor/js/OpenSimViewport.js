@@ -314,6 +314,9 @@ var OpenSimViewport = function ( editor ) {
 				//OPENSIM sceneHelpers.add( grid );
 				clearColor = 0x333333;
 				break;
+			case 'css/minimal.css':
+				clearColor = 0xffffff;
+				break;
 
 		}
 
