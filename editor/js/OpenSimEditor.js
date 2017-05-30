@@ -146,7 +146,7 @@ var OpenSimEditor = function () {
 	this.createGroundPlane(this.config.getKey('floor'));
 	this.createDollyPath();
 	this.createModelsGroup();
-        this.createLogoSprite();
+	this.createLogoSprite();
 
 };
 
@@ -732,7 +732,7 @@ OpenSimEditor.prototype = {
 		if (choice == 'nobackground') {
 		    //this.skyboxMesh.visible = false;
 		    this.scene.background = null;
-		    this.signals.objectChanged.dispatch( this.scene.background );
+		    //this.signals.objectChanged.dispatch( this.scene.background );
 		    return;
 		}
 		this.createBackground(choice);
@@ -781,28 +781,28 @@ OpenSimEditor.prototype = {
 	    ///this.sceneHelpers.add(dcameraHelper);
 
 	},
-        createLogoSprite: function() {
-            var getLogoTexture = function () {
-                var texture = new THREE.ImageUtils.loadTexture("OpenSimLogoSmall.PNG");
-                return texture;
-            };
-            var spriteMaterial = new THREE.SpriteMaterial({
-                        opacity: 0.5,
-                        color: 0xffffff,
-                        transparent: false,
-                        // useScreenCoordinates: true,
-                        map: getLogoTexture()}
-            );
+		createLogoSprite: function() {
+			var getLogoTexture = function () {
+				var texture = new THREE.ImageUtils.loadTexture("OpenSimLogoSmall.PNG");
+				return texture;
+			};
+			var spriteMaterial = new THREE.SpriteMaterial({
+						opacity: 0.5,
+						color: 0xffffff,
+						transparent: false,
+						// useScreenCoordinates: true,
+						map: getLogoTexture()}
+			);
 
-            spriteMaterial.scaleByViewport = false;
-            spriteMaterial.blending = THREE.AdditiveBlending;
+			spriteMaterial.scaleByViewport = false;
+			spriteMaterial.blending = THREE.AdditiveBlending;
 
-            var sprite = new THREE.Sprite(spriteMaterial);
-            sprite.scale.set(100, 100, 100);
-            sprite.position.set(100, 100, 0);
+			var sprite = new THREE.Sprite(spriteMaterial);
+			sprite.scale.set(100, 100, 100);
+			sprite.position.set(100, 100, 0);
 
-            this.sceneOrtho.add(sprite);
-        },
+			this.sceneOrtho.add(sprite);
+		},
 	getModel: function () {
 	    return editor.objectByUuid(this.currentModel);
 	},
