@@ -536,6 +536,9 @@ OpenSimEditor.prototype = {
 		    this.setCurrentModel(model.uuid);
 		    this.adjustSceneAfterModelLoading();
 		    //this.scripts = json.scripts;
+		    // The next 2 line has to be made after helper was added to scene to fix helper display
+		    var modelLight = model.getObjectByName('ModelLight');
+		    this.helpers[modelLight.id].update();
 		    this.signals.sceneGraphChanged.active = true;
 		    this.signals.sceneGraphChanged.dispatch();
 		    this.viewFitAll();
