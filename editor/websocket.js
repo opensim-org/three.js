@@ -54,7 +54,7 @@ function onMessage(evt) {
                     editor.updatePath(paths[p]);
                 }
             }
-	    onWindowResize();
+	    //onWindowResize();
 	    break;
 	case "CloseModel":
 	    modeluuid = msg.UUID;
