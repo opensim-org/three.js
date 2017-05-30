@@ -23,6 +23,8 @@ var OpenSimEditor = function () {
 	this.nonCurrentModelColor = new THREE.Color(0x888888);
 	this.sceneBoundingBox = undefined;
 	this.sceneLight = undefined;
+	// types of objects that are graphically movable
+	var supportedOpenSimTypes = ["PathPoint", "Marker"];
 	//this.cameraEye = new THREE.Mesh(new THREE.SphereGeometry(50), new THREE.MeshBasicMaterial({ color: 0xdddddd }));
 	//this.cameraEye.name = 'CameraEye';
 
@@ -404,7 +406,7 @@ OpenSimEditor.prototype = {
 
 		this.selected = object;
 
-		this.config.setKey( 'selected', uuid );
+		//this.config.setKey( 'selected', uuid );
 		this.signals.objectSelected.dispatch( object );
                 if ( object !== null ) {
                     // Send uuid of selected object across socket
