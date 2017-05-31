@@ -23,6 +23,8 @@ var OpenSimEditor = function () {
 	this.nonCurrentModelColor = new THREE.Color(0x888888);
 	this.sceneBoundingBox = undefined;
 	this.sceneLight = undefined;
+	// types of objects that are graphically movable
+	var supportedOpenSimTypes = ["PathPoint", "Marker"];
 	//this.cameraEye = new THREE.Mesh(new THREE.SphereGeometry(50), new THREE.MeshBasicMaterial({ color: 0xdddddd }));
 	//this.cameraEye.name = 'CameraEye';
 
@@ -144,7 +146,7 @@ var OpenSimEditor = function () {
 	this.createGroundPlane(this.config.getKey('floor'));
 	this.createDollyPath();
 	this.createModelsGroup();
-        this.createLogoSprite();
+	this.createLogoSprite();
 
 };
 
@@ -404,7 +406,7 @@ OpenSimEditor.prototype = {
 
 		this.selected = object;
 
-		this.config.setKey( 'selected', uuid );
+		//this.config.setKey( 'selected', uuid );
 		this.signals.objectSelected.dispatch( object );
                 if ( object !== null ) {
                     // Send uuid of selected object across socket
@@ -534,6 +536,9 @@ OpenSimEditor.prototype = {
 		    this.setCurrentModel(model.uuid);
 		    this.adjustSceneAfterModelLoading();
 		    //this.scripts = json.scripts;
+		    // The next 2 line has to be made after helper was added to scene to fix helper display
+		    var modelLight = model.getObjectByName('ModelLight');
+		    this.helpers[modelLight.id].update();
 		    this.signals.sceneGraphChanged.active = true;
 		    this.signals.sceneGraphChanged.dispatch();
 		    this.viewFitAll();
@@ -727,7 +732,7 @@ OpenSimEditor.prototype = {
 		if (choice == 'nobackground') {
 		    //this.skyboxMesh.visible = false;
 		    this.scene.background = null;
-		    this.signals.objectChanged.dispatch( this.scene.background );
+		    //this.signals.objectChanged.dispatch( this.scene.background );
 		    return;
 		}
 		this.createBackground(choice);
@@ -776,28 +781,28 @@ OpenSimEditor.prototype = {
 	    ///this.sceneHelpers.add(dcameraHelper);
 
 	},
-        createLogoSprite: function() {
-            var getLogoTexture = function () {
-                var texture = new THREE.ImageUtils.loadTexture("OpenSimLogoSmall.PNG");
-                return texture;
-            };
-            var spriteMaterial = new THREE.SpriteMaterial({
-                        opacity: 0.5,
-                        color: 0xffffff,
-                        transparent: false,
-                        // useScreenCoordinates: true,
-                        map: getLogoTexture()}
-            );
+		createLogoSprite: function() {
+			var getLogoTexture = function () {
+				var texture = new THREE.ImageUtils.loadTexture("OpenSimLogoSmall.PNG");
+				return texture;
+			};
+			var spriteMaterial = new THREE.SpriteMaterial({
+						opacity: 0.5,
+						color: 0xffffff,
+						transparent: false,
+						// useScreenCoordinates: true,
+						map: getLogoTexture()}
+			);
 
-            spriteMaterial.scaleByViewport = false;
-            spriteMaterial.blending = THREE.AdditiveBlending;
+			spriteMaterial.scaleByViewport = false;
+			spriteMaterial.blending = THREE.AdditiveBlending;
 
-            var sprite = new THREE.Sprite(spriteMaterial);
-            sprite.scale.set(100, 100, 100);
-            sprite.position.set(100, 100, 0);
+			var sprite = new THREE.Sprite(spriteMaterial);
+			sprite.scale.set(100, 100, 100);
+			sprite.position.set(100, 100, 0);
 
-            this.sceneOrtho.add(sprite);
-        },
+			this.sceneOrtho.add(sprite);
+		},
 	getModel: function () {
 	    return editor.objectByUuid(this.currentModel);
 	},
@@ -953,13 +958,14 @@ OpenSimEditor.prototype = {
 	},
 	updatePath: function (pathUpdateJson) {
 	    var pathObject = this.objectByUuid(pathUpdateJson.uuid);
+        /*
             pathpoints = pathObject.pathpoints;
             for (var i = 0; i < pathpoints.length; i++) {
                 var nextpathpoint = this.objectByUuid(pathpoints[i]);
                 nextpathpoint.updateMatrixWorld();
                 pathObject.geometry.vertices[i].setFromMatrixPosition(nextpathpoint.matrixWorld);
             }
-            pathObject.geometry.verticesNeedUpdate = true;
+            pathObject.geometry.verticesNeedUpdate = true;*/
             pathObject.material.color.setHex(pathUpdateJson.color);
         }
 

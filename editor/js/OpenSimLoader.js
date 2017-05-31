@@ -253,7 +253,7 @@ Object.assign( THREE.OpenSimLoader.prototype, {
 
 				    case 'PathGeometry':
 
-				        geometry = new THREE.Geometry();
+				        geometry = new THREE.CylinderGeometry(5, 5, data.segments, 8, data.segments, true);
 
 				        break;
 
@@ -562,14 +562,7 @@ Object.assign( THREE.OpenSimLoader.prototype, {
 			        break;
 
 			    case 'GeometryPath':
-			        // should create geometry here
-			        var geometry = getGeometry(data.geometry);
-			        for (var i = 0; i < data.points.length; i++) {
-			            geometry.vertices.push(new THREE.Vector3(100 * i, 50, 0));
-			        };
-			        material = getMaterial(data.material);
-			        object = new THREE.Line(geometry, material);
-			        object.pathpoints = data.points;
+			        object = new THREE.SkinnedMuscle(getGeometry(data.geometry), data.points,  getMaterial( data.material ));
 			        break;
 				default:
 
