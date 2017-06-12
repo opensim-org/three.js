@@ -725,6 +725,10 @@ OpenSimEditor.prototype = {
 		directionalLight.visible = true;
 		this.sceneLight = directionalLight;
 		this.addObject(directionalLight);
+        // HemisphericalLight 
+		hemiSphereLight = new THREE.HemisphereLight(10724259, 0, 1);
+		hemiSphereLight.name = 'GlobalLight';
+		this.addObject(hemiSphereLight);
 	},
 
 	updateBackground: function (choice) {
@@ -819,7 +823,7 @@ OpenSimEditor.prototype = {
 
 	    this.camera.position.set(newposition.x, newposition.y, newposition.z);
 	    this.camera.lookAt(viewCenter);
-	    //this.sceneLight.position.copy(this.camera.position);
+	    this.sceneLight.position.copy(this.camera.position);
 	    var changeEvent = { type: 'change' };
 	    this.control.dispatchEvent( changeEvent );
 	    this.signals.defaultCameraApplied.dispatch(viewCenter);
