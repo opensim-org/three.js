@@ -14,8 +14,8 @@ var Config = function ( name ) {
 		'project/editable': false,
 		'project/vr': false,
 		'render/debug': true,
-		'floor': 'graybricks',
-        'skybox': 'mars',
+		'floor': 'nofloor',
+		'skybox': 'nobackground',
 		'settings/history': false,
 
 		'ui/sidebar/animation/collapsed': true,
