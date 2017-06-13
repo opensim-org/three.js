@@ -732,7 +732,7 @@ OpenSimEditor.prototype = {
 	},
 
 	updateBackground: function (choice) {
-
+	    this.config.setKey('skybox', choice);
 		if (choice == 'nobackground') {
 		    //this.skyboxMesh.visible = false;
 		    this.scene.background = null;
@@ -743,7 +743,7 @@ OpenSimEditor.prototype = {
 	},
 
 	updateGroundPlane: function (choice) {
-
+	    this.config.setKey('floor', choice);
 	    if (choice == 'nofloor') {
 	        if (this.groundPlane !== null) {
 	            this.groundPlane.visible = false;
