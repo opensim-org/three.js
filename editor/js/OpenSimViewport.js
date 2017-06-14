@@ -325,7 +325,10 @@ var OpenSimViewport = function ( editor ) {
 		render();
 
 	} );
-
+	signals.backgroundColorChanged.add(function (newColor) {
+	    renderer.setClearColor(newColor);
+	    render();
+	});
 	signals.transformModeChanged.add( function ( mode ) {
 
 		transformControls.setMode( mode );

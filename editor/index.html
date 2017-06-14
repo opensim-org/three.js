@@ -11,8 +11,8 @@
 		<link id="theme" href="css/minimal.css" rel="stylesheet" />
 
 		<script src="../build/three.js"></script>
-        <script src="js/SkinnedMuscle.js"></script>
-        <script src="js/OpenSimLoader.js"></script>
+		<script src="js/SkinnedMuscle.js"></script>
+		<script src="js/OpenSimLoader.js"></script>
 		<script src="../examples/js/libs/system.min.js"></script>
 		<script src="websocket.js" type="text/javascript"></script>
 		<script src="../examples/js/Detector.js"></script>
@@ -70,7 +70,7 @@
 		<script src="js/OpenSimEditor.js"></script>
 		<script src="js/Config.js"></script>
 		<script src="js/History.js"></script>
-        <script src="js/Loader.js"></script>
+		<script src="js/Loader.js"></script>
 		<script src="js/Menubar.js"></script>
 		<script src="js/Menubar.File.js"></script>
 		<script src="js/Menubar.Edit.js"></script>
@@ -157,6 +157,7 @@
 				this.texture = editor.config.getKey('floor');
 				this.height = -0.001;
 				this.backdrop = editor.config.getKey('skybox');
+				this.backgroundColor = "#ffffff";
 				// Define render logic ...
 				this.sceneLightX = -0.01;
 				this.sceneLightY = -0.01;
@@ -183,6 +184,10 @@
 			    var backdrop = world.add(knobs, 'backdrop', ['nobackground', 'mars', 'sky', 'desert', 'city', 'dark', 'pastures']);
 				backdrop.onChange(function (value) {
 			        editor.updateBackground(value);
+				});
+				var backdropColor = world.addColor(knobs, 'backgroundColor');
+				backdropColor.onChange(function (value) {
+				    editor.updateBackgroundColor(value);
 				});
 				world.add(knobs, 'sceneLightSelect').name('Scene Light');
 				var model_control = gui.addFolder('Model');

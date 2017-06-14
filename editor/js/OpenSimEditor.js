@@ -53,7 +53,7 @@ var OpenSimEditor = function () {
 		savingFinished: new Signal(),
 
 		themeChanged: new Signal(),
-
+		backgroundColorChanged: new Signal(),
 		transformModeChanged: new Signal(),
 		snapChanged: new Signal(),
 		spaceChanged: new Signal(),
@@ -665,8 +665,11 @@ OpenSimEditor.prototype = {
 	},
 
 	createBackground: function(choice) {
-	    if (choice == 'nobackground')
+	    if (choice == 'nobackground') {
+	        this.scene.background = new THREE.Color(0xff0000);
+	        this.signals.backgroundColorChanged.dispatch(this.scene.background.getHex());
 	        return;
+	    }
 	    // load the cube textures
 	    // you need to create an instance of the loader...
 	    var textureloader = new THREE.CubeTextureLoader();
@@ -735,7 +738,7 @@ OpenSimEditor.prototype = {
 	    this.config.setKey('skybox', choice);
 		if (choice == 'nobackground') {
 		    //this.skyboxMesh.visible = false;
-		    this.scene.background = null;
+		    this.scene.background = new THREE.Color(0xff0000);
 		    //this.signals.objectChanged.dispatch( this.scene.background );
 		    return;
 		}
@@ -763,6 +766,10 @@ OpenSimEditor.prototype = {
 		this.groundMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, map: texture1 });
 		this.groundPlane.material = this.groundMaterial;
 		this.signals.materialChanged.dispatch( this.groundPlane );
+	},
+	updateBackgroundColor: function (newColor) {
+	    this.scene.background = new THREE.Color(newColor);
+	    this.signals.backgroundColorChanged.dispatch(this.scene.background.getHex());
 	},
 	getGroundSelection: function () {
 	    return this.config.getKey('floor');
