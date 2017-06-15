@@ -4,10 +4,7 @@
  * parameters = {
  *  color: <hex>,
  *  roughness: <float>,
- *  reflectivity: <float>,
  *  metalness: <float>,
-
- *  emissive: <hex>,
  *  opacity: <float>,
  *
  *  map: new THREE.Texture( <Image> ),
@@ -18,6 +15,8 @@
  *  aoMap: new THREE.Texture( <Image> ),
  *  aoMapIntensity: <float>
  *
+ *  emissive: <hex>,
+ *  emissiveIntensity: <float>
  *  emissiveMap: new THREE.Texture( <Image> ),
  *
  *  bumpMap: new THREE.Texture( <Image> ),
@@ -32,30 +31,21 @@
  *
  *  roughnessMap: new THREE.Texture( <Image> ),
  *
- *  reflectivityMap: new THREE.Texture( <Image> ),
- *
  *  metalnessMap: new THREE.Texture( <Image> ),
  *
  *  alphaMap: new THREE.Texture( <Image> ),
  *
  *  envMap: new THREE.CubeTexture( [posx, negx, posy, negy, posz, negz] ),
- *  refractionRatio: <float>,
+ *  envMapIntensity: <float>
  *
- *  shading: THREE.SmoothShading,
- *  blending: THREE.NormalBlending,
- *  depthTest: <bool>,
- *  depthWrite: <bool>,
+ *  refractionRatio: <float>,
  *
  *  wireframe: <boolean>,
  *  wireframeLinewidth: <float>,
  *
- *  vertexColors: THREE.NoColors / THREE.VertexColors / THREE.FaceColors,
- *
  *  skinning: <bool>,
  *  morphTargets: <bool>,
- *  morphNormals: <bool>,
- *
- *	fog: <bool>
+ *  morphNormals: <bool>
  * }
  */
 
@@ -63,14 +53,13 @@ THREE.MeshStandardMaterial = function ( parameters ) {
 
 	THREE.Material.call( this );
 
+	this.defines = { 'STANDARD': '' };
+
 	this.type = 'MeshStandardMaterial';
 
 	this.color = new THREE.Color( 0xffffff ); // diffuse
 	this.roughness = 0.5;
-	this.reflectivity = 1;
-	this.metalness = 0;
-
-	this.emissive = new THREE.Color( 0x000000 );
+	this.metalness = 0.5;
 
 	this.map = null;
 
@@ -80,6 +69,8 @@ THREE.MeshStandardMaterial = function ( parameters ) {
 	this.aoMap = null;
 	this.aoMapIntensity = 1.0;
 
+	this.emissive = new THREE.Color( 0x000000 );
+	this.emissiveIntensity = 1.0;
 	this.emissiveMap = null;
 
 	this.bumpMap = null;
@@ -94,8 +85,6 @@ THREE.MeshStandardMaterial = function ( parameters ) {
 
 	this.roughnessMap = null;
 
-	this.reflectivityMap = null;
-
 	this.metalnessMap = null;
 
 	this.alphaMap = null;
@@ -105,16 +94,10 @@ THREE.MeshStandardMaterial = function ( parameters ) {
 
 	this.refractionRatio = 0.98;
 
-	this.fog = true;
-
-	this.shading = THREE.SmoothShading;
-
 	this.wireframe = false;
 	this.wireframeLinewidth = 1;
 	this.wireframeLinecap = 'round';
 	this.wireframeLinejoin = 'round';
-
-	this.vertexColors = THREE.NoColors;
 
 	this.skinning = false;
 	this.morphTargets = false;
@@ -131,12 +114,11 @@ THREE.MeshStandardMaterial.prototype.copy = function ( source ) {
 
 	THREE.Material.prototype.copy.call( this, source );
 
+	this.defines = { 'STANDARD': '' };
+
 	this.color.copy( source.color );
 	this.roughness = source.roughness;
-	this.reflectivity = source.reflectivity;
 	this.metalness = source.metalness;
-
-	this.emissive.copy( source.emissive );
 
 	this.map = source.map;
 
@@ -146,7 +128,9 @@ THREE.MeshStandardMaterial.prototype.copy = function ( source ) {
 	this.aoMap = source.aoMap;
 	this.aoMapIntensity = source.aoMapIntensity;
 
+	this.emissive.copy( source.emissive );
 	this.emissiveMap = source.emissiveMap;
+	this.emissiveIntensity = source.emissiveIntensity;
 
 	this.bumpMap = source.bumpMap;
 	this.bumpScale = source.bumpScale;
@@ -160,8 +144,6 @@ THREE.MeshStandardMaterial.prototype.copy = function ( source ) {
 
 	this.roughnessMap = source.roughnessMap;
 
-	this.reflectivityMap = source.reflectivityMap;
-
 	this.metalnessMap = source.metalnessMap;
 
 	this.alphaMap = source.alphaMap;
@@ -171,16 +153,10 @@ THREE.MeshStandardMaterial.prototype.copy = function ( source ) {
 
 	this.refractionRatio = source.refractionRatio;
 
-	this.fog = source.fog;
-
-	this.shading = source.shading;
-
 	this.wireframe = source.wireframe;
 	this.wireframeLinewidth = source.wireframeLinewidth;
 	this.wireframeLinecap = source.wireframeLinecap;
 	this.wireframeLinejoin = source.wireframeLinejoin;
-
-	this.vertexColors = source.vertexColors;
 
 	this.skinning = source.skinning;
 	this.morphTargets = source.morphTargets;
