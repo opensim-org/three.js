@@ -10,7 +10,7 @@ var OpenSimViewport = function ( editor ) {
 	container.setId( 'viewport' );
 	container.setPosition( 'absolute' );
 
-	container.add( new Viewport.Info( editor ) );
+	//container.add( new Viewport.Info( editor ) );
 
 	var scene = editor.scene;
 	var sceneHelpers = editor.sceneHelpers;
@@ -702,7 +702,7 @@ var OpenSimViewport = function ( editor ) {
 
 		sceneHelpers.updateMatrixWorld();
 		scene.updateMatrixWorld();
-		stats.update();
+		//stats.update();
 		if (renderer != null) {
 		    renderer.clear();
 
