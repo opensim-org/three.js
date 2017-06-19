@@ -147,8 +147,8 @@
 				return this.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 			};
 			//
-			stats = new Stats();
-			document.body.appendChild( stats.domElement );
+			//stats = new Stats();
+			//document.body.appendChild( stats.domElement );
 
 			var editor = new OpenSimEditor();
 			
@@ -212,7 +212,8 @@
 				sceneLightColor.onChange(function (value) {
 				editor.updateSceneLight('color', value);
 				});*/
-				gui.remember(knobs);
+			    // No save/retrieve settings will go thru File menu or popup
+				// gui.remember(knobs);
 			}
 
 			var viewport = new OpenSimViewport( editor );
