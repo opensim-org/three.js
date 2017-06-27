@@ -14,7 +14,7 @@ var Config = function ( name ) {
 		'project/editable': false,
 		'project/vr': false,
 		'render/debug': true,
-		'floor': 'nofloor',
+		'floor': 'tile',
 		'skybox': 'nobackground',
 		'settings/history': false,
 

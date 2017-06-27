@@ -731,6 +731,7 @@ OpenSimEditor.prototype = {
         // HemisphericalLight 
 		hemiSphereLight = new THREE.HemisphereLight(10724259, 0, 1);
 		hemiSphereLight.name = 'GlobalLight';
+		hemiSphereLight.intensity = 0.25;
 		this.addObject(hemiSphereLight);
 	},
 
@@ -738,7 +739,7 @@ OpenSimEditor.prototype = {
 	    this.config.setKey('skybox', choice);
 		if (choice == 'nobackground') {
 		    //this.skyboxMesh.visible = false;
-		    this.scene.background = new THREE.Color(0xff0000);
+		    //this.scene.background = new THREE.Color(0xff0000);
 		    //this.signals.objectChanged.dispatch( this.scene.background );
 		    return;
 		}
@@ -762,8 +763,8 @@ OpenSimEditor.prototype = {
 		var textureLoader = new THREE.TextureLoader();
 		var texture1 = textureLoader.load("textures/"+choice+".jpg");
 		texture1.wrapS = texture1.wrapT = THREE.RepeatWrapping;
-		texture1.repeat.set(128, 128);
-		this.groundMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, map: texture1 });
+		texture1.repeat.set(64, 64);
+		this.groundMaterial = new THREE.MeshPhongMaterial({ color: 0x888888, map: texture1 });
 		this.groundPlane.material = this.groundMaterial;
 		this.signals.materialChanged.dispatch( this.groundPlane );
 	},
