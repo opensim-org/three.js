@@ -691,7 +691,7 @@ OpenSimEditor.prototype = {
 		var texture1 = textureLoader.load( "textures/"+choice+".jpg" );
 		var material1 = new THREE.MeshPhongMaterial( { color: 0xffffff, map: texture1 } );
 		texture1.wrapS = texture1.wrapT = THREE.RepeatWrapping;
-		texture1.repeat.set( 128, 128 );
+		texture1.repeat.set( 64, 64);
 		var geometry = new THREE.PlaneBufferGeometry( 100, 100 );
 		groundPlane = new THREE.Mesh( geometry, material1 );
 		groundPlane.name = 'GroundPlane';
@@ -729,7 +729,7 @@ OpenSimEditor.prototype = {
 		this.sceneLight = directionalLight;
 		this.addObject(directionalLight);
         // HemisphericalLight 
-		hemiSphereLight = new THREE.HemisphereLight(10724259, 0, 1);
+		hemiSphereLight = new THREE.HemisphereLight(10724259, 1, 0);
 		hemiSphereLight.name = 'GlobalLight';
 		hemiSphereLight.intensity = 0.25;
 		this.addObject(hemiSphereLight);
@@ -915,15 +915,18 @@ OpenSimEditor.prototype = {
 	    modelCenterGroup.name = "ModelCenter";
 	    modelCenterGroup.position.copy(new THREE.Vector3(modelCenter.x, modelCenter.y, modelCenter.z));
 	    model.add(modelCenterGroup);
-	    modelLight =  new THREE.SpotLight( {color: this.currentModelColor});
-	    modelLight.castShadow = true;
-	    modelLight.angle = 0.5;
+	    modelLight =  new THREE.PointLight( {color: this.currentModelColor});
+	    //modelLight.castShadow = true;
+	    //modelLight.angle = 0.5;
+	    modelLight.intensity = 0.25;	
 	    modelLight.name = 'ModelLight';
+        /*
 	    modelLight.shadow.camera.bottom = -1000;
 	    modelLight.shadow.camera.far = 2000;
 	    modelLight.shadow.camera.left = -1000;
 	    modelLight.shadow.camera.right = 1000;
 	    modelLight.shadow.camera.top = 1000;
+        */
 	    modelLight.position.copy(new THREE.Vector3((modelbbox.max.x+modelbbox.min.x)/2, 
 		modelbbox.max.y+100, (modelbbox.min.z+modelbbox.max.z)/2));
 	    modelLight.target = modelCenterGroup;
