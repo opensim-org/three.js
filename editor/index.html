@@ -71,10 +71,10 @@
 		<script src="js/Config.js"></script>
 		<script src="js/History.js"></script>
 		<script src="js/Loader.js"></script>
-		<script src="js/Menubar.js"></script>
-		<script src="js/Menubar.File.js"></script>
-		<script src="js/Menubar.Edit.js"></script>
-		<script src="js/Menubar.Add.js"></script>
+		//<script src="js/Menubar.js"></script>
+		//<script src="js/Menubar.File.js"></script>
+		//<script src="js/Menubar.Edit.js"></script>
+		//<script src="js/Menubar.Add.js"></script>
 		//<script src="js/Menubar.Movies.js"></script>
 		//<script src="js/Menubar.View.js"></script>
 		//<script src="js/Menubar.Examples.js"></script>
@@ -157,7 +157,11 @@
 				this.texture = editor.config.getKey('floor');
 				this.height = -0.001;
 				this.backdrop = editor.config.getKey('skybox');
-				this.backgroundColor = "#ffffff";
+				color = editor.config.getKey('settings/backgroundcolor');
+				if (color=== undefined)
+					this.backgroundColor = "#04004d";
+				else
+					this.backgroundColor = color;
 				// Define render logic ...
 				this.sceneLightX = -0.01;
 				this.sceneLightY = -0.01;
@@ -191,9 +195,9 @@
 				});
 				world.add(knobs, 'sceneLightSelect').name('Scene Light');
 				var model_control = gui.addFolder('Model');
-					model_control.add(knobs, 'modelLightSelect').name('Model SpotLight');
+					model_control.add(knobs, 'modelLightSelect').name('Model Light');
 				gui.add(knobs, 'toggleMarkup').name('Toggle Markup');
-				gui.add(knobs, 'expertModeSelect').name('Expert Mode');
+				//gui.add(knobs, 'expertModeSelect').name('Expert Mode');
 			    /*
 				var sceneLight = gui.addFolder('Scene Light');
 				var sceneLightX = sceneLight.add(knobs, 'sceneLightX', -1.01, 1.01, .001);
