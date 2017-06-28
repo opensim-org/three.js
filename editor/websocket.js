@@ -76,7 +76,16 @@ function onMessage(evt) {
 	    cmd = new window[msg.command.type]();
 	    cmd.fromJSON(msg.command);
             editor.execute(cmd);
-            break;        /*
+            break; 
+    case "addModelObject":
+        cmd = new window[msg.command.type]();
+	    cmd.fromJSON(msg.command);
+        parentUuid = msg.command.object.object.parent;
+        editor.execute(cmd);
+        newUuid = cmd.object.uuid;
+        editor.moveObject(editor.objectByUuid(newUuid), editor.objectByUuid(parentUuid));
+        break;
+        /*
         var paths = msg.paths;
         for (var i = 0; i < paths.length; i ++ ) {
             var onePathUpdate = paths[i];
