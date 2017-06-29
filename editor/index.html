@@ -192,6 +192,8 @@
 				var backdropColor = world.addColor(knobs, 'backgroundColor');
 				backdropColor.onChange(function (value) {
 				    editor.updateBackgroundColor(value);
+                    editor.updateBackground('nobackground');
+                    //gui.__controllers[1].
 				});
 				world.add(knobs, 'sceneLightSelect').name('Scene Light');
 				var model_control = gui.addFolder('Model');

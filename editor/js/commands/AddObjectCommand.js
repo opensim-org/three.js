@@ -56,7 +56,7 @@ AddObjectCommand.prototype = {
 
 		if ( this.object === undefined ) {
 
-			var loader = new THREE.ObjectLoader();
+			var loader = new THREE.OpenSimLoader();
 			this.object = loader.parse( json.object );
 
 		}
