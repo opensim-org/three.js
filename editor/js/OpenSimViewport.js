@@ -73,7 +73,7 @@ var OpenSimViewport = function ( editor ) {
 
 		}
 
-		render();
+ 		render();
 
 	} );
 	transformControls.addEventListener( 'mouseDown', function () {
@@ -382,7 +382,7 @@ var OpenSimViewport = function ( editor ) {
 	var saveTimeout;
 
 	signals.cameraChanged.add( function () {
-
+                editor.sceneLight.position.copy(editor.camera.position);
 		render();
 
 	} );
