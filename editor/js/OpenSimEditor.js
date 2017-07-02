@@ -732,7 +732,7 @@ OpenSimEditor.prototype = {
 		hemiSphereLight = new THREE.HemisphereLight(10724259, 1, 0);
 		hemiSphereLight.name = 'GlobalLight';
 		hemiSphereLight.intensity = 0.25;
-		this.addObject(hemiSphereLight);
+		//this.addObject(hemiSphereLight);
 	},
 
 	updateBackground: function (choice) {
@@ -831,7 +831,7 @@ OpenSimEditor.prototype = {
 
 	    this.camera.position.set(newposition.x, newposition.y, newposition.z);
 	    this.camera.lookAt(viewCenter);
-	    this.sceneLight.position.copy(this.camera.position);
+	    //this.sceneLight.position.copy(this.camera.position);
 	    var changeEvent = { type: 'change' };
 	    this.control.dispatchEvent( changeEvent );
 	    this.signals.defaultCameraApplied.dispatch(viewCenter);
@@ -896,6 +896,9 @@ OpenSimEditor.prototype = {
 	    // Compute Offset so that models don't overlap
 	    if (this.models.length==1)
 		return; // No need for offset
+            // if ExperimentalData, also no offset
+            if (modelObject.children[0].name.startsWith('/ExperimentalData'))
+                return;
 	    // Multiple models, compute box bounding all previous models and use to offset
 	    nextModel = editor.objectByUuid(this.models[0]);
 	    sceneBox = new THREE.Box3().setFromObject(nextModel);

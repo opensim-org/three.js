@@ -557,15 +557,21 @@ Object.assign( THREE.OpenSimLoader.prototype, {
 
 			    case 'Frame':
 
-			        object = new THREE.AxisHelper(data.size);
-
-			        break;
+                                        object = new THREE.AxisHelper(data.size);
+                                        
+                                        break;
 
 			    case 'GeometryPath':
-			        object = new THREE.SkinnedMuscle(getGeometry(data.geometry), data.points,  getMaterial( data.material ));
-			        break;
-				default:
-
+                                        object = new THREE.SkinnedMuscle(getGeometry(data.geometry), data.points,  getMaterial( data.material ));
+                                        
+                                        break;
+                                
+                            case 'Arrow':
+                                        object = new THREE.ArrowHelper(data.dir, data.origin, 1000, data.color);
+                                        
+                                        break;
+                                        
+                            default:
 					object = new THREE.Object3D();
 
 			}
