@@ -42,10 +42,10 @@ input.Number {
 
 #viewport {
 	position: absolute;
-	top: 32px;
+	top: 0px;
 	left: 0;
 	right: 0px;
-	bottom: 32px;
+	bottom: 0px;
 }
 
 #viewport #info {
