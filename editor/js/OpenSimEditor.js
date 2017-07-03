@@ -720,18 +720,18 @@ OpenSimEditor.prototype = {
 		directionalLight =  new THREE.DirectionalLight( sceneLightColor);
 		directionalLight.castShadow = true;
 		directionalLight.name = 'SceneLight';
-		directionalLight.shadow.camera.bottom = -1000;
-		directionalLight.shadow.camera.far = 2000;
-		directionalLight.shadow.camera.left = -1000;
-		directionalLight.shadow.camera.right = 1000;
-		directionalLight.shadow.camera.top = 1000;
+		directionalLight.shadow.camera.bottom = -2000;
+		directionalLight.shadow.camera.far = 8000;
+		directionalLight.shadow.camera.left = -2000;
+		directionalLight.shadow.camera.right = 2000;
+		directionalLight.shadow.camera.top = 2000;
 		directionalLight.visible = true;
 		this.sceneLight = directionalLight;
 		this.addObject(directionalLight);
         // HemisphericalLight 
 		hemiSphereLight = new THREE.HemisphereLight(10724259, 1, 0);
 		hemiSphereLight.name = 'GlobalLight';
-		hemiSphereLight.intensity = 0.25;
+		hemiSphereLight.intensity = 0.40;
 		//this.addObject(hemiSphereLight);
 	},
 
