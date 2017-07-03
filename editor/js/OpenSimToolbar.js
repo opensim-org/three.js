@@ -184,7 +184,7 @@ var OpenSimToolbar = function ( editor ) {
             var canvas = document.getElementById("viewport");
             getImageData = true;
             //canvas.children[1].render();
-	    var img    = canvas.children[1].toDataURL("image/jpeg");
+	    var img    = canvas.children[0].toDataURL("image/jpeg");
 	    saveFile(img, "opensim_snapshot.jpg");
 	};
         // Support saving image to file
