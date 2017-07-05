@@ -725,6 +725,9 @@ OpenSimEditor.prototype = {
 		directionalLight.shadow.camera.left = -2000;
 		directionalLight.shadow.camera.right = 2000;
 		directionalLight.shadow.camera.top = 2000;
+		directionalLight.shadow.mapSize.width = 1024;
+		directionalLight.shadow.mapSize.height = 1024;
+		// for debugging. not working directionalLight.shadowCameraVisible = true;
 		directionalLight.visible = true;
 		this.sceneLight = directionalLight;
 		this.addObject(directionalLight);
