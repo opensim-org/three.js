@@ -427,9 +427,24 @@ var OpenSimViewport = function ( editor ) {
 	});
 
 	signals.recordingStarted.add(function () {
-	    // add frame to gif
-	    
-
+	    // add frame to capture
+	    if (capturer !== undefined) 
+               capturer = undefined;
+         capturer = new CCapture({
+	            verbose: true,
+	            display: true,
+	            framerate: 15,
+	            motionBlurFrames: 0,
+	            quality: 100,
+                name: "opensim_video",
+	            format: 'webm',
+	            workersPath: 'js/',
+	            timeLimit: 200,
+	            frameLimit: 0,
+	            onProgress: function (p) { progress.style.width = (p * 100) + '%' }
+	        });
+	        recording = true;
+	        capturer.start();
 	});
 
 	signals.recordingStopped.add(function () {
