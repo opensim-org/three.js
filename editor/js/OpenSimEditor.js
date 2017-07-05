@@ -16,6 +16,7 @@ var OpenSimEditor = function () {
 	this.dolly_object = new THREE.Object3D();
 	this.dolly_object.name = 'Dolly';
 	this.dolly_object.position.y = 0;
+        this.recording = false;
 
 	this.models = [];
 	this.currentModel = undefined; //uuid of current model call getCurrentModel for actualobject
@@ -992,9 +993,11 @@ OpenSimEditor.prototype = {
         toggleRecord: function () {
             if (this.recording){
                 this.signals.recordingStopped.dispatch();
+                this.recording = false;
             }
             else {
                 this.signals.recordingStarted.dispatch();
+                this.recording = true;
             }
         }
 
