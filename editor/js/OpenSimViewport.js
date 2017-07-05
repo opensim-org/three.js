@@ -25,7 +25,7 @@ var OpenSimViewport = function ( editor ) {
 	var lookAtObject = scene;
 	var showCamOnly = false;
     // AnimationRecording
-	var capturer;
+	var capturer = undefined;
 	var recording = false;
 
 	var objects = [];
@@ -452,6 +452,7 @@ var OpenSimViewport = function ( editor ) {
 	        capturer.stop();
 	        capturer.save();
 	        capturer = undefined;
+                recording = false;
 	    }
 	    // add frame to gif
 	    //gif.render();
