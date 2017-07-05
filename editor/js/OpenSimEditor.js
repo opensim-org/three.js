@@ -96,7 +96,7 @@ var OpenSimEditor = function () {
 	    animationStopped: new Signal(),
 	    defaultCameraApplied: new Signal(),
 	    recordingStarted: new Signal(),
-        recordingStopped: new Signal()
+            recordingStopped: new Signal()
 	};
 
 	this.config = new Config( 'threejs-editor' );
@@ -988,6 +988,14 @@ OpenSimEditor.prototype = {
             }
             pathObject.geometry.verticesNeedUpdate = true;*/
             pathObject.material.color.setHex(pathUpdateJson.color);
+        },
+        toggleRecord: function () {
+            if (this.recording){
+                this.signals.recordingStopped.dispatch();
+            }
+            else {
+                this.signals.recordingStarted.dispatch();
+            }
         }
 
 };

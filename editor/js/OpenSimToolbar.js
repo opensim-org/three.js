@@ -200,7 +200,14 @@ var OpenSimToolbar = function ( editor ) {
                 location.replace(uri);
             }
         };
-
+        var startRecord = new UI.Button(false, 'icons/video.png').onClick(function () {
+		toggleRecord();
+	});
+	startRecord.dom.title = 'Record Start/Stop';
+	buttons.add(startRecord);
+	function toggleRecord() {
+            editor.toggleRecord();
+        }
 	return container;
 
 }
