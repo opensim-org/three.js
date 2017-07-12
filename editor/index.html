@@ -184,42 +184,20 @@
 			    texture.onChange(function (value) {
 			        editor.updateGroundPlane(value);
 			    });
-			    var world = gui.addFolder('World');
-			    var backdrop = world.add(knobs, 'backdrop', ['nobackground', 'mars', 'sky', 'desert', 'city', 'dark', 'pastures']);
-				backdrop.onChange(function (value) {
-			        editor.updateBackground(value);
-				});
-				var backdropColor = world.addColor(knobs, 'backgroundColor');
-				backdropColor.onChange(function (value) {
+			    //var world = gui.addFolder('World');
+                            var backdropColor = gui.addColor(knobs, 'backgroundColor');
+                            backdropColor.onChange(function (value) {
 				    editor.updateBackgroundColor(value);
-                    editor.updateBackground('nobackground');
-                    //gui.__controllers[1].
-				});
-				world.add(knobs, 'sceneLightSelect').name('Scene Light');
-				var model_control = gui.addFolder('Model');
-					model_control.add(knobs, 'modelLightSelect').name('Model Light');
-				gui.add(knobs, 'toggleMarkup').name('Toggle Markup');
-				//gui.add(knobs, 'expertModeSelect').name('Expert Mode');
-			    /*
-				var sceneLight = gui.addFolder('Scene Light');
-				var sceneLightX = sceneLight.add(knobs, 'sceneLightX', -1.01, 1.01, .001);
-				sceneLightX.onChange(function (value) {
-			        editor.updateSceneLight('x', value);
-			    });
-				var sceneLightY = sceneLight.add(knobs, 'sceneLightY', -1.01, 1.01, .001);
-				sceneLightY.onChange(function (value) {
-			        editor.updateSceneLight('y', value);
-			    });
-				var sceneLightZ = sceneLight.add(knobs, 'sceneLightZ', -1.01, 1.01, .001);
-				sceneLightZ.onChange(function (value) {
-			        editor.updateSceneLight('z', value);
-			    });
-				var sceneLightColor = sceneLight.addColor(knobs, 'sceneLightColor');
-				sceneLightColor.onChange(function (value) {
-				editor.updateSceneLight('color', value);
-				});*/
-			    // No save/retrieve settings will go thru File menu or popup
-				// gui.remember(knobs);
+                                    //editor.updateBackground('nobackground');
+                            });
+                            //world.add(knobs, 'sceneLightSelect').name('Scene Light');
+                            //var model_control = gui.addFolder('Model');
+                            // model_control.add(knobs, 'modelLightSelect').name('Model Light');
+                            //gui.add(knobs, 'toggleMarkup').name('Toggle Markup');
+                            //gui.add(knobs, 'expertModeSelect').name('Expert Mode');
+                            // No save/retrieve settings
+                            // gui.remember(knobs);
+                            gui.closed = true;
 			}
 
 			var viewport = new OpenSimViewport( editor );
