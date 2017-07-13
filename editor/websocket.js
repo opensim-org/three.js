@@ -63,8 +63,11 @@ function onMessage(evt) {
 	    break;
 	case "OpenModel":
 	    modeluuid = msg.UUID;
-        filePath = msg.filePath;
-	    editor.loadModel(filePath);
+        //filePath = msg.filePath;
+	    //editor.loadModel(filePath);
+        // 8003 is the port for the server that contains model json files.
+        modelJsonPort = msg.modelJsonPort;
+	    editor.loadModel("http://localhost:"+modelJsonPort+"/"+modeluuid.substring(0,8)+'.json');
 	    //editor.loadModel("http://localhost:8002/opensim/build/testuserdir/model_json/"+modeluuid.substring(0,8)+'.json');
 	    //editor.loadModel('file:///Users/chris/Desktop/69c454f3.json'); //modeluuid.substring(0,8)+'.json');
         //editor.loadModel('file:///Users/chris/repos/opensim-gui/6/opensim-gui/Gui/opensim/build/testuserdir/'+model.uuid.substring(0,8)+'.json');
