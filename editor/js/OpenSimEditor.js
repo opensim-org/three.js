@@ -309,7 +309,8 @@ OpenSimEditor.prototype = {
 
 			} else if ( object instanceof THREE.DirectionalLight ) {
 
-				helper = new THREE.DirectionalLightHelper( object, 1 );
+				// helper = new THREE.DirectionalLightHelper( object, 1 );
+                                return;
 
 			} else if ( object instanceof THREE.SpotLight ) {
 
