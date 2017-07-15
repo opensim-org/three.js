@@ -8,32 +8,14 @@ var OpenSimToolbar = function ( editor ) {
 
 	var container = new UI.Panel();
 	//container.setPaddingTop('10px');
-	container.dom.style.width = '20px';
+    // This causes 3 columns of buttons:
+	container.dom.style.width = '120px';
 	container.setId( 'opensim_toolbar' );
 
 	var buttons = new UI.Panel();
 	container.add( buttons );
 
 	var camera = editor.camera;
-    // -X
-	var viewminx = new UI.Button(false, 'icons/backView_axes.png').onClick(function () {
-		viewfromMinusX();
-	});
-	viewminx.dom.title = 'Back';
-	buttons.add(viewminx);
-	function viewfromMinusX() {
-	    var bbox = computeModelBbox();
-	    var center = new THREE.Vector3();
-	    bbox.center(center);
-	    var newpos = new THREE.Vector3().copy(center);
-	    var fov = editor.camera.fov * (Math.PI / 180);
-	    // Calculate the camera distance
-	    var objectSize = Math.max(bbox.max.y - bbox.min.y, bbox.max.z - bbox.min.z) / 2;
-	    var distance = Math.abs(objectSize / Math.sin(fov / 2));
-	    newpos.x = bbox.min.x - distance;
-	    editor.updateCamera(newpos, center);
-	    
-    };
     // +X
 	var viewx = new UI.Button(false, 'icons/frontView_axes.png').onClick(function () {
 
@@ -42,7 +24,6 @@ var OpenSimToolbar = function ( editor ) {
 	});
 	viewx.dom.title = 'Front';
 	buttons.add(viewx);
-
 	function viewfromPlusX() {
 	    var bbox = computeModelBbox();
 	    var center = new THREE.Vector3();
@@ -58,25 +39,6 @@ var OpenSimToolbar = function ( editor ) {
 	    var objectSize = Math.max(bbox.max.y - bbox.min.y, bbox.max.z - bbox.min.z) / 2;
 	    var distance = Math.abs(objectSize / Math.sin(fov / 2));
 	    newpos.x = bbox.max.x + distance;
-	    editor.updateCamera(newpos, center);
-	    
-    };
-    // -Y
-	var viewminy = new UI.Button(false, 'icons/bottomView_axes.png').onClick(function () {
-	    viewfromMinusY();
-	});
-	viewminy.dom.title = 'Bottom';
-	buttons.add(viewminy);
-	function viewfromMinusY() {
-	    var bbox = computeModelBbox();
-	    var center = new THREE.Vector3();
-	    bbox.center(center);
-	    var newpos = new THREE.Vector3().copy(center);
-	    var fov = editor.camera.fov * (Math.PI / 180);
-	    // Calculate the camera distance
-	    var objectSize = Math.max(bbox.max.x - bbox.min.x, bbox.max.z - bbox.min.z) / 2;
-	    var distance = Math.abs(objectSize / Math.sin(fov / 2));
-	    newpos.y = bbox.min.y - distance;
 	    editor.updateCamera(newpos, center);
 	    
     };
@@ -96,6 +58,64 @@ var OpenSimToolbar = function ( editor ) {
 	    var objectSize = Math.max(bbox.max.x - bbox.min.x, bbox.max.z - bbox.min.z) / 2;
 	    var distance = Math.abs(objectSize / Math.sin(fov / 2));
 	    newpos.y = bbox.max.y + distance;
+	    editor.updateCamera(newpos, center);
+	    
+    };
+    // +Z
+	var viewplusz = new UI.Button(false, 'icons/rightView_axes.png').onClick(function () {
+	    viewfromPlusZ();
+	});
+	viewplusz.dom.title = 'Left';
+	buttons.add(viewplusz);
+	function viewfromPlusZ() {
+
+	    var bbox = computeModelBbox();
+	    var center = new THREE.Vector3();
+	    bbox.center(center);
+	    var newpos = new THREE.Vector3().copy(center);
+	    var fov = editor.camera.fov * (Math.PI / 180);
+	    // Calculate the camera distance
+	    var objectSize = Math.max(bbox.max.x - bbox.min.x, bbox.max.y - bbox.min.y)/2;
+	    var distance = Math.abs(objectSize / Math.sin(fov / 2));
+	    newpos.z = bbox.max.z + distance;
+	    editor.updateCamera(newpos, center);
+	    
+    };
+    // -X
+	var viewminx = new UI.Button(false, 'icons/backView_axes.png').onClick(function () {
+		viewfromMinusX();
+	});
+	viewminx.dom.title = 'Back';
+	buttons.add(viewminx);
+	function viewfromMinusX() {
+	    var bbox = computeModelBbox();
+	    var center = new THREE.Vector3();
+	    bbox.center(center);
+	    var newpos = new THREE.Vector3().copy(center);
+	    var fov = editor.camera.fov * (Math.PI / 180);
+	    // Calculate the camera distance
+	    var objectSize = Math.max(bbox.max.y - bbox.min.y, bbox.max.z - bbox.min.z) / 2;
+	    var distance = Math.abs(objectSize / Math.sin(fov / 2));
+	    newpos.x = bbox.min.x - distance;
+	    editor.updateCamera(newpos, center);
+	    
+    };
+    // -Y
+	var viewminy = new UI.Button(false, 'icons/bottomView_axes.png').onClick(function () {
+	    viewfromMinusY();
+	});
+	viewminy.dom.title = 'Bottom';
+	buttons.add(viewminy);
+	function viewfromMinusY() {
+	    var bbox = computeModelBbox();
+	    var center = new THREE.Vector3();
+	    bbox.center(center);
+	    var newpos = new THREE.Vector3().copy(center);
+	    var fov = editor.camera.fov * (Math.PI / 180);
+	    // Calculate the camera distance
+	    var objectSize = Math.max(bbox.max.x - bbox.min.x, bbox.max.z - bbox.min.z) / 2;
+	    var distance = Math.abs(objectSize / Math.sin(fov / 2));
+	    newpos.y = bbox.min.y - distance;
 	    editor.updateCamera(newpos, center);
 	    
     };
@@ -119,26 +139,6 @@ var OpenSimToolbar = function ( editor ) {
 	    editor.updateCamera(newpos, center);
 	    
 	};
-    // +Z
-	var viewplusz = new UI.Button(false, 'icons/rightView_axes.png').onClick(function () {
-	    viewfromPlusZ();
-	});
-	viewplusz.dom.title = 'Left';
-	buttons.add(viewplusz);
-	function viewfromPlusZ() {
-
-	    var bbox = computeModelBbox();
-	    var center = new THREE.Vector3();
-	    bbox.center(center);
-	    var newpos = new THREE.Vector3().copy(center);
-	    var fov = editor.camera.fov * (Math.PI / 180);
-	    // Calculate the camera distance
-	    var objectSize = Math.max(bbox.max.x - bbox.min.x, bbox.max.y - bbox.min.y)/2;
-	    var distance = Math.abs(objectSize / Math.sin(fov / 2));
-	    newpos.z = bbox.max.z + distance;
-	    editor.updateCamera(newpos, center);
-	    
-    };
 
 	var view_zoomin = new UI.Button(false, 'icons/zoom-in.png').onClick(function () {
 	    editor.viewZoom(+100);
