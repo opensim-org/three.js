@@ -23,6 +23,7 @@ THREE.SkinnedMuscle = function(geom, points, material) {
     THREE.SkinnedMesh.call( this, geom );
     this.material = material;
     this.material.skinning = true;
+    this.frustumCulled = false;
 };
 THREE.SkinnedMuscle.prototype = Object.create( THREE.SkinnedMesh.prototype );
 THREE.SkinnedMuscle.prototype.constructor = THREE.SkinnedMuscle;
