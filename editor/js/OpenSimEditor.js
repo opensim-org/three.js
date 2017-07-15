@@ -309,7 +309,8 @@ OpenSimEditor.prototype = {
 
 			} else if ( object instanceof THREE.DirectionalLight ) {
 
-				helper = new THREE.DirectionalLightHelper( object, 1 );
+				// helper = new THREE.DirectionalLightHelper( object, 1 );
+                                return;
 
 			} else if ( object instanceof THREE.SpotLight ) {
 
@@ -893,6 +894,7 @@ OpenSimEditor.prototype = {
 	    */
 	    builtinLight = this.scene.getObjectByName('SceneLight');
 	    builtinLight.position.copy(new THREE.Vector3(modelbbox.max.x, modelbbox.max.y+100, modelbbox.min.z));
+	    this.signals.cameraChanged.dispatch(this.camera);
 	    // Move dolly to middle hight of bbox and make it invisible
 	    this.dolly_object.position.y = (modelbbox.max.y + modelbbox.min.y) / 2;
 	    path = this.scene.getObjectByName('DollyPath');
