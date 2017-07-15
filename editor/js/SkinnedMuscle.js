@@ -7,7 +7,7 @@ THREE.SkinnedMuscle = function(geom, points, material) {
     this.pathpointObjects = [];
     geom.bones = [];
     this.DEBUG = true;
-    for (var i=0; i< 2*points.length; i++) {
+    for (var i=0; i< 2*points.length-2; i++) {
         var bone = new THREE.Bone();
         bone.pos = [0, 0, 0];
         bone.rotq = [0, 0, 0, 1];
@@ -16,10 +16,9 @@ THREE.SkinnedMuscle = function(geom, points, material) {
         geom.bones.push(bone);
     }
 
-    console.warn("Num bones:" + geom.bones.length);
+    var numVerticesPerLevel = geom.vertices.length / (2*points.length-2);
 
-    var numVerticesPerLevel = geom.vertices.length / points.length;
-    for ( var i = 0; i < geom.vertices.length; i ++ ) {
+    for ( var i = 0; i < geom.vertices.length; i++ ) {
         var skinIndex = Math.floor(i / numVerticesPerLevel);
         geom.skinIndices.push(new THREE.Vector4(skinIndex, 0, 0, 0));
         geom.skinWeights.push( new THREE.Vector4( 1, 0, 0, 0 ) );
@@ -40,55 +39,78 @@ THREE.SkinnedMuscle.prototype.updateMatrixWorld = function( force ) {
     if (this.skeleton === undefined)
         return;
     var bones = this.skeleton.bones;
+    //console.warn("Num bones in updateMatrixWorld: " + bones.length);
+
     if (this.pathpointObjects.length != this.pathpoints.length){
-        for ( var b=0; b < this.pathpoints.length; b++) {
-            var ppt = this.pathpoints[b];
-            var pptObject = editor.objectByUuid(ppt);
-            if (pptObject !== undefined) {
-                this.pathpointObjects.push(pptObject);
-                bones[b].geometry = pptObject.geometry;
+        var b = 0;
+        for ( var p=0; p < this.pathpoints.length; p++) {
+            var pptObject1 = editor.objectByUuid(this.pathpoints[p]);
+            var pptObject2 = editor.objectByUuid(this.pathpoints[p+1]);
+
+            if (pptObject1 !== undefined) {
+               // add every pathpoint to the list of PathPoint objects
+                this.pathpointObjects.push(pptObject1);
+
+                if (pptObject2 !== undefined) {
+                // define the two bones of a segement of the path together
+                    bones[b].geometry = new THREE.SphereGeometry(8, 64, 64); //pptObject1.geometry;
+                    bones[++b].geometry = new THREE.SphereGeometry(8, 64, 64); //pptObject2.geometry;
+                }
+                b++;
             }
         }
     }
     // Compute reverse transform from Ground to Scene (usually this's inverse translation)
     // This is necessary since the blending to compute vertices adds offset twice
     var mat = new THREE.Matrix4().getInverse(this.parent.matrixWorld);
-    var vec = new THREE.Vector3(0, 0.02, 0.05); //.setFromMatrixPosition(mat);
+    var vec = new THREE.Vector3().setFromMatrixPosition(mat);
 
-    // clycle through each PathPoint and add two "bones" for each point
-    // one aligned with the currect parent and the second to the next
-    for (var p = 0; p < this.pathpoints.length; p++) {
+    // Variables for the two points of a given path segement, the axis to
+    // be rotated (from) and the vector between them (to)
+    var pt1 = new THREE.Vector3();
+    var pt2 = new THREE.Vector3();
+    var vFrom = new THREE.Vector3(0, -1, 0);
+    var vTo = new THREE.Vector3();
+
+    // cycle through each segement defined by two PathPoints, pt1 and pt2
+    // and alignge the bones (caps of each segment) to be alinged with
+    // the vector connecting them.
+    var b = 0; // bone (of SkinnedMuscle) index
+    for (var p = 0; p < this.pathpoints.length-1; p++) {
         var thisPathpointObject = this.pathpointObjects[p];
-        if (thisPathpointObject !== undefined) {
-            this.children[2*p].position.setFromMatrixPosition(thisPathpointObject.matrixWorld);
-            this.children[2*p].position.add(vec);
-            this.children[2*p].quaternion.setFromRotationMatrix(thisPathpointObject.matrixWorld);
+        var nextPathpointObject = this.pathpointObjects[p+1];
 
-            var nextPathpointObject = this.pathpointObjects[p+1];
-            if(nextPathpointObject !== undefined) {
-              this.children[2*p+1].position.setFromMatrixPosition(nextPathpointObject.matrixWorld);
-              this.children[2*p+1].position.add(vec);
-              this.children[2*p+1].quaternion.setFromRotationMatrix(nextPathpointObject.matrixWorld);
-            }
-            else{
+        if(thisPathpointObject !== undefined) {
+            pt1.setFromMatrixPosition(thisPathpointObject.matrixWorld);
+            pt2.setFromMatrixPosition(nextPathpointObject.matrixWorld);
 
-              this.children[2*p+1].position.setFromMatrixPosition(thisPathpointObject.matrixWorld);
-              this.children[2*p+1].position.add(vec);
-              this.children[2*p+1].quaternion.setFromRotationMatrix(thisPathpointObject.matrixWorld);
-            }
+            vTo = pt2.clone();
+            vTo.sub(pt1).normalize();
+
+            // bones are positioned on the pathpoints
+            bones[b].position.setFromMatrixPosition(thisPathpointObject.matrixWorld);
+            bones[b].position.add(vec);
+            // the orientation of the bone is updated to have its Y-axis pointed
+            // back along the vector from pt1 to pt2
+            bones[b].quaternion.setFromUnitVectors(vFrom, vTo);
+
+            bones[++b].position.setFromMatrixPosition(nextPathpointObject.matrixWorld);
+            // the orientation of the bone is updated to have its Y-axis pointed
+            // back along the vector from pt1 to pt2
+            bones[b].position.add(vec);
+            bones[b].quaternion.setFromUnitVectors(vFrom, vTo);
 
             if (this.DEBUG) {
                 console.warn("Path point name: " + thisPathpointObject.name);
                 console.warn("Num pathpoints = " + this.pathpoints.length);
                 console.warn("Num bones = " + this.children.length);
                 console.warn("This is vec:" + vec.toArray());
-                console.dir(this.children[2*p+1]);
+                //console.dir(this.children[2*p+1]);
                 this.DEBUG = false;
             }
-            //bones[b].pos.setFromMatrixPosition(pptObject.matrixWorld);
-            //console.warn('bone '+b+' pos ='+bones[b].position.x, bones[b].position.y, bones[b].position.z);
-            this.children[2*p].updateMatrixWorld();
-            this.children[2*p+1].updateMatrixWorld();
+
+            bones[b-1].updateMatrixWorld();
+            bones[b++].updateMatrixWorld();
         }
     }
     this.skeleton.update();
