@@ -7,7 +7,8 @@ var OpenSimToolbar = function ( editor ) {
 	var signals = editor.signals;
 
 	var container = new UI.Panel();
-	container.setPaddingTop('10px');
+	//container.setPaddingTop('10px');
+	container.dom.style.width = '20px';
 	container.setId( 'opensim_toolbar' );
 
 	var buttons = new UI.Panel();
