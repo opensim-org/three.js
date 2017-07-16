@@ -140,16 +140,16 @@ var OpenSimToolbar = function ( editor ) {
 	    
 	};
 
-	var view_zoomin = new UI.Button(false, 'icons/zoom-in.png').onClick(function () {
-	    editor.viewZoom(+100);
-	});
-	view_zoomin.dom.title = 'Zoom-in';
-	buttons.add(view_zoomin);
 	var view_zoomout = new UI.Button(false, 'icons/zoom-out.png').onClick(function () {
 	    editor.viewZoom(-100);
 	});
 	view_zoomout.dom.title = 'Zoom-out';
 	buttons.add(view_zoomout);
+	var view_zoomin = new UI.Button(false, 'icons/zoom-in.png').onClick(function () {
+	    editor.viewZoom(+100);
+	});
+	view_zoomin.dom.title = 'Zoom-in';
+	buttons.add(view_zoomin);
 	var view_refit = new UI.Button(false, 'icons/refit.png').onClick(function () {
 	    //var modelObject = editor.scene.getObjectByName('OpenSimModel');
 	    var bbox = computeModelBbox();
