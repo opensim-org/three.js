@@ -645,6 +645,14 @@ var OpenSimViewport = function ( editor ) {
 		camera.aspect = container.dom.offsetWidth / container.dom.offsetHeight;
 		camera.updateProjectionMatrix();
 
+        // To avoid the aspect ratio of the OpenSim watermark from changing
+        // as the window is resized.
+        editor.sceneOrthoCam.left = 0;
+        editor.sceneOrthoCam.right = window.innerWidth;
+        editor.sceneOrthoCam.top = window.innerHeight;
+        editor.sceneOrthoCam.bottom = 0;
+        editor.sceneOrthoCam.updateProjectionMatrix();
+
 		renderer.setSize( container.dom.offsetWidth, container.dom.offsetHeight );
 
 		render();
