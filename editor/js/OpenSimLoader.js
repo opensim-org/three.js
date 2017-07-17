@@ -253,7 +253,7 @@ Object.assign( THREE.OpenSimLoader.prototype, {
 
 				    case 'PathGeometry':
                 //CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments, heightSegments, openEnded, thetaStart, thetaLength)
-				        geometry = new THREE.CylinderGeometry(8, 8, data.segments, 8, 2*data.segments-2, true);
+				        geometry = new THREE.CylinderGeometry(8, 8, 0.1, 8, 2*data.segments-1, true);
 
 				        break;
 
