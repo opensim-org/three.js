@@ -98,10 +98,7 @@ THREE.SkinnedMuscle.prototype.updateMatrixWorld = function( force ) {
             // the orientation of the bone is updated to have its Y-axis pointed
             // back along the vector from pt1 to pt2
             bones[b].position.add(vec);
-            bones[b].quaternion.setFromUnitVectors(vFrom, vTo);
-
-            bones[b-1].updateMatrixWorld();
-            bones[b++].updateMatrixWorld();
+            bones[b++].quaternion.setFromUnitVectors(vFrom, vTo);
         }
     }
     this.skeleton.update();
