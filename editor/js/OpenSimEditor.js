@@ -309,7 +309,8 @@ OpenSimEditor.prototype = {
 
 			} else if ( object instanceof THREE.DirectionalLight ) {
 
-				helper = new THREE.DirectionalLightHelper( object, 1 );
+				// helper = new THREE.DirectionalLightHelper( object, 1 );
+                                return;
 
 			} else if ( object instanceof THREE.SpotLight ) {
 
@@ -799,23 +800,26 @@ OpenSimEditor.prototype = {
 	},
 		createLogoSprite: function() {
 			var getLogoTexture = function () {
-				var texture = new THREE.ImageUtils.loadTexture("OpenSimLogoSmall.PNG");
+				var texture = new THREE.ImageUtils.loadTexture("OpenSimWatermarkOpaqueGrayscale128x128.png");
 				return texture;
 			};
 			var spriteMaterial = new THREE.SpriteMaterial({
 						opacity: 0.5,
 						color: 0xffffff,
-						transparent: false,
-						// useScreenCoordinates: true,
+						transparent: false, // TODO not necessary
+						// useScreenCoordinates: true, TODO deprecated
 						map: getLogoTexture()}
 			);
 
 			spriteMaterial.scaleByViewport = false;
-			spriteMaterial.blending = THREE.AdditiveBlending;
+            // This used to be AdditiveBlending, but that caused the logo to
+            // very bright white on certain backgrounds.
+            // https://threejs.org/examples/webgl_materials_blending.html
+			spriteMaterial.blending = THREE.NormalBlending;
 
 			var sprite = new THREE.Sprite(spriteMaterial);
-			sprite.scale.set(100, 100, 100);
-			sprite.position.set(100, 100, 0);
+			sprite.scale.set(64, 64, 1);
+			sprite.position.set(50, 50, 0);
 
 			this.sceneOrtho.add(sprite);
 		},
@@ -893,6 +897,7 @@ OpenSimEditor.prototype = {
 	    */
 	    builtinLight = this.scene.getObjectByName('SceneLight');
 	    builtinLight.position.copy(new THREE.Vector3(modelbbox.max.x, modelbbox.max.y+100, modelbbox.min.z));
+	    this.signals.cameraChanged.dispatch(this.camera);
 	    // Move dolly to middle hight of bbox and make it invisible
 	    this.dolly_object.position.y = (modelbbox.max.y + modelbbox.min.y) / 2;
 	    path = this.scene.getObjectByName('DollyPath');
