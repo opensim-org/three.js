@@ -6,7 +6,7 @@ THREE.SkinnedMuscle = function(geom, points, material) {
     this.pathpoints = points;
     this.pathpointObjects = [];
     geom.bones = [];
-    this.DEBUG = true;
+
     for (var i=0; i< 2*points.length-2; i++) {
         var bone = new THREE.Bone();
         bone.pos = [0, 0, 0];
@@ -99,15 +99,6 @@ THREE.SkinnedMuscle.prototype.updateMatrixWorld = function( force ) {
             // back along the vector from pt1 to pt2
             bones[b].position.add(vec);
             bones[b].quaternion.setFromUnitVectors(vFrom, vTo);
-
-            if (this.DEBUG) {
-                console.warn("Path point name: " + thisPathpointObject.name);
-                console.warn("Num pathpoints = " + this.pathpoints.length);
-                console.warn("Num bones = " + this.children.length);
-                console.warn("This is vec:" + vec.toArray());
-                //console.dir(this.children[2*p+1]);
-                this.DEBUG = false;
-            }
 
             bones[b-1].updateMatrixWorld();
             bones[b++].updateMatrixWorld();
