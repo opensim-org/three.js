@@ -53,8 +53,8 @@ THREE.SkinnedMuscle.prototype.updateMatrixWorld = function( force ) {
 
                 if (pptObject2 !== undefined) {
                 // define the two bones of a segement of the path together
-                    bones[b].geometry = new THREE.SphereGeometry(8, 64, 64); //pptObject1.geometry;
-                    bones[++b].geometry = new THREE.SphereGeometry(8, 64, 64); //pptObject2.geometry;
+                    bones[b].geometry = pptObject1.geometry;
+                    bones[++b].geometry = pptObject2.geometry;
                 }
                 b++;
             }
