@@ -720,19 +720,19 @@ OpenSimEditor.prototype = {
 		this.addObject(amb);
 		sceneLightColor = new THREE.Color().setHex(12040119);
 		directionalLight =  new THREE.DirectionalLight( sceneLightColor);
-		directionalLight.castShadow = true;
-		directionalLight.name = 'SceneLight';
-		directionalLight.shadow.camera.bottom = -2000;
-		directionalLight.shadow.camera.far = 8000;
-		directionalLight.shadow.camera.left = -2000;
-		directionalLight.shadow.camera.right = 2000;
-		directionalLight.shadow.camera.top = 2000;
-		directionalLight.shadow.mapSize.width = 1024;
-		directionalLight.shadow.mapSize.height = 1024;
+		// TODO directionalLight.castShadow = true;
+		// TODO directionalLight.name = 'SceneLight';
+		// TODO directionalLight.shadow.camera.bottom = -2000;
+		// TODO directionalLight.shadow.camera.far = 8000;
+		// TODO directionalLight.shadow.camera.left = -2000;
+		// TODO directionalLight.shadow.camera.right = 2000;
+		// TODO directionalLight.shadow.camera.top = 2000;
+		// TODO directionalLight.shadow.mapSize.width = 1024;
+		// TODO directionalLight.shadow.mapSize.height = 1024;
 		// for debugging. not working directionalLight.shadowCameraVisible = true;
 		directionalLight.visible = true;
 		this.sceneLight = directionalLight;
-		this.addObject(directionalLight);
+		//this.addObject(directionalLight);
         // HemisphericalLight 
 		hemiSphereLight = new THREE.HemisphereLight(10724259, 1, 0);
 		hemiSphereLight.name = 'GlobalLight';
@@ -927,20 +927,18 @@ OpenSimEditor.prototype = {
 	    modelCenterGroup.name = "ModelCenter";
 	    modelCenterGroup.position.copy(new THREE.Vector3(modelCenter.x, modelCenter.y, modelCenter.z));
 	    model.add(modelCenterGroup);
-	    modelLight =  new THREE.PointLight( {color: this.currentModelColor});
-	    //modelLight.castShadow = true;
-	    //modelLight.angle = 0.5;
-	    modelLight.intensity = 0.25;	
+	    modelLight =  new THREE.SpotLight( {color: this.currentModelColor});
+	    modelLight.castShadow = true;
+	    modelLight.angle = 0.5;
+	    modelLight.intensity = 0.95;	
 	    modelLight.name = 'ModelLight';
-        /*
 	    modelLight.shadow.camera.bottom = -1000;
 	    modelLight.shadow.camera.far = 2000;
 	    modelLight.shadow.camera.left = -1000;
 	    modelLight.shadow.camera.right = 1000;
 	    modelLight.shadow.camera.top = 1000;
-        */
 	    modelLight.position.copy(new THREE.Vector3((modelbbox.max.x+modelbbox.min.x)/2, 
-		modelbbox.max.y+100, (modelbbox.min.z+modelbbox.max.z)/2));
+		modelbbox.max.y+500, (modelbbox.min.z+modelbbox.max.z)/2));
 	    modelLight.target = modelCenterGroup;
 	    model.add(modelLight);
 	},
