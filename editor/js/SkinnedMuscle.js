@@ -20,7 +20,13 @@ THREE.SkinnedMuscle = function(geom, points, material) {
     for ( var i = 0; i < geom.vertices.length; i++ ) {
         var skinIndex = Math.floor(i / numVerticesPerLevel);
         geom.skinIndices.push(new THREE.Vector4(skinIndex, skinIndex+1, skinIndex-1, 0));
-        geom.skinWeights.push( new THREE.Vector4( 0.8, 0.1, 0.1, 0 ) );
+        if(skinIndex > 0 && skinIndex < geom.bones.length-1) {
+           // blend next and previous bone vertices to smoothen transitions
+            geom.skinWeights.push( new THREE.Vector4( 0.8, 0.1, 0.1, 0 ) );
+        }
+        else { //but, strictly enforce the reaching of the end points
+            geom.skinWeights.push( new THREE.Vector4( 1.0, 0, 0, 0 ) );
+        }
     }
     geom.dynamic = true;
     THREE.SkinnedMesh.call( this, geom );
