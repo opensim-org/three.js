@@ -188,16 +188,14 @@ textarea, input { outline: none; } /* osx */
 }
 
 #opensim_toolbar button {
-    margin: 5px;
+    margin: 2px;
     text-align: center;
     text-decoration: none;
-    font-size: 20px;
-    border-radius: 50%;
-    border: 1px solid;
+    font-size: 10px;
 }
 #opensim_toolbar button img {
-        width: 30px;
-        height: 30px;
+        width: 20px;
+        height: 20px;
     }
 
 #opensim_toolbar .text {
