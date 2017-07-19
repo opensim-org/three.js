@@ -719,18 +719,18 @@ OpenSimEditor.prototype = {
 		amb.intensity = 0.2;
 		this.addObject(amb);
 		sceneLightColor = new THREE.Color().setHex(12040119);
-		directionalLight =  new THREE.DirectionalLight( sceneLightColor);
-		directionalLight.castShadow = true;
-		directionalLight.name = 'SceneLight';
-		directionalLight.shadow.camera.bottom = -2000;
-		directionalLight.shadow.camera.far = 8000;
-		directionalLight.shadow.camera.left = -2000;
-		directionalLight.shadow.camera.right = 2000;
-		directionalLight.shadow.camera.top = 2000;
-		directionalLight.shadow.mapSize.width = 1024;
-		directionalLight.shadow.mapSize.height = 1024;
+ 		directionalLight =  new THREE.DirectionalLight( sceneLightColor);
+// 		directionalLight.castShadow = true;
+// 		directionalLight.name = 'SceneLight';
+// 		directionalLight.shadow.camera.bottom = -2000;
+// 		directionalLight.shadow.camera.far = 8000;
+// 		directionalLight.shadow.camera.left = -2000;
+// 		directionalLight.shadow.camera.right = 2000;
+// 		directionalLight.shadow.camera.top = 2000;
+// 		directionalLight.shadow.mapSize.width = 1024;
+// 		directionalLight.shadow.mapSize.height = 1024;
 		// for debugging. not working directionalLight.shadowCameraVisible = true;
-		directionalLight.visible = true;
+	//	directionalLight.visible = true;
 		this.sceneLight = directionalLight;
 		this.addObject(directionalLight);
         // HemisphericalLight 
@@ -738,6 +738,61 @@ OpenSimEditor.prototype = {
 		hemiSphereLight.name = 'GlobalLight';
 		hemiSphereLight.intensity = 0.40;
 		//this.addObject(hemiSphereLight);
+
+      //   sunLight =  new THREE.SpotLight( {color: sceneLightColor});
+// 	    sunLight.castShadow = true;
+// 	    //sunLight.angle = 0.5;
+// 	    sunLight.intensity = 10.0;	
+// 	    sunLight.name = 'SunLight';
+// 	    sunLight.shadow.camera.bottom = -1000;
+// 	    sunLight.shadow.camera.far = 2000;
+// 	    sunLight.shadow.camera.left = -1000;
+// 	    sunLight.shadow.camera.right = 1000;
+// 	    sunLight.shadow.camera.top = 1000;
+//         sunLight.position.x = 0;
+//         sunLight.position.y = 0;
+//         sunLight.position.z = 1000;
+// 	    //sunLight.position.copy(new THREE.Vector3((modelbbox.max.x+modelbbox.min.x)/2, 
+// 		//modelbbox.max.y+100, (modelbbox.min.z+modelbbox.max.z)/2));
+// 	    //sunLight.target = modelCenterGroup;
+// 	    this.addObject(sunLight);
+	    
+//        hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
+//        hemiLight.color.setHSL( 0.6, 1, 0.6 );
+//        hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
+//        hemiLight.position.set( 0, 500, 0 );
+//        this.addObject(hemiLight);
+//
+//        //
+//
+        dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
+        dirLight.intensity = 0.1;
+        dirLight.color.setHSL( 0.1, 1, 0.95 );
+        dirLight.position.set( 1, 3, -1 );
+        dirLight.position.multiplyScalar( 500 );
+        this.addObject(dirLight);
+
+        dirLight.castShadow = true;
+
+        //dirLight.shadow.mapSize.width = 2048;
+        //dirLight.shadow.mapSize.height = 2048;
+
+        //var d = 5000;
+
+        //dirLight.shadow.camera.left = -d;
+        //dirLight.shadow.camera.right = d;
+        //dirLight.shadow.camera.top = d;
+        //dirLight.shadow.camera.bottom = -d;
+ 		dirLight.shadow.camera.bottom = -2000;
+ 		dirLight.shadow.camera.far = 8000;
+ 		dirLight.shadow.camera.left = -2000;
+ 		dirLight.shadow.camera.right = 2000;
+ 		dirLight.shadow.camera.top = 2000;
+ 		dirLight.shadow.mapSize.width = 1024;
+ 		dirLight.shadow.mapSize.height = 1024;
+
+        //dirLight.shadow.camera.far = 3500;
+        dirLight.shadow.bias = -0.0001;
 	},
 
 	updateBackground: function (choice) {
