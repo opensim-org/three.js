@@ -54,7 +54,7 @@ function onMessage(evt) {
                     editor.updatePath(paths[p]);
                 }
             }
-	    //onWindowResize();
+	    editor.refresh();
 	    break;
 	case "CloseModel":
 	    modeluuid = msg.UUID;
@@ -76,6 +76,7 @@ function onMessage(evt) {
 	    cmd = new window[msg.command.type]();
 	    cmd.fromJSON(msg.command);
             editor.execute(cmd);
+            editor.refresh();
             break; 
         case "addModelObject":
             cmd = new window[msg.command.type]();
