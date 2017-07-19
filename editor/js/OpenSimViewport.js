@@ -670,7 +670,7 @@ var OpenSimViewport = function ( editor ) {
 
 	var renderer = null;
 
-	animate();
+	render();
 
 	//
 
@@ -691,8 +691,8 @@ var OpenSimViewport = function ( editor ) {
 	function animate() {
 
 	    render();
-	    requestAnimationFrame(animate);
-	    TWEEN.update();
+	    //requestAnimationFrame(animate);
+	    //TWEEN.update();
 
 		/*
 
