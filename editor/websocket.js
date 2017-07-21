@@ -92,5 +92,6 @@ function onMessage(evt) {
             break;
 
    }
+   processing = false; // Defensive in case render never finishes/errors
 }
 // End test functions
