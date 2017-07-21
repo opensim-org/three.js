@@ -63,17 +63,17 @@ function onMessage(evt) {
 	case "CloseModel":
 	    modeluuid = msg.UUID;
 	    editor.closeModel(modeluuid);
-	    onWindowResize();
+	    editor.refresh();
 	    break;
 	case "OpenModel":
 	    modeluuid = msg.UUID;
 	    editor.loadModel(modeluuid.substring(0,8)+'.json');
-	    onWindowResize();
+	    editor.refresh();
 	    break;
 	case "SetCurrentModel":
 	    modeluuid = msg.UUID;
 	    editor.setCurrentModel(modeluuid);
-	    onWindowResize();
+	    editor.refresh();
 	    break;
         case "execute":
 	    //msg.command.object = editor.objectByUuid(msg.UUID);
