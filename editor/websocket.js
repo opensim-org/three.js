@@ -32,12 +32,15 @@ function sendText(json) {
 function onMessage(evt) {
     //console.log("received: " + evt.data);
     msg = JSON.parse(evt.data);
-    processing = true;
+
     switch(msg.Op){
 	case "Select":
 	    editor.selectByUuid( msg.UUID, true );
 	    break;
-	case "Frame":        //alert("uuid: " + msg.name);
+	case "Frame":  
+            if (processing)
+                return;//alert("uuid: " + msg.name);
+            processing = true;
 	    var transforms = msg.Transforms;
 	    for (var i = 0; i < transforms.length; i ++ ) {
 			var oneBodyTransform = transforms[i];
@@ -55,6 +58,7 @@ function onMessage(evt) {
                 }
             }
 	    editor.refresh();
+            processing = false;
 	    break;
 	case "CloseModel":
 	    modeluuid = msg.UUID;
@@ -86,28 +90,7 @@ function onMessage(evt) {
             newUuid = cmd.object.uuid;
             editor.moveObject(editor.objectByUuid(newUuid), editor.objectByUuid(parentUuid));
             break;
-        /*
-        var paths = msg.paths;
-        for (var i = 0; i < paths.length; i ++ ) {
-            var onePathUpdate = paths[i];
-            var o = editor.scene.getObjectByProperty( 'uuid', onePathUpdate.uuid);
-            var pathobj = o.geometry.attributes.position;
-            pathobj[0] = onePathUpdate.positions[0];
-            pathobj[1] = onePathUpdate.positions[1];
-            pathobj[2] = onePathUpdate.positions[2];
-            pathobj[3] = onePathUpdate.positions[3];
-            pathobj[4] = onePathUpdate.positions[4];
-            pathobj[5] = onePathUpdate.positions[5];
-            //o.geometry.attributes.position.needsUpdate = true;
-            //alert("mat before: " + o.matrix);
-            o.matrixAutoUpdate = false;
-            o.geometry.verticesNeedUpdate = true;
-            o.updateMatrix();
-        } */
-		    
-        processing = false;
 
    }
-
 }
 // End test functions
