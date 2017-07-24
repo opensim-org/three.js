@@ -766,6 +766,7 @@ OpenSimEditor.prototype = {
 //        //
 //
         dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
+        dirLight.name = 'SunLight';
         dirLight.intensity = 0.1;
         dirLight.color.setHSL( 0.1, 1, 0.95 );
         dirLight.position.set( 1, 3, -1 );
@@ -950,8 +951,8 @@ OpenSimEditor.prototype = {
 	    if (modelObject != undefined)
 		modelObject.add(helper);
 	    */
-	    builtinLight = this.scene.getObjectByName('SceneLight');
-	    builtinLight.position.copy(new THREE.Vector3(modelbbox.max.x, modelbbox.max.y+100, modelbbox.min.z));
+	    builtinLight = this.scene.getObjectByName('SunLight');
+	    builtinLight.position.copy(new THREE.Vector3(modelbbox.max.x-100, modelbbox.max.y+100, modelbbox.min.z-400));
 	    this.signals.cameraChanged.dispatch(this.camera);
 	    // Move dolly to middle hight of bbox and make it invisible
 	    this.dolly_object.position.y = (modelbbox.max.y + modelbbox.min.y) / 2;
