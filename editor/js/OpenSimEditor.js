@@ -16,6 +16,7 @@ var OpenSimEditor = function () {
 	this.dolly_object = new THREE.Object3D();
 	this.dolly_object.name = 'Dolly';
 	this.dolly_object.position.y = 0;
+        this.recording = false;
 
 	this.models = [];
 	this.currentModel = undefined; //uuid of current model call getCurrentModel for actualobject
@@ -96,7 +97,7 @@ var OpenSimEditor = function () {
 	    animationStopped: new Signal(),
 	    defaultCameraApplied: new Signal(),
 	    recordingStarted: new Signal(),
-        recordingStopped: new Signal()
+            recordingStopped: new Signal()
 	};
 
 	this.config = new Config( 'threejs-editor' );
@@ -308,7 +309,8 @@ OpenSimEditor.prototype = {
 
 			} else if ( object instanceof THREE.DirectionalLight ) {
 
-				helper = new THREE.DirectionalLightHelper( object, 1 );
+				// helper = new THREE.DirectionalLightHelper( object, 1 );
+                                return;
 
 			} else if ( object instanceof THREE.SpotLight ) {
 
@@ -691,7 +693,7 @@ OpenSimEditor.prototype = {
 		var texture1 = textureLoader.load( "textures/"+choice+".jpg" );
 		var material1 = new THREE.MeshPhongMaterial( { color: 0xffffff, map: texture1 } );
 		texture1.wrapS = texture1.wrapT = THREE.RepeatWrapping;
-		texture1.repeat.set( 128, 128 );
+		texture1.repeat.set( 64, 64);
 		var geometry = new THREE.PlaneBufferGeometry( 100, 100 );
 		groundPlane = new THREE.Mesh( geometry, material1 );
 		groundPlane.name = 'GroundPlane';
@@ -712,7 +714,7 @@ OpenSimEditor.prototype = {
 	},
 	createLights: function () {
 
-		amb = new THREE.AmbientLight(0x000000);
+		amb = new THREE.AmbientLight(0xffffff);
 		amb.name = 'AmbientLight';
 		amb.intensity = 0.2;
 		this.addObject(amb);
@@ -720,25 +722,29 @@ OpenSimEditor.prototype = {
 		directionalLight =  new THREE.DirectionalLight( sceneLightColor);
 		directionalLight.castShadow = true;
 		directionalLight.name = 'SceneLight';
-		directionalLight.shadow.camera.bottom = -1000;
-		directionalLight.shadow.camera.far = 2000;
-		directionalLight.shadow.camera.left = -1000;
-		directionalLight.shadow.camera.right = 1000;
-		directionalLight.shadow.camera.top = 1000;
+		directionalLight.shadow.camera.bottom = -2000;
+		directionalLight.shadow.camera.far = 8000;
+		directionalLight.shadow.camera.left = -2000;
+		directionalLight.shadow.camera.right = 2000;
+		directionalLight.shadow.camera.top = 2000;
+		directionalLight.shadow.mapSize.width = 1024;
+		directionalLight.shadow.mapSize.height = 1024;
+		// for debugging. not working directionalLight.shadowCameraVisible = true;
 		directionalLight.visible = true;
 		this.sceneLight = directionalLight;
 		this.addObject(directionalLight);
         // HemisphericalLight 
-		hemiSphereLight = new THREE.HemisphereLight(10724259, 0, 1);
+		hemiSphereLight = new THREE.HemisphereLight(10724259, 1, 0);
 		hemiSphereLight.name = 'GlobalLight';
-		this.addObject(hemiSphereLight);
+		hemiSphereLight.intensity = 0.40;
+		//this.addObject(hemiSphereLight);
 	},
 
 	updateBackground: function (choice) {
 	    this.config.setKey('skybox', choice);
 		if (choice == 'nobackground') {
 		    //this.skyboxMesh.visible = false;
-		    this.scene.background = new THREE.Color(0xff0000);
+		    //this.scene.background = new THREE.Color(0xff0000);
 		    //this.signals.objectChanged.dispatch( this.scene.background );
 		    return;
 		}
@@ -762,8 +768,8 @@ OpenSimEditor.prototype = {
 		var textureLoader = new THREE.TextureLoader();
 		var texture1 = textureLoader.load("textures/"+choice+".jpg");
 		texture1.wrapS = texture1.wrapT = THREE.RepeatWrapping;
-		texture1.repeat.set(128, 128);
-		this.groundMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, map: texture1 });
+		texture1.repeat.set(64, 64);
+		this.groundMaterial = new THREE.MeshPhongMaterial({ color: 0x888888, map: texture1 });
 		this.groundPlane.material = this.groundMaterial;
 		this.signals.materialChanged.dispatch( this.groundPlane );
 	},
@@ -794,23 +800,26 @@ OpenSimEditor.prototype = {
 	},
 		createLogoSprite: function() {
 			var getLogoTexture = function () {
-				var texture = new THREE.ImageUtils.loadTexture("OpenSimLogoSmall.PNG");
+				var texture = new THREE.ImageUtils.loadTexture("OpenSimWatermarkOpaqueGrayscale128x128.png");
 				return texture;
 			};
 			var spriteMaterial = new THREE.SpriteMaterial({
 						opacity: 0.5,
 						color: 0xffffff,
-						transparent: false,
-						// useScreenCoordinates: true,
+						transparent: false, // TODO not necessary
+						// useScreenCoordinates: true, TODO deprecated
 						map: getLogoTexture()}
 			);
 
 			spriteMaterial.scaleByViewport = false;
-			spriteMaterial.blending = THREE.AdditiveBlending;
+            // This used to be AdditiveBlending, but that caused the logo to
+            // very bright white on certain backgrounds.
+            // https://threejs.org/examples/webgl_materials_blending.html
+			spriteMaterial.blending = THREE.NormalBlending;
 
 			var sprite = new THREE.Sprite(spriteMaterial);
-			sprite.scale.set(100, 100, 100);
-			sprite.position.set(100, 100, 0);
+			sprite.scale.set(64, 64, 1);
+			sprite.position.set(50, 50, 0);
 
 			this.sceneOrtho.add(sprite);
 		},
@@ -888,6 +897,7 @@ OpenSimEditor.prototype = {
 	    */
 	    builtinLight = this.scene.getObjectByName('SceneLight');
 	    builtinLight.position.copy(new THREE.Vector3(modelbbox.max.x, modelbbox.max.y+100, modelbbox.min.z));
+	    this.signals.cameraChanged.dispatch(this.camera);
 	    // Move dolly to middle hight of bbox and make it invisible
 	    this.dolly_object.position.y = (modelbbox.max.y + modelbbox.min.y) / 2;
 	    path = this.scene.getObjectByName('DollyPath');
@@ -895,6 +905,9 @@ OpenSimEditor.prototype = {
 	    // Compute Offset so that models don't overlap
 	    if (this.models.length==1)
 		return; // No need for offset
+            // if ExperimentalData, also no offset
+            if (modelObject.children[0].name.startsWith('/ExperimentalData'))
+                return;
 	    // Multiple models, compute box bounding all previous models and use to offset
 	    nextModel = editor.objectByUuid(this.models[0]);
 	    sceneBox = new THREE.Box3().setFromObject(nextModel);
@@ -914,15 +927,18 @@ OpenSimEditor.prototype = {
 	    modelCenterGroup.name = "ModelCenter";
 	    modelCenterGroup.position.copy(new THREE.Vector3(modelCenter.x, modelCenter.y, modelCenter.z));
 	    model.add(modelCenterGroup);
-	    modelLight =  new THREE.SpotLight( {color: this.currentModelColor});
-	    modelLight.castShadow = true;
-	    modelLight.angle = 0.5;
+	    modelLight =  new THREE.PointLight( {color: this.currentModelColor});
+	    //modelLight.castShadow = true;
+	    //modelLight.angle = 0.5;
+	    modelLight.intensity = 0.25;	
 	    modelLight.name = 'ModelLight';
+        /*
 	    modelLight.shadow.camera.bottom = -1000;
 	    modelLight.shadow.camera.far = 2000;
 	    modelLight.shadow.camera.left = -1000;
 	    modelLight.shadow.camera.right = 1000;
 	    modelLight.shadow.camera.top = 1000;
+        */
 	    modelLight.position.copy(new THREE.Vector3((modelbbox.max.x+modelbbox.min.x)/2, 
 		modelbbox.max.y+100, (modelbbox.min.z+modelbbox.max.z)/2));
 	    modelLight.target = modelCenterGroup;
@@ -932,6 +948,7 @@ OpenSimEditor.prototype = {
 	    if (this.groundPlane !== undefined){
 		this.groundPlane.position.y = newHeight*1000;
 	    }
+		this.refresh();
 	},
 	getSceneLightPosition: function(coord) {
 	    sceneLightpos = this.sceneLight.position;
@@ -978,6 +995,20 @@ OpenSimEditor.prototype = {
             }
             pathObject.geometry.verticesNeedUpdate = true;*/
             pathObject.material.color.setHex(pathUpdateJson.color);
+        },
+        toggleRecord: function () {
+            if (this.recording){
+                this.signals.recordingStopped.dispatch();
+                this.recording = false;
+            }
+            else {
+                this.signals.recordingStarted.dispatch();
+                this.recording = true;
+            }
+        },
+        refresh: function() {
+            var changeEvent = { type: 'change' };
+	        this.control.dispatchEvent( changeEvent );
         }
 
 };

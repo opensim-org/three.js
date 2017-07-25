@@ -252,8 +252,9 @@ Object.assign( THREE.OpenSimLoader.prototype, {
 						break;
 
 				    case 'PathGeometry':
-
-				        geometry = new THREE.CylinderGeometry(5, 5, data.segments, 8, data.segments, true);
+                //CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments, heightSegments, openEnded, thetaStart, thetaLength)
+                // NOTE: number of heightSegments must be equal to the number of bones in the SkinnedMuscle
+								geometry = new THREE.CylinderGeometry(8, 8, 0.1, 8, 2*data.segments-1, true);
 
 				        break;
 
@@ -557,15 +558,21 @@ Object.assign( THREE.OpenSimLoader.prototype, {
 
 			    case 'Frame':
 
-			        object = new THREE.AxisHelper(data.size);
+                                        object = new THREE.AxisHelper(data.size);
 
-			        break;
+                                        break;
 
 			    case 'GeometryPath':
-			        object = new THREE.SkinnedMuscle(getGeometry(data.geometry), data.points,  getMaterial( data.material ));
-			        break;
-				default:
+                                        object = new THREE.SkinnedMuscle(getGeometry(data.geometry), data.points,  getMaterial( data.material ));
 
+                                        break;
+
+                            case 'Arrow':
+                                        object = new THREE.ArrowHelper(data.dir, data.origin, 1000, data.color);
+
+                                        break;
+
+                            default:
 					object = new THREE.Object3D();
 
 			}

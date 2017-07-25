@@ -25,7 +25,7 @@ var OpenSimViewport = function ( editor ) {
 	var lookAtObject = scene;
 	var showCamOnly = false;
     // AnimationRecording
-	var capturer;
+	var capturer = undefined;
 	var recording = false;
 
 	var objects = [];
@@ -73,7 +73,7 @@ var OpenSimViewport = function ( editor ) {
 
 		}
 
-		render();
+ 		render();
 
 	} );
 	transformControls.addEventListener( 'mouseDown', function () {
@@ -382,7 +382,7 @@ var OpenSimViewport = function ( editor ) {
 	var saveTimeout;
 
 	signals.cameraChanged.add( function () {
-
+                editor.sceneLight.position.copy(editor.camera.position);
 		render();
 
 	} );
@@ -427,9 +427,24 @@ var OpenSimViewport = function ( editor ) {
 	});
 
 	signals.recordingStarted.add(function () {
-	    // add frame to gif
-	    
-
+	    // add frame to capture
+	    if (capturer !== undefined) 
+               capturer = undefined;
+         capturer = new CCapture({
+	            verbose: true,
+	            display: true,
+	            framerate: 15,
+	            motionBlurFrames: 0,
+	            quality: 100,
+                name: "opensim_video",
+	            format: 'webm',
+	            workersPath: 'js/',
+	            timeLimit: 200,
+	            frameLimit: 0,
+	            onProgress: function (p) { progress.style.width = (p * 100) + '%' }
+	        });
+	        recording = true;
+	        capturer.start();
 	});
 
 	signals.recordingStopped.add(function () {
@@ -437,6 +452,7 @@ var OpenSimViewport = function ( editor ) {
 	        capturer.stop();
 	        capturer.save();
 	        capturer = undefined;
+                recording = false;
 	    }
 	    // add frame to gif
 	    //gif.render();
@@ -629,6 +645,14 @@ var OpenSimViewport = function ( editor ) {
 		camera.aspect = container.dom.offsetWidth / container.dom.offsetHeight;
 		camera.updateProjectionMatrix();
 
+        // To avoid the aspect ratio of the OpenSim watermark from changing
+        // as the window is resized.
+        editor.sceneOrthoCam.left = 0;
+        editor.sceneOrthoCam.right = window.innerWidth;
+        editor.sceneOrthoCam.top = window.innerHeight;
+        editor.sceneOrthoCam.bottom = 0;
+        editor.sceneOrthoCam.updateProjectionMatrix();
+
 		renderer.setSize( container.dom.offsetWidth, container.dom.offsetHeight );
 
 		render();
@@ -646,7 +670,7 @@ var OpenSimViewport = function ( editor ) {
 
 	var renderer = null;
 
-	animate();
+	render();
 
 	//
 
@@ -667,8 +691,8 @@ var OpenSimViewport = function ( editor ) {
 	function animate() {
 
 	    render();
-	    requestAnimationFrame(animate);
-	    TWEEN.update();
+	    //requestAnimationFrame(animate);
+	    //TWEEN.update();
 
 		/*
 
