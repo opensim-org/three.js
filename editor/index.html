@@ -75,9 +75,9 @@
 		<script src="js/Menubar.File.js"></script>
 		<script src="js/Menubar.Edit.js"></script>
 		<script src="js/Menubar.Add.js"></script>
-		//<script src="js/Menubar.Movies.js"></script>
-		//<script src="js/Menubar.View.js"></script>
-		//<script src="js/Menubar.Examples.js"></script>
+		<script src="js/Menubar.Movies.js"></script>
+		<script src="js/Menubar.View.js"></script>
+		<script src="js/Menubar.Examples.js"></script>
 		<script src="js/Menubar.Help.js"></script>
 		<script src="js/Menubar.Status.js"></script>
 		<script src="js/Sidebar.js"></script>
@@ -157,7 +157,11 @@
 				this.texture = editor.config.getKey('floor');
 				this.height = -0.001;
 				this.backdrop = editor.config.getKey('skybox');
-				this.backgroundColor = "#ffffff";
+				color = editor.config.getKey('settings/backgroundcolor');
+				if (color=== undefined)
+					this.backgroundColor = "#888888";
+				else
+					this.backgroundColor = color;
 				// Define render logic ...
 				this.sceneLightX = -0.01;
 				this.sceneLightY = -0.01;
@@ -180,40 +184,20 @@
 			    texture.onChange(function (value) {
 			        editor.updateGroundPlane(value);
 			    });
-			    var world = gui.addFolder('World');
-			    var backdrop = world.add(knobs, 'backdrop', ['nobackground', 'mars', 'sky', 'desert', 'city', 'dark', 'pastures']);
-				backdrop.onChange(function (value) {
-			        editor.updateBackground(value);
-				});
-				var backdropColor = world.addColor(knobs, 'backgroundColor');
-				backdropColor.onChange(function (value) {
+			    //var world = gui.addFolder('World');
+                            var backdropColor = gui.addColor(knobs, 'backgroundColor');
+                            backdropColor.onChange(function (value) {
 				    editor.updateBackgroundColor(value);
-				});
-				world.add(knobs, 'sceneLightSelect').name('Scene Light');
-				var model_control = gui.addFolder('Model');
-					model_control.add(knobs, 'modelLightSelect').name('Model SpotLight');
-				gui.add(knobs, 'toggleMarkup').name('Toggle Markup');
-				gui.add(knobs, 'expertModeSelect').name('Expert Mode');
-			    /*
-				var sceneLight = gui.addFolder('Scene Light');
-				var sceneLightX = sceneLight.add(knobs, 'sceneLightX', -1.01, 1.01, .001);
-				sceneLightX.onChange(function (value) {
-			        editor.updateSceneLight('x', value);
-			    });
-				var sceneLightY = sceneLight.add(knobs, 'sceneLightY', -1.01, 1.01, .001);
-				sceneLightY.onChange(function (value) {
-			        editor.updateSceneLight('y', value);
-			    });
-				var sceneLightZ = sceneLight.add(knobs, 'sceneLightZ', -1.01, 1.01, .001);
-				sceneLightZ.onChange(function (value) {
-			        editor.updateSceneLight('z', value);
-			    });
-				var sceneLightColor = sceneLight.addColor(knobs, 'sceneLightColor');
-				sceneLightColor.onChange(function (value) {
-				editor.updateSceneLight('color', value);
-				});*/
-			    // No save/retrieve settings will go thru File menu or popup
-				// gui.remember(knobs);
+                                    //editor.updateBackground('nobackground');
+                            });
+                            //world.add(knobs, 'sceneLightSelect').name('Scene Light');
+                            //var model_control = gui.addFolder('Model');
+                            // model_control.add(knobs, 'modelLightSelect').name('Model Light');
+                            //gui.add(knobs, 'toggleMarkup').name('Toggle Markup');
+                            //gui.add(knobs, 'expertModeSelect').name('Expert Mode');
+                            // No save/retrieve settings
+                            // gui.remember(knobs);
+                            gui.closed = true;
 			}
 
 			var viewport = new OpenSimViewport( editor );
@@ -228,8 +212,8 @@
 			var toolbar = new OpenSimToolbar(editor);
 			document.body.appendChild( toolbar.dom );
 
-			var menubar = new Menubar( editor );
-			document.body.appendChild( menubar.dom );
+			//var menubar = new Menubar( editor );
+			//document.body.appendChild( menubar.dom );
 
 			var sidebar = new Sidebar( editor );
 			document.body.appendChild( sidebar.dom );
