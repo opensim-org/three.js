@@ -37,7 +37,7 @@ RemoveObjectCommand.prototype = {
 		} );
 
 		this.parent.remove( this.object );
-		this.editor.select( this.parent );
+		//this.editor.select( this.parent );
 
 		this.editor.signals.objectRemoved.dispatch( this.object );
 		this.editor.signals.sceneGraphChanged.dispatch();
@@ -93,7 +93,7 @@ RemoveObjectCommand.prototype = {
 		this.object = this.editor.objectByUuid( json.object.object.uuid );
 		if ( this.object === undefined ) {
 
-			var loader = new THREE.ObjectLoader();
+			var loader = new THREE.OpenSimLoader();
 			this.object = loader.parse( json.object );
 
 		}
