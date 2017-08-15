@@ -713,7 +713,6 @@ OpenSimEditor.prototype = {
 		}
 	},
 	createLights: function () {
-
 		amb = new THREE.AmbientLight(0xffffff);
 		amb.name = 'AmbientLight';
 		amb.intensity = 0.2;
@@ -782,7 +781,6 @@ OpenSimEditor.prototype = {
 	},
 	createDollyPath: function () {
 
-		///this.scene.add(this.dolly_object);
 		tube = new THREE.TubeGeometry(this.dollyPath, 100, 5, 8, true);
 		tubemat = new THREE.MeshLambertMaterial({
 			color: 0xff00ff
@@ -978,37 +976,33 @@ OpenSimEditor.prototype = {
 		this.config.setKey('render/debug', newValue);
 		this.signals.renderDebugChanged.dispatch(newValue);
 	},
-		selectCurrentModelLight: function () {
-			if (this.currentModel === undefined) return;
-			var modelObject = this.getModel();
-			var modelLight = modelObject.getObjectByName('ModelLight');
-			this.select(modelLight);
+	selectCurrentModelLight: function () {
+		if (this.currentModel === undefined) return;
+		var modelObject = this.getModel();
+		var modelLight = modelObject.getObjectByName('ModelLight');
+		this.select(modelLight);
 	},
 	updatePath: function (pathUpdateJson) {
 		var pathObject = this.objectByUuid(pathUpdateJson.uuid);
-		/*
-			pathpoints = pathObject.pathpoints;
-			for (var i = 0; i < pathpoints.length; i++) {
-				var nextpathpoint = this.objectByUuid(pathpoints[i]);
-				nextpathpoint.updateMatrixWorld();
-				pathObject.geometry.vertices[i].setFromMatrixPosition(nextpathpoint.matrixWorld);
-			}
-			pathObject.geometry.verticesNeedUpdate = true;*/
-			pathObject.material.color.setHex(pathUpdateJson.color);
-		},
-		toggleRecord: function () {
-			if (this.recording){
-				this.signals.recordingStopped.dispatch();
-				this.recording = false;
-			}
-			else {
-				this.signals.recordingStarted.dispatch();
-				this.recording = true;
-			}
-		},
-		refresh: function() {
-			var changeEvent = { type: 'change' };
-			this.control.dispatchEvent( changeEvent );
+		pathObject.material.color.setHex(pathUpdateJson.color);
+	},
+	processPathEdit: function (pathEditJson) {
+		var pathObject = this.objectByUuid(pathEditJson.uuid);
+		pathObject.updatePathPoints(pathEditJson.points);
+	},
+	toggleRecord: function () {
+		if (this.recording){
+			this.signals.recordingStopped.dispatch();
+			this.recording = false;
 		}
+		else {
+			this.signals.recordingStarted.dispatch();
+			this.recording = true;
+		}
+	},
+	refresh: function() {
+		var changeEvent = { type: 'change' };
+		this.control.dispatchEvent( changeEvent );
+	}
 
 };
