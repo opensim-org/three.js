@@ -570,10 +570,10 @@ OpenSimEditor.prototype = {
 	},
 	closeModel: function (modeluuid) {
 		if (this.models.indexOf(modeluuid)!=-1){
-		ndx = this.models.indexOf(modeluuid);
-		this.models.splice(ndx, 1);
-		modelObject = editor.objectByUuid(modeluuid);
-		editor.removeObject(modelObject);
+		    ndx = this.models.indexOf(modeluuid);
+		    this.models.splice(ndx, 1);
+		    modelObject = editor.objectByUuid(modeluuid);
+		    editor.removeObject(modelObject);
 		}
 		this.signals.sceneGraphChanged.dispatch();
 	},
@@ -987,8 +987,18 @@ OpenSimEditor.prototype = {
 		pathObject.material.color.setHex(pathUpdateJson.color);
 	},
 	processPathEdit: function (pathEditJson) {
-		var pathObject = this.objectByUuid(pathEditJson.uuid);
-		pathObject.updatePathPoints(pathEditJson.points);
+	    var pathObject = this.objectByUuid(pathEditJson.uuid);
+	    var pathGeometry = pathObject.geometry;
+	    var pathMaterial = pathObject.material;
+	    var pathParent = pathObject.parent;
+	    this.removeObject(pathObject);
+	    // remove from parent
+	    var newGeometry = new THREE.CylinderGeometry(8, 8, 0.1, 8, 2 * (pathEditJson.points.length-1) - 1, true);
+	    var newMuscle = new THREE.SkinnedMuscle(newGeometry, pathEditJson.points, pathMaterial);
+	    newMuscle.parent = pathParent;
+	    newMuscle.uuid = pathEditJson.uuid;
+	    // add to parent.
+	    this.addObject(newMuscle);
 	},
 	toggleRecord: function () {
 		if (this.recording){
