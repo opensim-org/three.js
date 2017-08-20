@@ -991,7 +991,35 @@ OpenSimEditor.prototype = {
 	    var pathGeometry = pathObject.geometry;
 	    var pathMaterial = pathObject.material;
 	    var pathParent = pathObject.parent;
+	    if (pathEditJson.SubOperation === "refresh") {
+	    	var updPoints = pathEditJson.points;
+	    	for (var i = 0; i < updPoints.length; i++) {
+	    		var nextEntry = updPoints[i];
+	    		var uuid = nextEntry.uuid;
+	    		var xform = nextEntry.matrix;
+	    		var matrix = new THREE.Matrix4();
+	    		matrix.fromArray(xform);
+	    		var pathpointObject = this.objectByUuid(uuid);
+	    		matrix.decompose(pathpointObject.position, pathpointObject.quaternion, pathpointObject.scale);
+	    	}
+	    	this.refresh();
+	    	return;
+	    }
 	    this.removeObject(pathObject);
+	    if (pathEditJson.SubOperation === "insert") { // Add new Pathpoint so uuid is found later
+	    	var newPointJson = pathEditJson.NewPoint;
+	    	var pointParent = newPointJson.parent_uuid;
+	    	parentFrame = this.objectByUuid(pointParent);
+	
+	    	var newPointGeometry = newPointJson.geometry;
+	    	var newPointMaterial = newPointJson.material;
+	    	var newMesh = this.objectByUuid(pathEditJson.points[0]).clone();
+	    	newMesh.uuid = newPointJson.uuid;
+	    	var matrix = new THREE.Matrix4();
+	    	matrix.fromArray(newPointJson.matrix);
+	    	matrix.decompose(newMesh.position, newMesh.quaternion, newMesh.scale);
+	    	parentFrame.add(newMesh);
+	    }
 	    // remove from parent
 	    var newGeometry = new THREE.CylinderGeometry(8, 8, 0.1, 8, 2 * (pathEditJson.points.length-1) - 1, true);
 	    var newMuscle = new THREE.SkinnedMuscle(newGeometry, pathEditJson.points, pathMaterial);
@@ -999,6 +1027,7 @@ OpenSimEditor.prototype = {
 	    newMuscle.uuid = pathEditJson.uuid;
 	    // add to parent.
 	    this.addObject(newMuscle);
+	    this.refresh();
 	},
 	toggleRecord: function () {
 		if (this.recording){
