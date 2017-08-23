@@ -883,7 +883,35 @@ OpenSimEditor.prototype = {
 	    this.signals.defaultCameraApplied.dispatch(aabbCenter);
 
 	},
-    // Fix scene after loading a model by placing directional light at the corner
+	handleKey: function (keyCode) {
+		var positionOffset = new THREE.Vector3();
+		switch (keyCode) {
+			case 73:
+				this.viewZoom(100.0);
+				return;
+			case 79:
+				this.viewZoom(-100.0);
+				return;
+			case 37:
+				positionOffset.set(100, 0., 0.);
+				break;
+			case 39:
+				positionOffset.set(-100, 0., 0.);
+				break;
+			case 38:
+				positionOffset.set(0, -100, 0.);
+				break;
+			case 40:
+				positionOffset.set(0, 100., 0.);
+				break;
+		}
+		positionOffset.applyQuaternion(this.camera.quaternion);
+		this.camera.position.add(positionOffset);
+		this.camera.updateProjectionMatrix();
+		this.signals.cameraChanged.dispatch(this.camera);
+		this.refresh();
+	},
+	// Fix scene after loading a model by placing directional light at the corner
     // of bounding box and dolly at half hight.
 	adjustSceneAfterModelLoading: function () {
 	    var modelObject = this.getModel();
