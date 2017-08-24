@@ -1099,6 +1099,7 @@ UI.Button = function ( value, image ) {
 	this.dom.textContent = value;
     else if(image) {
         var img = new UI.Image(image);
+        img.dom.draggable = false;
         this.add(img);
     } else
         console.error('Invalid arguments');
