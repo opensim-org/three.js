@@ -767,7 +767,7 @@ OpenSimEditor.prototype = {
 //
         dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
         dirLight.name = 'SunLight';
-        dirLight.intensity = 0.1;
+        dirLight.intensity = 0.2;
         dirLight.color.setHSL( 0.1, 1, 0.95 );
         dirLight.position.set( 1, 3, -1 );
         dirLight.position.multiplyScalar( 500 );
