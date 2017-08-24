@@ -1004,6 +1004,7 @@ OpenSimEditor.prototype = {
 	    if (this.groundPlane !== undefined){
 		this.groundPlane.position.y = newHeight*1000;
 	    }
+		this.refresh();
 	},
 	getSceneLightPosition: function(coord) {
 	    sceneLightpos = this.sceneLight.position;
@@ -1060,6 +1061,10 @@ OpenSimEditor.prototype = {
                 this.signals.recordingStarted.dispatch();
                 this.recording = true;
             }
+        },
+        refresh: function() {
+            var changeEvent = { type: 'change' };
+	        this.control.dispatchEvent( changeEvent );
         }
 
 };

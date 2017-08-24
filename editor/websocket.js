@@ -32,12 +32,15 @@ function sendText(json) {
 function onMessage(evt) {
     //console.log("received: " + evt.data);
     msg = JSON.parse(evt.data);
-    processing = true;
+
     switch(msg.Op){
 	case "Select":
 	    editor.selectByUuid( msg.UUID, true );
 	    break;
-	case "Frame":        //alert("uuid: " + msg.name);
+	case "Frame":  
+            if (processing)
+                return;//alert("uuid: " + msg.name);
+            processing = true;
 	    var transforms = msg.Transforms;
 	    for (var i = 0; i < transforms.length; i ++ ) {
 			var oneBodyTransform = transforms[i];
@@ -54,28 +57,30 @@ function onMessage(evt) {
                     editor.updatePath(paths[p]);
                 }
             }
-	    //onWindowResize();
+	    editor.refresh();
+            processing = false;
 	    break;
 	case "CloseModel":
 	    modeluuid = msg.UUID;
 	    editor.closeModel(modeluuid);
-	    onWindowResize();
+	    editor.refresh();
 	    break;
 	case "OpenModel":
 	    modeluuid = msg.UUID;
 	    editor.loadModel(modeluuid.substring(0,8)+'.json');
-	    onWindowResize();
+	    editor.refresh();
 	    break;
 	case "SetCurrentModel":
 	    modeluuid = msg.UUID;
 	    editor.setCurrentModel(modeluuid);
-	    onWindowResize();
+	    editor.refresh();
 	    break;
         case "execute":
 	    //msg.command.object = editor.objectByUuid(msg.UUID);
 	    cmd = new window[msg.command.type]();
 	    cmd.fromJSON(msg.command);
             editor.execute(cmd);
+            editor.refresh();
             break; 
         case "addModelObject":
             cmd = new window[msg.command.type]();
@@ -85,28 +90,8 @@ function onMessage(evt) {
             newUuid = cmd.object.uuid;
             editor.moveObject(editor.objectByUuid(newUuid), editor.objectByUuid(parentUuid));
             break;
-        /*
-        var paths = msg.paths;
-        for (var i = 0; i < paths.length; i ++ ) {
-            var onePathUpdate = paths[i];
-            var o = editor.scene.getObjectByProperty( 'uuid', onePathUpdate.uuid);
-            var pathobj = o.geometry.attributes.position;
-            pathobj[0] = onePathUpdate.positions[0];
-            pathobj[1] = onePathUpdate.positions[1];
-            pathobj[2] = onePathUpdate.positions[2];
-            pathobj[3] = onePathUpdate.positions[3];
-            pathobj[4] = onePathUpdate.positions[4];
-            pathobj[5] = onePathUpdate.positions[5];
-            //o.geometry.attributes.position.needsUpdate = true;
-            //alert("mat before: " + o.matrix);
-            o.matrixAutoUpdate = false;
-            o.geometry.verticesNeedUpdate = true;
-            o.updateMatrix();
-        } */
-		    
-        processing = false;
 
    }
-
+   processing = false; // Defensive in case render never finishes/errors
 }
 // End test functions
