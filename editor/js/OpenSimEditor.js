@@ -16,7 +16,7 @@ var OpenSimEditor = function () {
 	this.dolly_object = new THREE.Object3D();
 	this.dolly_object.name = 'Dolly';
 	this.dolly_object.position.y = 0;
-        this.recording = false;
+		this.recording = false;
 
 	this.models = [];
 	this.currentModel = undefined; //uuid of current model call getCurrentModel for actualobject
@@ -93,11 +93,11 @@ var OpenSimEditor = function () {
 		refreshScriptEditor: new Signal(),
 
 		renderDebugChanged: new Signal(),
-	    animationStarted: new Signal(),
-	    animationStopped: new Signal(),
-	    defaultCameraApplied: new Signal(),
-	    recordingStarted: new Signal(),
-            recordingStopped: new Signal()
+		animationStarted: new Signal(),
+		animationStopped: new Signal(),
+		defaultCameraApplied: new Signal(),
+		recordingStarted: new Signal(),
+			recordingStopped: new Signal()
 	};
 
 	this.config = new Config( 'threejs-editor' );
@@ -119,9 +119,9 @@ var OpenSimEditor = function () {
 
 	this.dollyPath.type = 'catmullrom';
 	this.scene = new THREE.Scene();
-        // Ortho Scene and Camera for Logo and text
-        this.sceneOrtho = new THREE.Scene();
-        this.sceneOrthoCam = new THREE.OrthographicCamera( 0, window.innerWidth, window.innerHeight, 0, - 10, 10 );
+		// Ortho Scene and Camera for Logo and text
+		this.sceneOrtho = new THREE.Scene();
+		this.sceneOrthoCam = new THREE.OrthographicCamera( 0, window.innerWidth, window.innerHeight, 0, - 10, 10 );
 
 	this.scene.userData = "NonEditable";
 
@@ -310,7 +310,7 @@ OpenSimEditor.prototype = {
 			} else if ( object instanceof THREE.DirectionalLight ) {
 
 				// helper = new THREE.DirectionalLightHelper( object, 1 );
-                                return;
+				return;
 
 			} else if ( object instanceof THREE.SpotLight ) {
 
@@ -410,14 +410,14 @@ OpenSimEditor.prototype = {
 
 		//this.config.setKey( 'selected', uuid );
 		this.signals.objectSelected.dispatch( object );
-                if ( object !== null ) {
-                    // Send uuid of selected object across socket
-                    var json = JSON.stringify({
-                        "event": "select",
-                        "uuid": uuid,
-                        "name": object.name});
-                    sendText(json);
-                }
+		if ( object !== null ) {
+			// Send uuid of selected object across socket
+			var json = JSON.stringify({
+				"event": "select",
+				"uuid": uuid,
+				"name": object.name});
+			sendText(json);
+		}
 	},
 
 	selectById: function ( id ) {
@@ -530,79 +530,79 @@ OpenSimEditor.prototype = {
 		model.parent = this.modelsGroup;
 		var exist = this.models.indexOf(model.uuid);
 		if (exist == -1){
-		    //this.scene.add( model );
-		    this.currentModel=model;
-		    this.addModelLight(model);
-		    this.addObject(model);
-		    this.models.push(model.uuid);
-		    this.setCurrentModel(model.uuid);
-		    this.adjustSceneAfterModelLoading();
-		    //this.scripts = json.scripts;
-		    // The next 2 line has to be made after helper was added to scene to fix helper display
-		    var modelLight = model.getObjectByName('ModelLight');
-		    this.helpers[modelLight.id].update();
-		    this.signals.sceneGraphChanged.active = true;
-		    this.signals.sceneGraphChanged.dispatch();
-		    this.viewFitAll();
-		    this.signals.windowResize.dispatch();
-	    }
+			//this.scene.add( model );
+			this.currentModel=model;
+			this.addModelLight(model);
+			this.addObject(model);
+			this.models.push(model.uuid);
+			this.setCurrentModel(model.uuid);
+			this.adjustSceneAfterModelLoading();
+			//this.scripts = json.scripts;
+			// The next 2 line has to be made after helper was added to scene to fix helper display
+			var modelLight = model.getObjectByName('ModelLight');
+			this.helpers[modelLight.id].update();
+			this.signals.sceneGraphChanged.active = true;
+			this.signals.sceneGraphChanged.dispatch();
+			this.viewFitAll();
+			this.signals.windowResize.dispatch();
+		}
 	},
 	
 	loadModel: function ( modelJsonFileName) {
 		var loader = new THREE.XHRLoader();
 		loader.crossOrigin = '';
 		loader.load( modelJsonFileName, function ( text ) {
-		    var json = JSON.parse( text );
-		    //editor.clear();
-		    editor.addfromJSON( json );
-		    editor.signals.sceneGraphChanged.dispatch();
+			var json = JSON.parse( text );
+			//editor.clear();
+			editor.addfromJSON( json );
+			editor.signals.sceneGraphChanged.dispatch();
 		} );	
 	},
 	enableShadows: function (modeluuid, newSetting) {
-	    modelobject = editor.objectByUuid(modeluuid);
-	    if (modelobject != undefined){
+		modelobject = editor.objectByUuid(modeluuid);
+		if (modelobject != undefined){
 		modelobject.traverse( function ( child ) {
-		    if (child instanceof THREE.Mesh)
+			if (child instanceof THREE.Mesh)
 			child.castShadow = newSetting;
 			child.receiveShadow = newSetting;
 		});
-	    }
+		}
 	},
 	closeModel: function (modeluuid) {
-	    if (this.models.indexOf(modeluuid)!=-1){
-		ndx = this.models.indexOf(modeluuid);
-		this.models.splice(ndx, 1);
-		modelObject = editor.objectByUuid(modeluuid);
-		editor.removeObject(modelObject);
-	    }
-	    this.signals.sceneGraphChanged.dispatch();
+		if (this.models.indexOf(modeluuid)!=-1){
+		    ndx = this.models.indexOf(modeluuid);
+		    this.models.splice(ndx, 1);
+		    modelObject = editor.objectByUuid(modeluuid);
+		    editor.removeObject(modelObject);
+		}
+		this.signals.sceneGraphChanged.dispatch();
 	},
 	setCurrentModel: function ( modeluuid ) {
-	    if (this.currentModel == modeluuid) 
+		if (this.currentModel == modeluuid) 
 		return; // Nothing to do
-	    this.currentModel = modeluuid;
-	    if (this.currentModel == undefined)
+		this.currentModel = modeluuid;
+		if (this.currentModel == undefined)
 		return;
-	    newCurrentModel = editor.objectByUuid(modeluuid);
-	    // Dim light for all other models and make the model have shadows, 
-	    // Specififc light
-	    for ( var modindex = 0; modindex < this.models.length; modindex++ ) {
+		newCurrentModel = editor.objectByUuid(modeluuid);
+		// Dim light for all other models and make the model have shadows, 
+		// Specififc light
+		for ( var modindex = 0; modindex < this.models.length; modindex++ ) {
 		if (this.models[modindex] == modeluuid){
-		    modelLight = newCurrentModel.getObjectByName('ModelLight');
-		    modelLight.color = this.currentModelColor;
-		    modelLight.visible = true;
-		    this.enableShadows(modeluuid, true);
+			modelLight = newCurrentModel.getObjectByName('ModelLight');
+			modelLight.color = this.currentModelColor;
+			modelLight.visible = true;
+			this.enableShadows(modeluuid, true);
 		}
 		else{
-		    other_uuid = this.models[modindex];
-		    nonCurrentModel = editor.objectByUuid(other_uuid);
-		    modelLight = nonCurrentModel.getObjectByName('ModelLight');
-		    modelLight.color = this.nonCurrentModelColor;
-		    modelLight.visible = false;
-		    this.enableShadows(other_uuid, false);
+			other_uuid = this.models[modindex];
+			nonCurrentModel = editor.objectByUuid(other_uuid);
+			modelLight = nonCurrentModel.getObjectByName('ModelLight');
+			modelLight.color = this.nonCurrentModelColor;
+			modelLight.visible = false;
+			this.enableShadows(other_uuid, false);
 		}
-	    }
-	    this.signals.sceneGraphChanged.dispatch();
+		}
+		this.signals.sceneGraphChanged.dispatch();
 	},
 	toJSON: function () {
 
@@ -667,28 +667,28 @@ OpenSimEditor.prototype = {
 	},
 
 	createBackground: function(choice) {
-	    if (choice == 'nobackground') {
-	        this.scene.background = new THREE.Color(0xff0000);
-	        this.signals.backgroundColorChanged.dispatch(this.scene.background.getHex());
-	        return;
-	    }
-	    // load the cube textures
-	    // you need to create an instance of the loader...
-	    var textureloader = new THREE.CubeTextureLoader();
-	    var path = 'images/'+choice+'/';
-	    textureloader.setPath(path);
-	    // and then set your CORS config
-	    var textureCube = textureloader.load( ["px.jpg",
+		if (choice == 'nobackground') {
+			this.scene.background = new THREE.Color(0xff0000);
+			this.signals.backgroundColorChanged.dispatch(this.scene.background.getHex());
+			return;
+		}
+		// load the cube textures
+		// you need to create an instance of the loader...
+		var textureloader = new THREE.CubeTextureLoader();
+		var path = 'images/'+choice+'/';
+		textureloader.setPath(path);
+		// and then set your CORS config
+		var textureCube = textureloader.load( ["px.jpg",
 		"nx.jpg", "py.jpg", "ny.jpg", 
 		"pz.jpg", "nz.jpg"] );
-	    textureCube.format = THREE.RGBFormat;
-	    textureloader.mapping = THREE.CubeRefactionMapping;
-	    this.scene.background = textureCube;
+		textureCube.format = THREE.RGBFormat;
+		textureloader.mapping = THREE.CubeRefactionMapping;
+		this.scene.background = textureCube;
 	},
 	
 	createGroundPlane: function(choice) {
-	    if (choice == 'nofloor')
-	        return;
+		if (choice == 'nofloor')
+			return;
 		var textureLoader = new THREE.TextureLoader();
 		var texture1 = textureLoader.load( "textures/"+choice+".jpg" );
 		var material1 = new THREE.MeshPhongMaterial( { color: 0xffffff, map: texture1 } );
@@ -705,15 +705,14 @@ OpenSimEditor.prototype = {
 		this.groundPlane = groundPlane;
 	},
 	createModelsGroup: function () {
-	    if (this.modelsGroup == undefined) {
+		if (this.modelsGroup == undefined) {
 		modelsGroup = new THREE.Group();
 		modelsGroup.name = "Models";
 		this.addObject(modelsGroup);
 		this.modelsGroup = modelsGroup;
-	    }
+		}
 	},
 	createLights: function () {
-
 		amb = new THREE.AmbientLight(0xffffff);
 		amb.name = 'AmbientLight';
 		amb.intensity = 0.2;
@@ -733,7 +732,7 @@ OpenSimEditor.prototype = {
 		directionalLight.visible = true;
 		this.sceneLight = directionalLight;
 		this.addObject(directionalLight);
-        // HemisphericalLight 
+		// HemisphericalLight 
 		hemiSphereLight = new THREE.HemisphereLight(10724259, 1, 0);
 		hemiSphereLight.name = 'GlobalLight';
 		hemiSphereLight.intensity = 0.40;
@@ -741,29 +740,29 @@ OpenSimEditor.prototype = {
 	},
 
 	updateBackground: function (choice) {
-	    this.config.setKey('skybox', choice);
+		this.config.setKey('skybox', choice);
 		if (choice == 'nobackground') {
-		    //this.skyboxMesh.visible = false;
-		    //this.scene.background = new THREE.Color(0xff0000);
-		    //this.signals.objectChanged.dispatch( this.scene.background );
-		    return;
+			//this.skyboxMesh.visible = false;
+			//this.scene.background = new THREE.Color(0xff0000);
+			//this.signals.objectChanged.dispatch( this.scene.background );
+			return;
 		}
 		this.createBackground(choice);
 	},
 
 	updateGroundPlane: function (choice) {
-	    this.config.setKey('floor', choice);
-	    if (choice == 'nofloor') {
-	        if (this.groundPlane !== null) {
-	            this.groundPlane.visible = false;
-	            this.signals.objectChanged.dispatch(groundPlane);
-	        }
-		    return;
-	    }
-	    if (this.groundPlane == null) {
-	        this.createGroundPlane(choice);
-	        return;
-	    }
+		this.config.setKey('floor', choice);
+		if (choice == 'nofloor') {
+			if (this.groundPlane !== null) {
+				this.groundPlane.visible = false;
+				this.signals.objectChanged.dispatch(groundPlane);
+			}
+			return;
+		}
+		if (this.groundPlane == null) {
+			this.createGroundPlane(choice);
+			return;
+		}
 		this.groundPlane.visible = true;
 		var textureLoader = new THREE.TextureLoader();
 		var texture1 = textureLoader.load("textures/"+choice+".jpg");
@@ -774,28 +773,27 @@ OpenSimEditor.prototype = {
 		this.signals.materialChanged.dispatch( this.groundPlane );
 	},
 	updateBackgroundColor: function (newColor) {
-	    this.scene.background = new THREE.Color(newColor);
-	    this.signals.backgroundColorChanged.dispatch(this.scene.background.getHex());
+		this.scene.background = new THREE.Color(newColor);
+		this.signals.backgroundColorChanged.dispatch(this.scene.background.getHex());
 	},
 	getGroundSelection: function () {
-	    return this.config.getKey('floor');
+		return this.config.getKey('floor');
 	},
 	createDollyPath: function () {
 
-	    ///this.scene.add(this.dolly_object);
-	    tube = new THREE.TubeGeometry(this.dollyPath, 100, 5, 8, true);
-	    tubemat = new THREE.MeshLambertMaterial({
-	        color: 0xff00ff
-	    });
-	    tubeMesh = new THREE.Mesh(tube, tubemat);
-	    tubeMesh.name = "DollyPath";
-	    // evaluate dollyPath at t=0 and use that to place dolly_camera
-	    this.dolly_camera.position = this.dollyPath.getPoint(0);
-	    this.dolly_object.add(this.dolly_camera);
-	    this.dolly_object.add(tubeMesh);
-	    //this.dolly_object.add(this.cameraEye);
-	    dcameraHelper = new THREE.CameraHelper(this.dolly_camera);
-	    ///this.sceneHelpers.add(dcameraHelper);
+		tube = new THREE.TubeGeometry(this.dollyPath, 100, 5, 8, true);
+		tubemat = new THREE.MeshLambertMaterial({
+			color: 0xff00ff
+		});
+		tubeMesh = new THREE.Mesh(tube, tubemat);
+		tubeMesh.name = "DollyPath";
+		// evaluate dollyPath at t=0 and use that to place dolly_camera
+		this.dolly_camera.position = this.dollyPath.getPoint(0);
+		this.dolly_object.add(this.dolly_camera);
+		this.dolly_object.add(tubeMesh);
+		//this.dolly_object.add(this.cameraEye);
+		dcameraHelper = new THREE.CameraHelper(this.dolly_camera);
+		///this.sceneHelpers.add(dcameraHelper);
 
 	},
 		createLogoSprite: function() {
@@ -812,9 +810,9 @@ OpenSimEditor.prototype = {
 			);
 
 			spriteMaterial.scaleByViewport = false;
-            // This used to be AdditiveBlending, but that caused the logo to
-            // very bright white on certain backgrounds.
-            // https://threejs.org/examples/webgl_materials_blending.html
+			// This used to be AdditiveBlending, but that caused the logo to
+			// very bright white on certain backgrounds.
+			// https://threejs.org/examples/webgl_materials_blending.html
 			spriteMaterial.blending = THREE.NormalBlending;
 
 			var sprite = new THREE.Sprite(spriteMaterial);
@@ -824,191 +822,226 @@ OpenSimEditor.prototype = {
 			this.sceneOrtho.add(sprite);
 		},
 	getModel: function () {
-	    return editor.objectByUuid(this.currentModel);
+		return editor.objectByUuid(this.currentModel);
 	},
 
 	addMarkerAtPosition: function (testPosition) {
 
-	    var sphere = new THREE.SphereGeometry(20, 20, 20);
-	    var sphereMesh = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xff0040 }));
-	    sphereMesh.position.copy(testPosition);
-	    this.scene.add(sphereMesh);
+		var sphere = new THREE.SphereGeometry(20, 20, 20);
+		var sphereMesh = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({ color: 0xff0040 }));
+		sphereMesh.position.copy(testPosition);
+		this.scene.add(sphereMesh);
 	},
 
 	updateCamera: function (newposition, viewCenter) {
 
-	    this.camera.position.set(newposition.x, newposition.y, newposition.z);
-	    this.camera.lookAt(viewCenter);
-	    this.sceneLight.position.copy(this.camera.position);
-	    var changeEvent = { type: 'change' };
-	    this.control.dispatchEvent( changeEvent );
-	    this.signals.defaultCameraApplied.dispatch(viewCenter);
+		this.camera.position.set(newposition.x, newposition.y, newposition.z);
+		this.camera.lookAt(viewCenter);
+		this.sceneLight.position.copy(this.camera.position);
+		var changeEvent = { type: 'change' };
+		this.control.dispatchEvent( changeEvent );
+		this.signals.defaultCameraApplied.dispatch(viewCenter);
 	},
 
 	viewZoom: function(in_out) {
-	    // Debug	    
-	    var vector = new THREE.Vector3(0, 0, -1 * in_out);
-	    vector.applyQuaternion(this.camera.quaternion);
-	    var newPos = this.camera.position.add(vector);
-	    this.camera.position.copy(newPos);
-	    
-	    this.signals.cameraChanged.dispatch(this.camera);
+		// Debug	    
+		var vector = new THREE.Vector3(0, 0, -1 * in_out);
+		vector.applyQuaternion(this.camera.quaternion);
+		var newPos = this.camera.position.add(vector);
+		this.camera.position.copy(newPos);
+		
+		this.signals.cameraChanged.dispatch(this.camera);
 	},
 
 	viewFitAll: function () {
 
-	    var modelObject = this.getModel();
-	    var modelbbox = new THREE.Box3();
-	    if (modelObject != undefined)
+		var modelObject = this.getModel();
+		var modelbbox = new THREE.Box3();
+		if (modelObject != undefined)
 		modelbbox.setFromObject(modelObject);
-	    var radius = Math.max(modelbbox.max.x - modelbbox.min.x, modelbbox.max.y - modelbbox.min.y, modelbbox.max.z - modelbbox.min.z) / 2;
-	    var aabbCenter = new THREE.Vector3();
-	    modelbbox.center(aabbCenter);
+		var radius = Math.max(modelbbox.max.x - modelbbox.min.x, modelbbox.max.y - modelbbox.min.y, modelbbox.max.z - modelbbox.min.z) / 2;
+		var aabbCenter = new THREE.Vector3();
+		modelbbox.center(aabbCenter);
 
-	    // Compute offset needed to move the camera back that much needed to center AABB (approx: better if from BB front face)
-	    var offset = radius / Math.tan(Math.PI / 180.0 * 25 * 0.5);
+		// Compute offset needed to move the camera back that much needed to center AABB (approx: better if from BB front face)
+		var offset = radius / Math.tan(Math.PI / 180.0 * 25 * 0.5);
 
-	    // Compute new camera direction and position
-	    var dir = new THREE.Vector3(0.0, 0.0, 1.0);
-	    if (this.camera != undefined){
-	        dir.x = this.camera.matrix.elements[8];
-	        dir.y = this.camera.matrix.elements[9];
-	        dir.z = this.camera.matrix.elements[10];
-        }
-	    dir.multiplyScalar(offset);
-	    var newPos = new THREE.Vector3();
-	    newPos.addVectors(aabbCenter, dir);
-	    this.camera.position.set(newPos.x, newPos.y, newPos.z);
-	    this.camera.lookAt(aabbCenter);
-	    this.signals.defaultCameraApplied.dispatch(aabbCenter);
+		// Compute new camera direction and position
+		var dir = new THREE.Vector3(0.0, 0.0, 1.0);
+		if (this.camera != undefined){
+			dir.x = this.camera.matrix.elements[8];
+			dir.y = this.camera.matrix.elements[9];
+			dir.z = this.camera.matrix.elements[10];
+		}
+		dir.multiplyScalar(offset);
+		var newPos = new THREE.Vector3();
+		newPos.addVectors(aabbCenter, dir);
+		this.camera.position.set(newPos.x, newPos.y, newPos.z);
+		this.camera.lookAt(aabbCenter);
+		this.signals.defaultCameraApplied.dispatch(aabbCenter);
 
 	},
-    // Fix scene after loading a model by placing directional light at the corner
-    // of bounding box and dolly at half hight.
+	// Fix scene after loading a model by placing directional light at the corner
+	// of bounding box and dolly at half hight.
 	adjustSceneAfterModelLoading: function () {
-	    var modelObject = this.getModel();
-	    var modelbbox = new THREE.Box3().setFromObject(modelObject);
-	    /*
-	    var helper = new THREE.BoundingBoxHelper(modelObject, 0xff0000);
-	    helper.name = 'boundingbox';
-	    helper.update();
-	    if (modelObject != undefined)
+		var modelObject = this.getModel();
+		var modelbbox = new THREE.Box3().setFromObject(modelObject);
+		/*
+		var helper = new THREE.BoundingBoxHelper(modelObject, 0xff0000);
+		helper.name = 'boundingbox';
+		helper.update();
+		if (modelObject != undefined)
 		modelObject.add(helper);
-	    */
-	    builtinLight = this.scene.getObjectByName('SceneLight');
-	    builtinLight.position.copy(new THREE.Vector3(modelbbox.max.x, modelbbox.max.y+100, modelbbox.min.z));
-	    this.signals.cameraChanged.dispatch(this.camera);
-	    // Move dolly to middle hight of bbox and make it invisible
-	    this.dolly_object.position.y = (modelbbox.max.y + modelbbox.min.y) / 2;
-	    path = this.scene.getObjectByName('DollyPath');
-	    ///path.visible = false;
-	    // Compute Offset so that models don't overlap
-	    if (this.models.length==1)
+		*/
+		builtinLight = this.scene.getObjectByName('SceneLight');
+		builtinLight.position.copy(new THREE.Vector3(modelbbox.max.x, modelbbox.max.y+100, modelbbox.min.z));
+		this.signals.cameraChanged.dispatch(this.camera);
+		// Move dolly to middle hight of bbox and make it invisible
+		this.dolly_object.position.y = (modelbbox.max.y + modelbbox.min.y) / 2;
+		path = this.scene.getObjectByName('DollyPath');
+		///path.visible = false;
+		// Compute Offset so that models don't overlap
+		if (this.models.length==1)
 		return; // No need for offset
-            // if ExperimentalData, also no offset
-            if (modelObject.children[0].name.startsWith('/ExperimentalData'))
-                return;
-	    // Multiple models, compute box bounding all previous models and use to offset
-	    nextModel = editor.objectByUuid(this.models[0]);
-	    sceneBox = new THREE.Box3().setFromObject(nextModel);
-	    for ( var modindex = 1; modindex < this.models.length-1; modindex++ ) {
+			// if ExperimentalData, also no offset
+			if (modelObject.children[0].name.startsWith('/ExperimentalData'))
+				return;
+		// Multiple models, compute box bounding all previous models and use to offset
+		nextModel = editor.objectByUuid(this.models[0]);
+		sceneBox = new THREE.Box3().setFromObject(nextModel);
+		for ( var modindex = 1; modindex < this.models.length-1; modindex++ ) {
 		nextModel = editor.objectByUuid(this.models[modindex]);
 		nextModelBox = new THREE.Box3().setFromObject(nextModel);
 		sceneBox.union(nextModelBox);
-	    }
-	    modelObject.position.z = sceneBox.max.z+modelbbox.max.z-modelbbox.min.z;
-	    modelObject.getObjectByName('ModelLight').target.updateMatrixWorld();
+		}
+		modelObject.position.z = sceneBox.max.z+modelbbox.max.z-modelbbox.min.z;
+		modelObject.getObjectByName('ModelLight').target.updateMatrixWorld();
 	},
 	addModelLight: function(model) {
-	    var modelbbox = new THREE.Box3().setFromObject(model);
-	    var modelCenter = new THREE.Vector3();
-	    modelbbox.center(modelCenter);
-	    modelCenterGroup = new THREE.Group();
-	    modelCenterGroup.name = "ModelCenter";
-	    modelCenterGroup.position.copy(new THREE.Vector3(modelCenter.x, modelCenter.y, modelCenter.z));
-	    model.add(modelCenterGroup);
-	    modelLight =  new THREE.PointLight( {color: this.currentModelColor});
-	    //modelLight.castShadow = true;
-	    //modelLight.angle = 0.5;
-	    modelLight.intensity = 0.25;	
-	    modelLight.name = 'ModelLight';
-        /*
-	    modelLight.shadow.camera.bottom = -1000;
-	    modelLight.shadow.camera.far = 2000;
-	    modelLight.shadow.camera.left = -1000;
-	    modelLight.shadow.camera.right = 1000;
-	    modelLight.shadow.camera.top = 1000;
-        */
-	    modelLight.position.copy(new THREE.Vector3((modelbbox.max.x+modelbbox.min.x)/2, 
+		var modelbbox = new THREE.Box3().setFromObject(model);
+		var modelCenter = new THREE.Vector3();
+		modelbbox.center(modelCenter);
+		modelCenterGroup = new THREE.Group();
+		modelCenterGroup.name = "ModelCenter";
+		modelCenterGroup.position.copy(new THREE.Vector3(modelCenter.x, modelCenter.y, modelCenter.z));
+		model.add(modelCenterGroup);
+		modelLight =  new THREE.PointLight( {color: this.currentModelColor});
+		//modelLight.castShadow = true;
+		//modelLight.angle = 0.5;
+		modelLight.intensity = 0.25;	
+		modelLight.name = 'ModelLight';
+		/*
+		modelLight.shadow.camera.bottom = -1000;
+		modelLight.shadow.camera.far = 2000;
+		modelLight.shadow.camera.left = -1000;
+		modelLight.shadow.camera.right = 1000;
+		modelLight.shadow.camera.top = 1000;
+		*/
+		modelLight.position.copy(new THREE.Vector3((modelbbox.max.x+modelbbox.min.x)/2, 
 		modelbbox.max.y+100, (modelbbox.min.z+modelbbox.max.z)/2));
-	    modelLight.target = modelCenterGroup;
-	    model.add(modelLight);
+		modelLight.target = modelCenterGroup;
+		model.add(modelLight);
 	},
 	setFloorHeight: function(newHeight) {
-	    if (this.groundPlane !== undefined){
+		if (this.groundPlane !== undefined){
 		this.groundPlane.position.y = newHeight*1000;
-	    }
+		}
 		this.refresh();
 	},
 	getSceneLightPosition: function(coord) {
-	    sceneLightpos = this.sceneLight.position;
-	    if (coord === 'x')
+		sceneLightpos = this.sceneLight.position;
+		if (coord === 'x')
 		return sceneLightpos.x/1000.0;
-	    else if (coord === 'y')
+		else if (coord === 'y')
 		return sceneLightpos.y/1000.0;
-	    else
+		else
 		return sceneLightpos.z/1000.0;
 	},
 	updateSceneLight: function(param, val){
-	    if (param==='color'){
+		if (param==='color'){
 		this.sceneLight.color = new THREE.Color(val);
 		return;
-	    }
-	    sceneLightpos = this.sceneLight.position;
-	    if (param === 'x')
+		}
+		sceneLightpos = this.sceneLight.position;
+		if (param === 'x')
 		sceneLightpos.x += val*1000;
-	    else if (param === 'y')
+		else if (param === 'y')
 		sceneLightpos.y += val*1000;
-	    else
+		else
 		sceneLightpos.z += val*1000;
 	},
 	toggleMarkup: function () {
-	    oldValue = this.config.getKey('render/debug');
-	    newValue = !oldValue;
-	    this.config.setKey('render/debug', newValue);
-	    this.signals.renderDebugChanged.dispatch(newValue);
+		oldValue = this.config.getKey('render/debug');
+		newValue = !oldValue;
+		this.config.setKey('render/debug', newValue);
+		this.signals.renderDebugChanged.dispatch(newValue);
 	},
-        selectCurrentModelLight: function () {
-            if (this.currentModel === undefined) return;
-            var modelObject = this.getModel();
-            var modelLight = modelObject.getObjectByName('ModelLight');
-            this.select(modelLight);
+	selectCurrentModelLight: function () {
+		if (this.currentModel === undefined) return;
+		var modelObject = this.getModel();
+		var modelLight = modelObject.getObjectByName('ModelLight');
+		this.select(modelLight);
 	},
 	updatePath: function (pathUpdateJson) {
-	    var pathObject = this.objectByUuid(pathUpdateJson.uuid);
-        /*
-            pathpoints = pathObject.pathpoints;
-            for (var i = 0; i < pathpoints.length; i++) {
-                var nextpathpoint = this.objectByUuid(pathpoints[i]);
-                nextpathpoint.updateMatrixWorld();
-                pathObject.geometry.vertices[i].setFromMatrixPosition(nextpathpoint.matrixWorld);
-            }
-            pathObject.geometry.verticesNeedUpdate = true;*/
-            pathObject.material.color.setHex(pathUpdateJson.color);
-        },
-        toggleRecord: function () {
-            if (this.recording){
-                this.signals.recordingStopped.dispatch();
-                this.recording = false;
-            }
-            else {
-                this.signals.recordingStarted.dispatch();
-                this.recording = true;
-            }
-        },
-        refresh: function() {
-            var changeEvent = { type: 'change' };
-	        this.control.dispatchEvent( changeEvent );
-        }
+		var pathObject = this.objectByUuid(pathUpdateJson.uuid);
+		pathObject.material.color.setHex(pathUpdateJson.color);
+	},
+	processPathEdit: function (pathEditJson) {
+	    var pathObject = this.objectByUuid(pathEditJson.uuid);
+	    var pathGeometry = pathObject.geometry;
+	    var pathMaterial = pathObject.material;
+	    var pathParent = pathObject.parent;
+	    if (pathEditJson.SubOperation === "refresh") {
+	    	var updPoints = pathEditJson.points;
+	    	for (var i = 0; i < updPoints.length; i++) {
+	    		var nextEntry = updPoints[i];
+	    		var uuid = nextEntry.uuid;
+	    		var xform = nextEntry.matrix;
+	    		var matrix = new THREE.Matrix4();
+	    		matrix.fromArray(xform);
+	    		var pathpointObject = this.objectByUuid(uuid);
+	    		matrix.decompose(pathpointObject.position, pathpointObject.quaternion, pathpointObject.scale);
+	    	}
+	    	this.refresh();
+	    	return;
+	    }
+	    this.removeObject(pathObject);
+	    if (pathEditJson.SubOperation === "insert") { // Add new Pathpoint so uuid is found later
+	    	var newPointJson = pathEditJson.NewPoint;
+	    	var pointParent = newPointJson.parent_uuid;
+	    	parentFrame = this.objectByUuid(pointParent);
+	
+	    	var newPointGeometry = newPointJson.geometry;
+	    	var newPointMaterial = newPointJson.material;
+	    	var newMesh = this.objectByUuid(pathEditJson.points[0]).clone();
+	    	newMesh.uuid = newPointJson.uuid;
+	    	var matrix = new THREE.Matrix4();
+	    	matrix.fromArray(newPointJson.matrix);
+	    	matrix.decompose(newMesh.position, newMesh.quaternion, newMesh.scale);
+	    	parentFrame.add(newMesh);
+	    }
+	    // remove from parent
+	    var newGeometry = new THREE.CylinderGeometry(8, 8, 0.1, 8, 2 * (pathEditJson.points.length-1) - 1, true);
+	    var newMuscle = new THREE.SkinnedMuscle(newGeometry, pathEditJson.points, pathMaterial);
+	    newMuscle.parent = pathParent;
+	    newMuscle.uuid = pathEditJson.uuid;
+	    // add to parent.
+	    this.addObject(newMuscle);
+	    this.refresh();
+	},
+	toggleRecord: function () {
+		if (this.recording){
+			this.signals.recordingStopped.dispatch();
+			this.recording = false;
+		}
+		else {
+			this.signals.recordingStarted.dispatch();
+			this.recording = true;
+		}
+	},
+	refresh: function() {
+		var changeEvent = { type: 'change' };
+		this.control.dispatchEvent( changeEvent );
+	}
 
 };
