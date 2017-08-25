@@ -167,7 +167,7 @@
 				this.sceneLightY = -0.01;
 				this.sceneLightZ = -0.01;
 				this.sceneLightColor = [255, 255, 255];
-				this.sceneLightSelect = function () { editor.select(editor.sceneLight); }
+				this.sceneLightSelect = function () { editor.select(editor.scene.getObjectByName('SunLight')); }
 				this.modelLightSelect = function () { editor.selectCurrentModelLight(); }
 				this.toggleMarkup = function () { editor.toggleMarkup(); }
 				this.expertModeSelect = function () { editor.setTheme('css/dark.css'); }
@@ -190,7 +190,7 @@
 				    editor.updateBackgroundColor(value);
                                     //editor.updateBackground('nobackground');
                             });
-                            //world.add(knobs, 'sceneLightSelect').name('Scene Light');
+                            gui.add(knobs, 'sceneLightSelect').name('Scene Light');
                             //var model_control = gui.addFolder('Model');
                             // model_control.add(knobs, 'modelLightSelect').name('Model Light');
                             //gui.add(knobs, 'toggleMarkup').name('Toggle Markup');
