@@ -381,8 +381,10 @@ var OpenSimViewport = function ( editor ) {
 
 	var saveTimeout;
 
-	signals.cameraChanged.add( function () {
-                editor.sceneLight.position.copy(editor.camera.position);
+	signals.cameraChanged.add( function (camera, offset) {
+		editor.sceneLight.position.copy(editor.camera.position);
+		if (offset !== undefined)
+			controls.center.add (offset);
 		render();
 
 	} );

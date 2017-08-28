@@ -914,28 +914,57 @@ OpenSimEditor.prototype = {
 		var modelObject = this.getModel();
 		var modelbbox = new THREE.Box3();
 		if (modelObject != undefined)
-		modelbbox.setFromObject(modelObject);
-		var radius = Math.max(modelbbox.max.x - modelbbox.min.x, modelbbox.max.y - modelbbox.min.y, modelbbox.max.z - modelbbox.min.z) / 2;
-		var aabbCenter = new THREE.Vector3();
-		modelbbox.center(aabbCenter);
+		    modelbbox.setFromObject(modelObject);
+	    var radius = Math.max(modelbbox.max.x - modelbbox.min.x, modelbbox.max.y - modelbbox.min.y, modelbbox.max.z - modelbbox.min.z) / 2;
+	    var aabbCenter = new THREE.Vector3();
+	    modelbbox.center(aabbCenter);
 
-		// Compute offset needed to move the camera back that much needed to center AABB (approx: better if from BB front face)
-		var offset = radius / Math.tan(Math.PI / 180.0 * 25 * 0.5);
+	    // Compute offset needed to move the camera back that much needed to center AABB (approx: better if from BB front face)
+	    var offset = radius / Math.tan(Math.PI / 180.0 * 25 * 0.5);
 
-		// Compute new camera direction and position
-		var dir = new THREE.Vector3(0.0, 0.0, 1.0);
-		if (this.camera != undefined){
-			dir.x = this.camera.matrix.elements[8];
-			dir.y = this.camera.matrix.elements[9];
-			dir.z = this.camera.matrix.elements[10];
+	    // Compute new camera direction and position
+	    var dir = new THREE.Vector3(0.0, 0.0, 1.0);
+	    if (this.camera != undefined){
+	        dir.x = this.camera.matrix.elements[8];
+	        dir.y = this.camera.matrix.elements[9];
+	        dir.z = this.camera.matrix.elements[10];
+        }
+	    dir.multiplyScalar(offset);
+	    var newPos = new THREE.Vector3();
+	    newPos.addVectors(aabbCenter, dir);
+	    this.camera.position.set(newPos.x, newPos.y, newPos.z);
+	    this.camera.lookAt(aabbCenter);
+	    this.signals.defaultCameraApplied.dispatch(aabbCenter);
+
+	},
+	handleKey: function (keyCode) {
+		var positionOffset = new THREE.Vector3();
+		switch (keyCode) {
+			case 73:
+				this.viewZoom(100.0);
+				return;
+			case 79:
+				this.viewZoom(-100.0);
+				return;
+			case 37:
+				positionOffset.set(100, 0., 0.);
+				break;
+			case 39:
+				positionOffset.set(-100, 0., 0.);
+				break;
+			case 38:
+				positionOffset.set(0, -100, 0.);
+				break;
+			case 40:
+				positionOffset.set(0, 100., 0.);
+				break;
 		}
-		dir.multiplyScalar(offset);
-		var newPos = new THREE.Vector3();
-		newPos.addVectors(aabbCenter, dir);
-		this.camera.position.set(newPos.x, newPos.y, newPos.z);
-		this.camera.lookAt(aabbCenter);
-		this.signals.defaultCameraApplied.dispatch(aabbCenter);
-
+		positionOffset.applyQuaternion(this.camera.quaternion);
+		this.camera.position.add(positionOffset);
+		this.camera.updateProjectionMatrix();
+		// Send offset along so that rotation center is updated by EditorControl
+		this.signals.cameraChanged.dispatch(this.camera, positionOffset);
+		this.refresh();
 	},
 	// Fix scene after loading a model by placing directional light at the corner
 	// of bounding box and dolly at half hight.
