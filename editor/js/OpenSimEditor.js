@@ -908,7 +908,8 @@ OpenSimEditor.prototype = {
 		positionOffset.applyQuaternion(this.camera.quaternion);
 		this.camera.position.add(positionOffset);
 		this.camera.updateProjectionMatrix();
-		this.signals.cameraChanged.dispatch(this.camera);
+		// Send offset along so that rotation center is updated by EditorControl
+		this.signals.cameraChanged.dispatch(this.camera, positionOffset);
 		this.refresh();
 	},
 	// Fix scene after loading a model by placing directional light at the corner
