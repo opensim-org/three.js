@@ -35,12 +35,14 @@ function onMessage(evt) {
 
 	switch(msg.Op){
 	case "Select":
-		editor.selectByUuid( msg.UUID, true );
+		editor.selectByUuid( msg.UUID);
 		break;
 	case "Frame":  
 		if (processing)
 			return;//alert("uuid: " + msg.name);
 		processing = true;
+		// Make sure nothing is selected before applying Frame
+		editor.select( null);
 		var transforms = msg.Transforms;
 		for (var i = 0; i < transforms.length; i ++ ) {
 			var oneBodyTransform = transforms[i];
