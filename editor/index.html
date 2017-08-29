@@ -137,7 +137,15 @@
 		<!-- <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="qyqgfqd9j8z890t"></script> -->
 
 		<script>
-
+                        function getParameterByName(name, url) {
+                            if (!url) url = window.location.href;
+                            name = name.replace(/[\[\]]/g, "\\$&");
+                            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                                results = regex.exec(url);
+                            if (!results) return null;
+                            if (!results[2]) return '';
+                            return decodeURIComponent(results[2].replace(/\+/g, " "));
+                        }
 			if (!Detector.webgl) Detector.addGetWebGLMessage();
 
 			window.URL = window.URL || window.webkitURL;
@@ -194,7 +202,8 @@
                             //var model_control = gui.addFolder('Model');
                             // model_control.add(knobs, 'modelLightSelect').name('Model Light');
                             //gui.add(knobs, 'toggleMarkup').name('Toggle Markup');
-                            //gui.add(knobs, 'expertModeSelect').name('Expert Mode');
+                            if (getParameterByName('expert')==="1")
+                                gui.add(knobs, 'expertModeSelect').name('Expert Mode');
                             // No save/retrieve settings
                             // gui.remember(knobs);
                             gui.closed = true;
