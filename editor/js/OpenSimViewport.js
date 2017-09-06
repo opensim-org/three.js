@@ -728,7 +728,7 @@ var OpenSimViewport = function ( editor ) {
 
 		sceneHelpers.updateMatrixWorld();
 		scene.updateMatrixWorld();
-		//stats.update();
+		stats.update();
 		if (renderer != null) {
 		    renderer.clear();
 
