@@ -147,8 +147,8 @@
 				return this.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 			};
 			//
-			//stats = new Stats();
-			//document.body.appendChild( stats.domElement );
+			stats = new Stats();
+			document.body.appendChild( stats.domElement );
 
 			var editor = new OpenSimEditor();
 			
@@ -171,6 +171,13 @@
 				this.modelLightSelect = function () { editor.selectCurrentModelLight(); }
 				this.toggleMarkup = function () { editor.toggleMarkup(); }
 				this.expertModeSelect = function () { editor.setTheme('css/dark.css'); }
+				this.showStats = function () { 
+					var elem = document.getElementById("viewport"); 
+					if (elem.style.bottom=="20px")
+						elem.style.bottom="0px";
+					else
+						elem.style.bottom="20px"; 
+				}
 			};
 			window.onload = function () {
 			    var gui = new dat.GUI(); // create dat.gui 
@@ -185,19 +192,21 @@
 			        editor.updateGroundPlane(value);
 			    });
 			    //var world = gui.addFolder('World');
-                            var backdropColor = gui.addColor(knobs, 'backgroundColor');
-                            backdropColor.onChange(function (value) {
+				var backdropColor = gui.addColor(knobs, 'backgroundColor');
+				backdropColor.onChange(function (value) {
 				    editor.updateBackgroundColor(value);
-                                    //editor.updateBackground('nobackground');
-                            });
-                            gui.add(knobs, 'sceneLightSelect').name('Scene Light');
-                            //var model_control = gui.addFolder('Model');
-                            // model_control.add(knobs, 'modelLightSelect').name('Model Light');
-                            //gui.add(knobs, 'toggleMarkup').name('Toggle Markup');
-                            //gui.add(knobs, 'expertModeSelect').name('Expert Mode');
-                            // No save/retrieve settings
-                            // gui.remember(knobs);
-                            gui.closed = true;
+						//editor.updateBackground('nobackground');
+				});
+				gui.add(knobs, 'sceneLightSelect').name('Scene Light');
+				//var model_control = gui.addFolder('Model');
+				// model_control.add(knobs, 'modelLightSelect').name('Model Light');
+				//gui.add(knobs, 'toggleMarkup').name('Toggle Markup');
+				gui.add(knobs, 'showStats').name('Show FPS');
+				//gui.add(knobs, 'expertModeSelect').name('Expert Mode');
+							
+				// No save/retrieve settings
+				// gui.remember(knobs);
+				gui.closed = true;
 			}
 
 			var viewport = new OpenSimViewport( editor );
