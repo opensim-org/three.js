@@ -563,7 +563,7 @@ Object.assign( THREE.OpenSimLoader.prototype, {
                                         break;
 
 			    case 'GeometryPath':
-                                        object = new THREE.SkinnedMuscle(getGeometry(data.geometry), data.points,  getMaterial( data.material ));
+                                        object = new THREE.SkinnedMuscle(getGeometry(data.geometry),  getMaterial( data.material ), data.points, data.active);
 
                                         break;
 
