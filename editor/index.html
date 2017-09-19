@@ -177,6 +177,7 @@
 						elem.style.bottom="0px";
 					else
 						elem.style.bottom="20px"; 
+					window.dispatchEvent(new Event('resize'));
 				}
 			};
 			window.onload = function () {
