@@ -7,6 +7,8 @@ var wsUri = "ws://" + document.location.host + "/visEndpoint";
 var websocket = new WebSocket(wsUri);
 
 var processing = false;
+var totalTime = 0.0;
+var numFrames = 0;
 websocket.onerror = function(evt) { onError(evt) };
 
 function onError(evt) {
@@ -41,6 +43,7 @@ function onMessage(evt) {
 		if (processing)
 			return;//alert("uuid: " + msg.name);
 		processing = true;
+		var t0 = performance.now();
 		// Make sure nothing is selected before applying Frame
 		editor.select( null);
 		var transforms = msg.Transforms;
@@ -60,6 +63,9 @@ function onMessage(evt) {
 			}
 		}
 		editor.refresh();
+		var t1 = performance.now() - t0;
+		totalTime +=t1;
+		numFrames++;
 		processing = false;
 		break;
 	case "CloseModel":
@@ -94,6 +100,18 @@ function onMessage(evt) {
 		break;
 	 case "PathOperation":
 		editor.processPathEdit(msg);
+		break;
+	case "startAnimation":
+		totalTime=0.0;
+		numFrames = 0;
+		break;
+	case "endAnimation":
+		var json = JSON.stringify({
+			"type": "info",
+			"numFrames": numFrames,
+			"totalTime": totalTime
+		});
+		sendText(json);
 		break;
    }
    processing = false; // Defensive in case render never finishes/errors
