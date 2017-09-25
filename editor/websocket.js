@@ -91,6 +91,7 @@ function onMessage(evt) {
 		editor.execute(cmd);
 		newUuid = cmd.object.uuid;
 		editor.moveObject(editor.objectByUuid(newUuid), editor.objectByUuid(parentUuid));
+		editor.refresh();
 		break;
 	 case "PathOperation":
 		editor.processPathEdit(msg);
