@@ -2,27 +2,23 @@
  * @author mrdoob / http://mrdoob.com/
  */
 
-var Config = function () {
-
-	var name = 'threejs-editor';
+var Config = function ( name ) {
 
 	var storage = {
 		'autosave': true,
-		'theme': 'css/light.css',
+		'theme': 'css/minimal.css',
 
-		'project/history/stored': true,
 		'project/renderer': 'WebGLRenderer',
 		'project/renderer/antialias': true,
 		'project/renderer/shadows': true,
+		'project/editable': false,
 		'project/vr': false,
+		'render/debug': true,
+		'floor': 'tile',
+		'skybox': 'nobackground',
+		'settings/history': false,
 
 		'ui/sidebar/animation/collapsed': true,
-		'ui/sidebar/geometry/collapsed': true,
-		'ui/sidebar/history/collapsed': true,
-		'ui/sidebar/material/collapsed': true,
-		'ui/sidebar/object3d/collapsed': false,
-		'ui/sidebar/project/collapsed': true,
-		'ui/sidebar/scene/collapsed': false,
 		'ui/sidebar/script/collapsed': true
 	};
 
@@ -70,6 +66,6 @@ var Config = function () {
 
 		}
 
-	}
+	};
 
 };

@@ -9,27 +9,18 @@ THREE.MaterialLoader = function ( manager ) {
 
 };
 
-THREE.MaterialLoader.prototype = {
-
-	constructor: THREE.MaterialLoader,
+Object.assign( THREE.MaterialLoader.prototype, {
 
 	load: function ( url, onLoad, onProgress, onError ) {
 
 		var scope = this;
 
 		var loader = new THREE.XHRLoader( scope.manager );
-		loader.setCrossOrigin( this.crossOrigin );
 		loader.load( url, function ( text ) {
 
 			onLoad( scope.parse( JSON.parse( text ) ) );
 
 		}, onProgress, onError );
-
-	},
-
-	setCrossOrigin: function ( value ) {
-
-		this.crossOrigin = value;
 
 	},
 
@@ -56,8 +47,8 @@ THREE.MaterialLoader.prototype = {
 	parse: function ( json ) {
 
 		var material = new THREE[ json.type ];
-		material.uuid = json.uuid;
 
+		if ( json.uuid !== undefined ) material.uuid = json.uuid;
 		if ( json.name !== undefined ) material.name = json.name;
 		if ( json.color !== undefined ) material.color.setHex( json.color );
 		if ( json.roughness !== undefined ) material.roughness = json.roughness;
@@ -77,6 +68,7 @@ THREE.MaterialLoader.prototype = {
 		if ( json.alphaTest !== undefined ) material.alphaTest = json.alphaTest;
 		if ( json.depthTest !== undefined ) material.depthTest = json.depthTest;
 		if ( json.depthWrite !== undefined ) material.depthWrite = json.depthWrite;
+		if ( json.colorWrite !== undefined ) material.colorWrite = json.colorWrite;
 		if ( json.wireframe !== undefined ) material.wireframe = json.wireframe;
 		if ( json.wireframeLinewidth !== undefined ) material.wireframeLinewidth = json.wireframeLinewidth;
 
@@ -122,6 +114,9 @@ THREE.MaterialLoader.prototype = {
 		if ( json.roughnessMap !== undefined ) material.roughnessMap = this.getTexture( json.roughnessMap );
 		if ( json.metalnessMap !== undefined ) material.metalnessMap = this.getTexture( json.metalnessMap );
 
+		if ( json.emissiveMap !== undefined ) material.emissiveMap = this.getTexture( json.emissiveMap );
+		if ( json.emissiveIntensity !== undefined ) material.emissiveIntensity = json.emissiveIntensity;
+
 		if ( json.specularMap !== undefined ) material.specularMap = this.getTexture( json.specularMap );
 
 		if ( json.envMap !== undefined ) {
@@ -131,7 +126,7 @@ THREE.MaterialLoader.prototype = {
 
 		}
 
-		if ( json.reflectivity ) material.reflectivity = json.reflectivity;
+		if ( json.reflectivity !== undefined ) material.reflectivity = json.reflectivity;
 
 		if ( json.lightMap !== undefined ) material.lightMap = this.getTexture( json.lightMap );
 		if ( json.lightMapIntensity !== undefined ) material.lightMapIntensity = json.lightMapIntensity;
@@ -139,7 +134,7 @@ THREE.MaterialLoader.prototype = {
 		if ( json.aoMap !== undefined ) material.aoMap = this.getTexture( json.aoMap );
 		if ( json.aoMapIntensity !== undefined ) material.aoMapIntensity = json.aoMapIntensity;
 
-		// MeshFaceMaterial
+		// MultiMaterial
 
 		if ( json.materials !== undefined ) {
 
@@ -155,4 +150,4 @@ THREE.MaterialLoader.prototype = {
 
 	}
 
-};
+} );

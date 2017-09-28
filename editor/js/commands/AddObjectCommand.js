@@ -28,7 +28,8 @@ AddObjectCommand.prototype = {
 	execute: function () {
 
 		this.editor.addObject( this.object );
-		this.editor.select( this.object );
+		//this.editor.select( this.object );
+		this.object.updateMatrixWorld( true );
 
 	},
 
@@ -56,7 +57,7 @@ AddObjectCommand.prototype = {
 
 		if ( this.object === undefined ) {
 
-			var loader = new THREE.ObjectLoader();
+			var loader = new THREE.OpenSimLoader();
 			this.object = loader.parse( json.object );
 
 		}

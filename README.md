@@ -1,68 +1,31 @@
-three.js
-========
+OpenSim Viewer based on three.js
+================================
 
 #### JavaScript 3D library ####
+The library three.js a lightweight 3D library with a very low level of complexity. This fork utilizes three.js as the technology behind the OpenSim visualizer.
 
-The aim of the project is to create a lightweight 3D library with a very low level of complexity — in other words, for dummies. The library provides &lt;canvas&gt;, &lt;svg&gt;, CSS3D and WebGL renderers.
-
-[Examples](http://threejs.org/examples/) — [Documentation](http://threejs.org/docs/) — [Migrating](https://github.com/mrdoob/three.js/wiki/Migration) — [Help](http://stackoverflow.com/questions/tagged/three.js)
+Please refer to [Examples](http://threejs.org/examples/) — [Documentation](http://threejs.org/docs/) — [Migrating](https://github.com/mrdoob/three.js/wiki/Migration) — [Help](http://stackoverflow.com/questions/tagged/three.js) for three.js related usage.
 
 
 ### Usage ###
 
-Download the [minified library](http://threejs.org/build/three.min.js) and include it in your html.
-Alternatively see [how to build the library yourself](https://github.com/mrdoob/three.js/wiki/build.py,-or-how-to-generate-a-compressed-Three.js-file).
+Download the master branch of this repo or a distribution. This includes a fixed OpenSim model visuals exported into supported .json format, the model is embedded in a scene. 
 
-```html
-<script src="js/three.min.js"></script>
-```
+## Prerequisites ###
+Three.js is a WebGL based technology as such there has to be a server running in the background that "serves" javascript pages that are displayed in a web browser. When integrated into the OpenSim application, the application will launch the server internally and the communication is transparent to users. For testing the visualizer standalone (in a browser) you'll need:
 
-This code creates a scene, a camera, and a geometric cube, and it adds the cube to the scene. It then creates a `WebGL` renderer for the scene and camera, and it adds that viewport to the document.body element. Finally it animates the cube within the scene for the camera.
+1. Installation of Python (tested with 2.7 but should work with any later version).
+2. Some installation of Google Chrome (tested wiith 52.0.2743.116 on Windows)
+3. Clone or checkout master branch of this repo or a distribution when available.
 
-```html
-<script>
+## Steps to Launch ##
 
-	var scene, camera, renderer;
-	var geometry, material, mesh;
+1. Open a shell/command prompt and navigate to the top level folder of the repository
+2. type ```python -m SimpleHTTPServer 8000``` (In python 3 the command is ```python -m http.server 8000```)
+3. Open Google Chrome to the URL localhost:8000/editor/
+4. Enjoy!
+ 
 
-	init();
-	animate();
 
-	function init() {
 
-		scene = new THREE.Scene();
-		
-		camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
-		camera.position.z = 1000;
 
-		geometry = new THREE.BoxGeometry( 200, 200, 200 );
-		material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
-
-		mesh = new THREE.Mesh( geometry, material );
-		scene.add( mesh );
-
-		renderer = new THREE.WebGLRenderer();
-		renderer.setSize( window.innerWidth, window.innerHeight );
-
-		document.body.appendChild( renderer.domElement );
-
-	}
-
-	function animate() {
-
-		requestAnimationFrame( animate );
-
-		mesh.rotation.x += 0.01;
-		mesh.rotation.y += 0.02;
-
-		renderer.render( scene, camera );
-
-	}
-
-</script>
-```
-If everything went well you should see [this](http://jsfiddle.net/f17Lz5ux/).
-
-### Change log ###
-
-[releases](https://github.com/mrdoob/three.js/releases)

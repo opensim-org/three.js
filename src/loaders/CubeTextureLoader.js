@@ -8,15 +8,13 @@ THREE.CubeTextureLoader = function ( manager ) {
 
 };
 
-THREE.CubeTextureLoader.prototype = {
-
-	constructor: THREE.CubeTextureLoader,
+Object.assign( THREE.CubeTextureLoader.prototype, {
 
 	load: function ( urls, onLoad, onProgress, onError ) {
 
-		var texture = new THREE.CubeTexture( [] );
+		var texture = new THREE.CubeTexture();
 
-		var loader = new THREE.ImageLoader();
+		var loader = new THREE.ImageLoader( this.manager );
 		loader.setCrossOrigin( this.crossOrigin );
 		loader.setPath( this.path );
 
@@ -55,13 +53,15 @@ THREE.CubeTextureLoader.prototype = {
 	setCrossOrigin: function ( value ) {
 
 		this.crossOrigin = value;
+		return this;
 
 	},
 
 	setPath: function ( value ) {
 
 		this.path = value;
+		return this;
 
 	}
 
-};
+} );

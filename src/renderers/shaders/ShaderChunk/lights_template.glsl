@@ -3,8 +3,8 @@
 //   for specific lighting scenarios.
 //
 // Instructions for use:
-//  - Ensure that both Material_RE_DirectLight, Material_RE_IndirectDiffuseLight and Material_RE_IndirectSpecularLight are defined
-//  - If you have defined a Material_RE_IndirectSpecularLight, you need to also provide a Material_LightProbeLOD.
+//  - Ensure that both RE_Direct, RE_IndirectDiffuse and RE_IndirectSpecular are defined
+//  - If you have defined an RE_IndirectSpecular, you need to also provide a Material_LightProbeLOD. <---- ???
 //  - Create a material parameter that is to be passed as the third parameter to your lighting functions.
 //
 // TODO:
@@ -13,88 +13,124 @@
 //  - Add diffuse light probe (irradiance cubemap) support.
 //
 
-GeometricContext geometry = GeometricContext( -vViewPosition, normalize( normal ), normalize(vViewPosition ) );
+GeometricContext geometry;
 
-#if ( NUM_POINT_LIGHTS > 0 ) && defined( Material_RE_DirectLight )
+geometry.position = - vViewPosition;
+geometry.normal = normal;
+geometry.viewDir = normalize( vViewPosition );
+
+IncidentLight directLight;
+
+#if ( NUM_POINT_LIGHTS > 0 ) && defined( RE_Direct )
+
+	PointLight pointLight;
 
 	for ( int i = 0; i < NUM_POINT_LIGHTS; i ++ ) {
 
-		IncidentLight directLight = getPointDirectLight( pointLights[ i ], geometry );
+		pointLight = pointLights[ i ];
 
-		Material_RE_DirectLight( directLight, geometry, material, reflectedLight );
+		getPointDirectLightIrradiance( pointLight, geometry, directLight );
+
+		#ifdef USE_SHADOWMAP
+		directLight.color *= all( bvec2( pointLight.shadow, directLight.visible ) ) ? getPointShadow( pointShadowMap[ i ], pointLight.shadowMapSize, pointLight.shadowBias, pointLight.shadowRadius, vPointShadowCoord[ i ] ) : 1.0;
+		#endif
+
+		RE_Direct( directLight, geometry, material, reflectedLight );
 
 	}
 
 #endif
 
-#if ( NUM_SPOT_LIGHTS > 0 ) && defined( Material_RE_DirectLight )
+#if ( NUM_SPOT_LIGHTS > 0 ) && defined( RE_Direct )
+
+	SpotLight spotLight;
 
 	for ( int i = 0; i < NUM_SPOT_LIGHTS; i ++ ) {
 
-		IncidentLight directLight = getSpotDirectLight( spotLights[ i ], geometry );
+		spotLight = spotLights[ i ];
 
-		Material_RE_DirectLight( directLight, geometry, material, reflectedLight );
+		getSpotDirectLightIrradiance( spotLight, geometry, directLight );
+
+		#ifdef USE_SHADOWMAP
+		directLight.color *= all( bvec2( spotLight.shadow, directLight.visible ) ) ? getShadow( spotShadowMap[ i ], spotLight.shadowMapSize, spotLight.shadowBias, spotLight.shadowRadius, vSpotShadowCoord[ i ] ) : 1.0;
+		#endif
+
+		RE_Direct( directLight, geometry, material, reflectedLight );
 
 	}
 
 #endif
 
-#if ( NUM_DIR_LIGHTS > 0 ) && defined( Material_RE_DirectLight )
+#if ( NUM_DIR_LIGHTS > 0 ) && defined( RE_Direct )
+
+	DirectionalLight directionalLight;
 
 	for ( int i = 0; i < NUM_DIR_LIGHTS; i ++ ) {
 
-		IncidentLight directLight = getDirectionalDirectLight( directionalLights[ i ], geometry );
+		directionalLight = directionalLights[ i ];
 
-		Material_RE_DirectLight( directLight, geometry, material, reflectedLight );
+		getDirectionalDirectLightIrradiance( directionalLight, geometry, directLight );
+
+		#ifdef USE_SHADOWMAP
+		directLight.color *= all( bvec2( directionalLight.shadow, directLight.visible ) ) ? getShadow( directionalShadowMap[ i ], directionalLight.shadowMapSize, directionalLight.shadowBias, directionalLight.shadowRadius, vDirectionalShadowCoord[ i ] ) : 1.0;
+		#endif
+
+		RE_Direct( directLight, geometry, material, reflectedLight );
 
 	}
 
 #endif
 
-#if defined( Material_RE_IndirectDiffuseLight )
+#if defined( RE_IndirectDiffuse )
 
-	{
+	vec3 irradiance = getAmbientLightIrradiance( ambientLightColor );
 
-		vec3 indirectDiffuseIrradiance = getAmbientLightIrradiance( ambientLightColor );
+	#ifdef USE_LIGHTMAP
 
-#ifdef USE_LIGHTMAP
+		vec3 lightMapIrradiance = texture2D( lightMap, vUv2 ).xyz * lightMapIntensity;
 
-		indirectDiffuseIrradiance += PI * texture2D( lightMap, vUv2 ).xyz * lightMapIntensity; // factor of PI should not be present; included here to prevent breakage
+		#ifndef PHYSICALLY_CORRECT_LIGHTS
 
-#endif
+			lightMapIrradiance *= PI; // factor of PI should not be present; included here to prevent breakage
 
-#if ( NUM_HEMI_LIGHTS > 0 )
+		#endif
+
+		irradiance += lightMapIrradiance;
+
+	#endif
+
+	#if ( NUM_HEMI_LIGHTS > 0 )
 
 		for ( int i = 0; i < NUM_HEMI_LIGHTS; i ++ ) {
 
-			indirectDiffuseIrradiance += getHemisphereLightIrradiance( hemisphereLights[ i ], geometry );
+			irradiance += getHemisphereLightIrradiance( hemisphereLights[ i ], geometry );
 
 		}
 
-#endif
+	#endif
 
-#if defined( USE_ENVMAP ) && defined( STANDARD )
-
-		// TODO, replace 8 with the real maxMIPLevel
-		indirectDiffuseIrradiance += getLightProbeIndirectIrradiance( /*lightProbe,*/ geometry, 8 );
-
-#endif
-
-		Material_RE_IndirectDiffuseLight( indirectDiffuseIrradiance, geometry, material, reflectedLight );
-
-	}
-
-#endif
-
-#if defined( USE_ENVMAP ) && defined( Material_RE_IndirectSpecularLight )
-
-	{
+	#if defined( USE_ENVMAP ) && defined( PHYSICAL ) && defined( ENVMAP_TYPE_CUBE_UV )
 
 		// TODO, replace 8 with the real maxMIPLevel
-		vec3 indirectSpecularRadiance = getLightProbeIndirectRadiance( /*specularLightProbe,*/ geometry, Material_BlinnShininessExponent( material ), 8 );
+	 	irradiance += getLightProbeIndirectIrradiance( /*lightProbe,*/ geometry, 8 );
 
-		Material_RE_IndirectSpecularLight( indirectSpecularRadiance, geometry, material, reflectedLight );
+	#endif
 
-    }
+	RE_IndirectDiffuse( irradiance, geometry, material, reflectedLight );
+
+#endif
+
+#if defined( USE_ENVMAP ) && defined( RE_IndirectSpecular )
+
+	// TODO, replace 8 with the real maxMIPLevel
+	vec3 radiance = getLightProbeIndirectRadiance( /*specularLightProbe,*/ geometry, Material_BlinnShininessExponent( material ), 8 );
+
+	#ifndef STANDARD
+		vec3 clearCoatRadiance = getLightProbeIndirectRadiance( /*specularLightProbe,*/ geometry, Material_ClearCoat_BlinnShininessExponent( material ), 8 );
+	#else
+		vec3 clearCoatRadiance = vec3( 0.0 );
+	#endif
+		
+	RE_IndirectSpecular( radiance, clearCoatRadiance, geometry, material, reflectedLight );
 
 #endif

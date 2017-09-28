@@ -10,23 +10,16 @@ Sidebar.Project = function ( editor ) {
 	var rendererTypes = {
 
 		'WebGLRenderer': THREE.WebGLRenderer,
-		'CanvasRenderer': THREE.CanvasRenderer,
-		'SVGRenderer': THREE.SVGRenderer,
-		'SoftwareRenderer': THREE.SoftwareRenderer,
-		'RaytracingRenderer': THREE.RaytracingRenderer
+		//'CanvasRenderer': THREE.CanvasRenderer,
+		//'SVGRenderer': THREE.SVGRenderer,
+		//'SoftwareRenderer': THREE.SoftwareRenderer,
+		//'RaytracingRenderer': THREE.RaytracingRenderer
 
 	};
 
-	var container = new UI.CollapsiblePanel();
-	container.setCollapsed( config.getKey( 'ui/sidebar/project/collapsed' ) );
-	container.onCollapsedChange( function ( boolean ) {
-
-		config.setKey( 'ui/sidebar/project/collapsed', boolean );
-
-	} );
-
-	container.addStatic( new UI.Text( 'PROJECT' ) );
-	container.add( new UI.Break() );
+	var container = new UI.Panel();
+	container.setBorderTop( '0' );
+	container.setPaddingTop( '20px' );
 
 	// class
 
@@ -40,7 +33,8 @@ Sidebar.Project = function ( editor ) {
 
 	}
 
-	var rendererTypeRow = new UI.Panel();
+    //OPENSIM var rendererTypeRow = new UI.Row();
+
 	var rendererType = new UI.Select().setOptions( options ).setWidth( '150px' ).onChange( function () {
 
 		var value = this.getValue();
@@ -51,10 +45,10 @@ Sidebar.Project = function ( editor ) {
 
 	} );
 
-	rendererTypeRow.add( new UI.Text( 'Renderer' ).setWidth( '90px' ) );
-	rendererTypeRow.add( rendererType );
+    //rendererTypeRow.add( new UI.Text( 'Renderer' ).setWidth( '90px' ) );
+    //rendererTypeRow.add( rendererType );
 
-	container.add( rendererTypeRow );
+	//container.add( rendererTypeRow );
 
 	if ( config.getKey( 'project/renderer' ) !== undefined ) {
 
@@ -64,7 +58,7 @@ Sidebar.Project = function ( editor ) {
 
 	// antialiasing
 
-	var rendererPropertiesRow = new UI.Panel();
+	var rendererPropertiesRow = new UI.Row();
 	rendererPropertiesRow.add( new UI.Text( '' ).setWidth( '90px' ) );
 
 	var rendererAntialias = new UI.THREE.Boolean( config.getKey( 'project/renderer/antialias' ), 'antialias' ).onChange( function () {
@@ -87,9 +81,23 @@ Sidebar.Project = function ( editor ) {
 
 	container.add( rendererPropertiesRow );
 
+    // Editable
+	/*
+	var editableRow = new UI.Row();
+	var editable = new UI.Checkbox( config.getKey( 'project/editable' ) ).setLeft( '100px' ).onChange( function () {
+
+		config.setKey( 'project/editable', this.getValue() );
+
+	} );
+
+	editableRow.add( new UI.Text( 'Editable' ).setWidth( '90px' ) );
+	editableRow.add( editable );
+
+	container.add( editableRow );
+
 	// VR
 
-	var vrRow = new UI.Panel();
+	var vrRow = new UI.Row();
 	var vr = new UI.Checkbox( config.getKey( 'project/vr' ) ).setLeft( '100px' ).onChange( function () {
 
 		config.setKey( 'project/vr', this.getValue() );
@@ -101,17 +109,17 @@ Sidebar.Project = function ( editor ) {
 	vrRow.add( vr );
 
 	container.add( vrRow );
-
+	*/
 	//
 
 	function updateRenderer() {
 
-		createRenderer( rendererType.getValue(), rendererAntialias.getValue(), rendererShadows.getValue() );
+		createRenderer( 'WebGLRenderer', rendererAntialias.getValue(), rendererShadows.getValue() );
 
 	}
 
 	function createRenderer( type, antialias, shadows ) {
-
+		
 		if ( type === 'WebGLRenderer' && System.support.webgl === false ) {
 
 			type = 'CanvasRenderer';
@@ -119,9 +127,18 @@ Sidebar.Project = function ( editor ) {
 		}
 
 		rendererPropertiesRow.setDisplay( type === 'WebGLRenderer' ? '' : 'none' );
+		// in case sidebar is not shown (minimal ui mode)
+		if (type === null)
+		    type = 'WebGLRenderer';
+		var renderer = new rendererTypes[ type ]( { antialias: antialias, preserveDrawingBuffer: true } );
 
-		var renderer = new rendererTypes[ type ]( { antialias: antialias } );
-		if ( shadows && renderer.shadowMap ) renderer.shadowMap.enabled = true;
+		if ( shadows && renderer.shadowMap ) {
+
+			renderer.shadowMap.enabled = true;
+			renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+		}
+
 		signals.rendererChanged.dispatch( renderer );
 
 	}
@@ -130,4 +147,4 @@ Sidebar.Project = function ( editor ) {
 
 	return container;
 
-}
+};
