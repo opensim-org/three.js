@@ -498,13 +498,7 @@ var OpenSimViewport = function ( editor ) {
 		}
 
 		render();
-                var json = JSON.stringify({
-                    "event": "geometry-changed",
-                    "uuid": object.uuid,
-                    "name": object.name,
-                    "geometry": object.geometry.toJSON(),
-                });
-                sendText(json);
+
 	} );
 
 	signals.objectAdded.add( function ( object ) {
@@ -538,18 +532,7 @@ var OpenSimViewport = function ( editor ) {
 			editor.helpers[ object.id ].update();
 
 		}
-                if ( object !== null ) {
-                    // Send uuid of selected object across socket
-                    var json = JSON.stringify({
-                        "event": "transform-changed",
-                        "uuid": object.uuid,
-                        "name": object.name,
-                        "position": object.position,
-                        "rotation": object.rotation,
-                        "scale": object.scale,
-                    });
-                    sendText(json);
-                }
+
 		render();
 
 	} );
@@ -579,14 +562,7 @@ var OpenSimViewport = function ( editor ) {
 	signals.materialChanged.add( function ( material ) {
 
 		render();
-                var json = JSON.stringify({
-                    "event": "material-changed",
-                    "uuid": material.uuid,
-                    "name": material.name,
-                    "visible": material.visible,
-                    "color": material.color,
-                });
-                sendText(json);
+
 	} );
 
 	signals.fogTypeChanged.add( function ( fogType ) {
@@ -725,7 +701,7 @@ var OpenSimViewport = function ( editor ) {
 	}
 
 	function render() {
-
+	    //console.log('Render called');
 		sceneHelpers.updateMatrixWorld();
 		scene.updateMatrixWorld();
 		stats.update();
