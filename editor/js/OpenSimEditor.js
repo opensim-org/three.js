@@ -24,6 +24,7 @@ var OpenSimEditor = function () {
 	this.nonCurrentModelColor = new THREE.Color(0x888888);
 	this.sceneBoundingBox = undefined;
 	this.sceneLight = undefined;
+	this.cache = Object.create(null);
 	// types of objects that are graphically movable
 	var supportedOpenSimTypes = ["PathPoint", "Marker"];
 	//this.cameraEye = new THREE.Mesh(new THREE.SphereGeometry(50), new THREE.MeshBasicMaterial({ color: 0xdddddd }));
@@ -544,10 +545,16 @@ OpenSimEditor.prototype = {
 			this.signals.sceneGraphChanged.active = true;
 			this.signals.sceneGraphChanged.dispatch();
 			this.viewFitAll();
-			this.signals.windowResize.dispatch();
+			this.buildCache(model);
+			//this.signals.windowResize.dispatch();
 		}
 	},
-	
+	buildCache: function( model) {
+	    modelobject.traverse(function (child) {
+	        if (child.type === "Group")
+	            editor.cache[child.uuid] = child;
+	    });
+	},
 	loadModel: function ( modelJsonFileName) {
 		var loader = new THREE.XHRLoader();
 		loader.crossOrigin = '';
@@ -642,10 +649,13 @@ OpenSimEditor.prototype = {
 
 	},
 
-	objectByUuid: function ( uuid ) {
-
-		return this.scene.getObjectByProperty( 'uuid', uuid, true );
-
+	objectByUuid: function (uuid) {
+	    var Object = this.cache[uuid];
+	    if (Object !== undefined)
+	        return Object;
+            Object = this.scene.getObjectByProperty( 'uuid', uuid, true );
+            this.cache[uuid] = Object;
+            return Object;
 	},
 
 	execute: function ( cmd, optionalName ) {
