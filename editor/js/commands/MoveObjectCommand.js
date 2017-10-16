@@ -87,7 +87,11 @@ MoveObjectCommand.prototype = {
 		Command.prototype.fromJSON.call( this, json );
 
 		this.object = this.editor.objectByUuid( json.objectUuid );
-		this.oldParent = this.editor.objectByUuid( json.oldParentUuid );
+		if (json.oldParentUuid === undefined)
+			this.oldParent = this.object.parent;
+		else 
+			this.oldParent = this.editor.objectByUuid( json.oldParentUuid );
+
 		if ( this.oldParent === undefined ) {
 
 			this.oldParent = this.editor.scene;
