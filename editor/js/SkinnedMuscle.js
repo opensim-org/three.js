@@ -21,7 +21,7 @@ THREE.SkinnedMuscle = function(geom, material, points, actives) {
     for ( var i = 0; i < geom.vertices.length; i++ ) {
         var skinIndex = Math.floor(i / numVerticesPerLevel);
         var pptIndex = Math.floor((skinIndex+1)/2);
-        var activePoint = this.actives[pptIndex];
+        //var activePoint = this.actives[pptIndex];
         geom.skinIndices.push(new THREE.Vector4(skinIndex, skinIndex+1, skinIndex-1, 0));
         if(skinIndex > 0 && skinIndex < geom.bones.length-1) {
            // blend next and previous bone vertices to smoothen transitions
