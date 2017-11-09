@@ -583,7 +583,7 @@ function CCapture( settings ) {
 	
 	var _timeDisplay = document.createElement( 'div' );
 	_timeDisplay.style.position = 'absolute';
-	_timeDisplay.style.left = _timeDisplay.style.top = 0
+	_timeDisplay.style.left = _timeDisplay.style.bottom = 0
 	_timeDisplay.style.backgroundColor = 'black';
 	_timeDisplay.style.fontFamily = 'monospace'
 	_timeDisplay.style.fontSize = '11px'

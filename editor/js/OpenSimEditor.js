@@ -1117,11 +1117,11 @@ OpenSimEditor.prototype = {
 	    }
 	    // remove from parent
 	    var newGeometry = new THREE.CylinderGeometry(8, 8, 0.1, 8, 2 * (pathEditJson.points.length-1) - 1, true);
-	    var newMuscle = new THREE.SkinnedMuscle(newGeometry, pathEditJson.points, pathMaterial);
+	    var newMuscle = new THREE.SkinnedMuscle(newGeometry, pathMaterial, pathEditJson.points);
 	    newMuscle.parent = pathParent;
 	    newMuscle.uuid = pathEditJson.uuid;
 	    // add to parent.
-	    this.addObject(newMuscle);
+	    pathParent.add(newMuscle);
 	    this.refresh();
 	},
 	toggleRecord: function () {
