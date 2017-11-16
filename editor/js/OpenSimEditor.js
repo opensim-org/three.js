@@ -1127,6 +1127,16 @@ OpenSimEditor.prototype = {
 	refresh: function() {
 		var changeEvent = { type: 'change' };
 		this.control.dispatchEvent( changeEvent );
+	},
+	followModelInAnimation: function () {
+	    // get position of current model
+	    var modelObject = this.getModel();
+	    var positionOffset = new THREE.Vector3(modelObject.position.x, 0, 0);
+	    positionOffset.applyQuaternion(this.camera.quaternion);
+	    this.camera.position.add(positionOffset);
+	    this.camera.updateProjectionMatrix();
+	    // Send offset along so that rotation center is updated by EditorControl
+	    this.signals.cameraChanged.dispatch(this.camera, positionOffset);
 	}
 
 };
