@@ -20,7 +20,8 @@
 
 		<script src="../examples/js/controls/EditorControls.js"></script>
 		<script src="../examples/js/controls/TransformControls.js"></script>
-
+		<script src="../examples/js/loaders/STLLoader.js"></script>
+		<script src="../examples/js/loaders/OBJLoader.js"></script>
 		<script src="../examples/js/renderers/Projector.js"></script>
 		<script src="../examples/js/renderers/CanvasRenderer.js"></script>
 		<script src="../examples/js/renderers/RaytracingRenderer.js"></script>
@@ -334,7 +335,7 @@
 
 				if ( event.dataTransfer.files.length > 0 ) {
 
-					editor.loader.loadFile( event.dataTransfer.files[ 0 ] );
+					new Loader(editor).loadFile( event.dataTransfer.files[ 0 ] );
 
 				}
 
