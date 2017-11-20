@@ -47,6 +47,7 @@ function onMessage(evt) {
 		// Make sure nothing is selected before applying Frame
 		editor.select( null);
 		var transforms = msg.Transforms;
+		var baseObject = null;
 		for (var i = 0; i < transforms.length; i ++ ) {
 			var oneBodyTransform = transforms[i];
 			var o = editor.objectByUuid( oneBodyTransform.uuid);
@@ -54,6 +55,8 @@ function onMessage(evt) {
 			if (o != undefined) {
 				o.matrixAutoUpdate = false;
 				o.matrix.fromArray(oneBodyTransform.matrix);
+				if (i===0)
+					baseObject = o;
 			}
 		}
 		var paths = msg.paths;
@@ -62,6 +65,9 @@ function onMessage(evt) {
 				editor.updatePath(paths[p]);
 			}
 		}
+		var v1 = new THREE.Vector3();    
+		v1.setFromMatrixPosition( baseObject.matrixWorld );
+		editor.camera.position.x = v1.x;
 		editor.refresh();
 		var t1 = performance.now() - t0;
 		totalTime +=t1;

@@ -568,6 +568,15 @@ OpenSimEditor.prototype = {
 		});
 		}
 	},
+	collectTargets: function(modelobject) {
+	var groups = {};
+	if (modelobject != undefined){
+		modelobject.traverse( function ( child ) {
+			if (child instanceof THREE.Group)
+				groups[child.name] = child.uuid; 
+		});
+	};
+	},
 	closeModel: function (modeluuid) {
 		if (this.models.indexOf(modeluuid)!=-1){
 		    ndx = this.models.indexOf(modeluuid);
@@ -592,6 +601,7 @@ OpenSimEditor.prototype = {
 			modelLight.color = this.currentModelColor;
 			modelLight.visible = true;
 			this.enableShadows(modeluuid, true);
+			this.collectTargets(newCurrentModel);
 		}
 		else{
 			other_uuid = this.models[modindex];
