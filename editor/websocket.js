@@ -102,7 +102,13 @@ function onMessage(evt) {
 	 case "PathOperation":
 		editor.processPathEdit(msg);
 		break;
-	case "startAnimation":
+	case "View":
+		editor.processViewCommand(msg.Command);
+		break;
+	 case "Camera":
+			editor.processCameraCommand(msg);
+			break;
+	 case "startAnimation":
 		totalTime=0.0;
 		numFrames = 0;
 		break;

@@ -937,14 +937,19 @@ OpenSimEditor.prototype = {
 	    this.signals.defaultCameraApplied.dispatch(aabbCenter);
 
 	},
+	processViewCommand: function (command) {
+	    this.handleKey(command.charAt(0));
+	},
 	handleKey: function (keyCode) {
 		var positionOffset = new THREE.Vector3();
 		switch (keyCode) {
-			case 73:
-				this.viewZoom(100.0);
+		    case 73:
+		    case "i":
+		        this.viewZoom(100.0);
 				return;
-			case 79:
-				this.viewZoom(-100.0);
+		    case 79:
+		    case "o":
+		        this.viewZoom(-100.0);
 				return;
 			case 37:
 				positionOffset.set(100, 0., 0.);
@@ -954,6 +959,9 @@ OpenSimEditor.prototype = {
 				break;
 			case 38:
 				positionOffset.set(0, -100, 0.);
+				break;
+			case 40:
+				positionOffset.set(0, 100., 0.);
 				break;
 			case 40:
 				positionOffset.set(0, 100., 0.);
@@ -1127,6 +1135,18 @@ OpenSimEditor.prototype = {
 	refresh: function() {
 		var changeEvent = { type: 'change' };
 		this.control.dispatchEvent( changeEvent );
+	},
+	processCameraCommand: function (commandJson) {
+	    var cmd = commandJson.Command;
+	    var target = commandJson.Target;
+	    if (target !== undefined) {
+	        var o = editor.objectByUuid(target);
+	        var v1 = new THREE.Vector3();
+	        v1.setFromMatrixPosition(o.matrixWorld);
+	        editor.camera.lookAt(v1);
+	        editor.camera.updateProjectionMatrix();
+	        editor.refresh();
+	    }
 	}
 
 };
