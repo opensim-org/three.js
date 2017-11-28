@@ -1140,13 +1140,28 @@ OpenSimEditor.prototype = {
 	    var cmd = commandJson.Command;
 	    var target = commandJson.Target;
 	    if (target !== undefined) {
-	        var o = editor.objectByUuid(target);
-	        var v1 = new THREE.Vector3();
-	        v1.setFromMatrixPosition(o.matrixWorld);
-	        editor.camera.lookAt(v1);
-	        editor.camera.updateProjectionMatrix();
-	        editor.refresh();
+	        if (cmd === "LookAt") {
+	            var o = editor.objectByUuid(target);
+	            var v1 = new THREE.Vector3();
+	            v1.setFromMatrixPosition(o.matrixWorld);
+	            editor.camera.position.x = v1.x;
+	            editor.camera.position.y = v1.y;
+	            editor.camera.lookAt(v1);
+	            editor.camera.updateProjectionMatrix();
+	            editor.refresh();
+	        }
 	    }
+	},
+	cameraFollow: function (followedObject) {
+	    followedObject.updateMatrixWorld();
+	    var v1 = new THREE.Vector3();
+	    v1.setFromMatrixPosition(followedObject.matrixWorld);
+	    var positionOffset = new THREE.Vector3(v1.x, 0, 0);
+	    positionOffset.applyQuaternion(this.camera.quaternion);
+	    this.camera.position.x = v1.x;
+	    this.camera.updateProjectionMatrix();
+	    	    // Send offset along so that rotation center is updated by EditorControl
+        this.signals.cameraChanged.dispatch(this.camera, positionOffset);
 	}
 
 };

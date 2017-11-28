@@ -7,6 +7,8 @@ var wsUri = "ws://" + document.location.host + "/visEndpoint";
 var websocket = new WebSocket(wsUri);
 
 var processing = false;
+var following = false;
+var followedObject = undefined;
 var totalTime = 0.0;
 var numFrames = 0;
 websocket.onerror = function(evt) { onError(evt) };
@@ -62,6 +64,9 @@ function onMessage(evt) {
 				editor.updatePath(paths[p]);
 			}
 		}
+		if (following) {
+		    editor.cameraFollow(followedObject);
+		}
 		editor.refresh();
 		var t1 = performance.now() - t0;
 		totalTime +=t1;
@@ -106,8 +111,14 @@ function onMessage(evt) {
 		editor.processViewCommand(msg.Command);
 		break;
 	 case "Camera":
-			editor.processCameraCommand(msg);
-			break;
+	     if (msg.Command === "Follow" && msg.Target != undefined) {
+	         following = true;
+	         followedObject = editor.objectByUuid(msg.Target);
+	     }
+	     else
+	         following = false;
+	     editor.processCameraCommand(msg);
+		 break;
 	 case "startAnimation":
 		totalTime=0.0;
 		numFrames = 0;
