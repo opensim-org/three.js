@@ -16,7 +16,7 @@ var OpenSimEditor = function () {
 	this.dolly_object = new THREE.Object3D();
 	this.dolly_object.name = 'Dolly';
 	this.dolly_object.position.y = 0;
-		this.recording = false;
+	this.recording = false;
 
 	this.models = [];
 	this.currentModel = undefined; //uuid of current model call getCurrentModel for actualobject
@@ -28,7 +28,7 @@ var OpenSimEditor = function () {
 	var supportedOpenSimTypes = ["PathPoint", "Marker"];
 	//this.cameraEye = new THREE.Mesh(new THREE.SphereGeometry(50), new THREE.MeshBasicMaterial({ color: 0xdddddd }));
 	//this.cameraEye.name = 'CameraEye';
-
+	var cameraOffset;
 	var Signal = signals.Signal;
 
 	this.signals = {
@@ -1158,10 +1158,13 @@ OpenSimEditor.prototype = {
 	    v1.setFromMatrixPosition(followedObject.matrixWorld);
 	    var positionOffset = new THREE.Vector3(v1.x, 0, 0);
 	    positionOffset.applyQuaternion(this.camera.quaternion);
-	    this.camera.position.x = v1.x;
+	    this.camera.position.x = v1.x + this.cameraOffset;
 	    this.camera.updateProjectionMatrix();
 	    	    // Send offset along so that rotation center is updated by EditorControl
         this.signals.cameraChanged.dispatch(this.camera, positionOffset);
+	},
+	cameraSaveOffset: function () {
+	    this.cameraOffset = this.camera.position.x;
 	}
 
 };

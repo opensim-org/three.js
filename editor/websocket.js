@@ -114,6 +114,7 @@ function onMessage(evt) {
 	     if (msg.Command === "Follow" && msg.Target != undefined) {
 	         following = true;
 	         followedObject = editor.objectByUuid(msg.Target);
+	         editor.cameraSaveOffset();
 	     }
 	     else
 	         following = false;
