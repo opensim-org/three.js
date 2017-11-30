@@ -232,10 +232,10 @@
 
 			var toolbar = new OpenSimToolbar(editor);
 			document.body.appendChild( toolbar.dom );
-
-			//var menubar = new Menubar( editor );
-			//document.body.appendChild( menubar.dom );
-
+			if (getParameterByName('expert') === "1"){
+				var menubar = new Menubar( editor );
+				document.body.appendChild( menubar.dom );
+			}
 			var sidebar = new Sidebar( editor );
 			document.body.appendChild( sidebar.dom );
 
