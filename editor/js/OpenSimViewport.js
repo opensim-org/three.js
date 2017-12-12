@@ -700,6 +700,29 @@ var OpenSimViewport = function ( editor ) {
 
 	}
 
+	function renderHiRes(widthOfScreenshot, heightOfScreenshot) {
+		var saveWidth = renderer.getSize().width;
+		var saveHeight = renderer.getSize().height;
+		renderer.setSize( widthOfScreenshot, heightOfScreenshot );
+		renderer.render(scene, currentCamera);
+		renderer.render(sceneOrtho, sceneOrthoCam);
+		var creenShotHiRes = renderer.domElement.toDataURL();
+		renderer.setSize(saveWidth, saveHeight);
+		renderer.render(scene, currentCamera);
+		renderer.render(sceneOrtho, sceneOrthoCam);
+		// save hires image to file
+		var link = document.createElement('a');
+		if (typeof link.download === 'string') {
+			document.body.appendChild(link); 
+			link.download = "opensim_snapshot_"+widthOfScreenshot+"X"+heightOfScreenshot+".png";
+			link.href = creenShotHiRes;
+			link.click();
+			document.body.removeChild(link); //remove the link when done
+		} else {
+			location.replace(uri);
+		}
+	}
+
 	function render() {
 	    //console.log('Render called');
 		sceneHelpers.updateMatrixWorld();
