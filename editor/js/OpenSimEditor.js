@@ -736,33 +736,7 @@ OpenSimEditor.prototype = {
 		hemiSphereLight = new THREE.HemisphereLight(10724259, 1, 0);
 		hemiSphereLight.name = 'GlobalLight';
 		hemiSphereLight.intensity = 0.40;
-		//this.addObject(hemiSphereLight);
 
-      //   sunLight =  new THREE.SpotLight( {color: sceneLightColor});
-// 	    sunLight.castShadow = true;
-// 	    //sunLight.angle = 0.5;
-// 	    sunLight.intensity = 10.0;	
-// 	    sunLight.name = 'SunLight';
-// 	    sunLight.shadow.camera.bottom = -1000;
-// 	    sunLight.shadow.camera.far = 2000;
-// 	    sunLight.shadow.camera.left = -1000;
-// 	    sunLight.shadow.camera.right = 1000;
-// 	    sunLight.shadow.camera.top = 1000;
-//         sunLight.position.x = 0;
-//         sunLight.position.y = 0;
-//         sunLight.position.z = 1000;
-// 	    //sunLight.position.copy(new THREE.Vector3((modelbbox.max.x+modelbbox.min.x)/2, 
-// 		//modelbbox.max.y+100, (modelbbox.min.z+modelbbox.max.z)/2));
-// 	    //sunLight.target = modelCenterGroup;
-// 	    this.addObject(sunLight);
-	    
-//        hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
-//        hemiLight.color.setHSL( 0.6, 1, 0.6 );
-//        hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
-//        hemiLight.position.set( 0, 500, 0 );
-//        this.addObject(hemiLight);
-//
-//        //
 //
         dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
         dirLight.name = 'SunLight';
@@ -815,18 +789,20 @@ OpenSimEditor.prototype = {
 			}
 			return;
 		}
-		if (this.groundPlane == null) {
+		if (this.groundPlane === null) {
 			this.createGroundPlane(choice);
 			return;
 		}
 		this.groundPlane.visible = true;
 		var textureLoader = new THREE.TextureLoader();
-		var texture1 = textureLoader.load("textures/"+choice+".jpg");
-		texture1.wrapS = texture1.wrapT = THREE.RepeatWrapping;
-		texture1.repeat.set(64, 64);
-		this.groundMaterial = new THREE.MeshPhongMaterial({ color: 0x888888, map: texture1 });
-		this.groundPlane.material = this.groundMaterial;
-		this.signals.materialChanged.dispatch( this.groundPlane );
+		textureLoader.load("textures/" + choice + ".jpg",
+            function (texture1) { 
+		        texture1.wrapS = texture1.wrapT = THREE.RepeatWrapping;
+		        texture1.repeat.set(64, 64);
+		        groundMaterial = new THREE.MeshPhongMaterial({ color: 0x888888, map: texture1 });
+		        groundPlane.material = groundMaterial;
+		        groundPlane.needsUpdate = true;
+            });
 	},
 	updateBackgroundColor: function (newColor) {
 		this.scene.background = new THREE.Color(newColor);
