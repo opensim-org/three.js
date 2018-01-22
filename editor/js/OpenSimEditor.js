@@ -800,7 +800,7 @@ OpenSimEditor.prototype = {
             function (texture1) { 
 		        texture1.wrapS = texture1.wrapT = THREE.RepeatWrapping;
 		        texture1.repeat.set(64, 64);
-		        groundMaterial = new THREE.MeshPhongMaterial({ color: 0x888888, map: texture1 });
+		        groundMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, map: texture1 });
 		        groundPlane.material = groundMaterial;
 		        groundPlane.needsUpdate = true;
             });
