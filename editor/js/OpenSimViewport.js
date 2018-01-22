@@ -700,10 +700,12 @@ var OpenSimViewport = function ( editor ) {
 
 	}
 
-	function renderHiRes(widthOfScreenshot, heightOfScreenshot) {
+	function renderHiRes(upSample) {
 		var saveWidth = renderer.getSize().width;
 		var saveHeight = renderer.getSize().height;
-		renderer.setSize( widthOfScreenshot, heightOfScreenshot );
+		widthOfScreenshot = saveWidth * upSample;
+		heightOfScreenshot = saveHeight * upSample;
+		renderer.setSize(widthOfScreenshot, heightOfScreenshot);
 		renderer.render(scene, currentCamera);
 		renderer.render(sceneOrtho, sceneOrthoCam);
 		var creenShotHiRes = renderer.domElement.toDataURL();
