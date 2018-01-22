@@ -97,7 +97,8 @@ var OpenSimEditor = function () {
 		animationStopped: new Signal(),
 		defaultCameraApplied: new Signal(),
 		recordingStarted: new Signal(),
-			recordingStopped: new Signal()
+		recordingStopped: new Signal(),
+		hiresRender: new Signal()
 	};
 
 	this.config = new Config( 'threejs-editor' );

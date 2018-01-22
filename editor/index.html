@@ -400,6 +400,9 @@
 						editor.handleKey(event.keyCode);
 
 						break;
+					case 68:
+						editor.signals.hiresRender.dispatch();
+						break;
 
 				}
 
