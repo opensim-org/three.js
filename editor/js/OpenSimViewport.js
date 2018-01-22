@@ -644,6 +644,9 @@ var OpenSimViewport = function ( editor ) {
 
 	} );
 
+	signals.hiresRender.add(function () {
+		renderHiRes(4);
+	});
 	//
 
 	var renderer = null;
@@ -708,7 +711,7 @@ var OpenSimViewport = function ( editor ) {
 		renderer.setSize(widthOfScreenshot, heightOfScreenshot);
 		renderer.render(scene, currentCamera);
 		renderer.render(sceneOrtho, sceneOrthoCam);
-		var creenShotHiRes = renderer.domElement.toDataURL();
+		var screenShotHiRes = renderer.domElement.toDataURL();
 		renderer.setSize(saveWidth, saveHeight);
 		renderer.render(scene, currentCamera);
 		renderer.render(sceneOrtho, sceneOrthoCam);
@@ -717,7 +720,7 @@ var OpenSimViewport = function ( editor ) {
 		if (typeof link.download === 'string') {
 			document.body.appendChild(link); 
 			link.download = "opensim_snapshot_"+widthOfScreenshot+"X"+heightOfScreenshot+".png";
-			link.href = creenShotHiRes;
+			link.href = screenShotHiRes;
 			link.click();
 			document.body.removeChild(link); //remove the link when done
 		} else {
