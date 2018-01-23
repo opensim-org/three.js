@@ -210,7 +210,7 @@ OpenSimEditor.prototype = {
 	moveObject: function ( object, parent, before ) {
 
 		if ( parent === undefined ) {
-
+			console.log('parent not found, using scene');
 			parent = this.scene;
 
 		}
