@@ -598,7 +598,11 @@ Object.assign( THREE.OpenSimLoader.prototype, {
 
 			if ( data.visible !== undefined ) object.visible = data.visible;
 			if ( data.userData !== undefined ) object.userData = data.userData;
-
+			if ( object.userData === 'NonEditable') { // Propagate to children if any
+				for ( var child in object.children ) {
+					object.children[child].userData = 'NonEditable';
+				}
+			}
 			if ( data.children !== undefined ) {
 
 				for ( var child in data.children ) {
