@@ -35,8 +35,10 @@ RemoveObjectCommand.prototype = {
 			scope.removeHelper( child );
 
 		} );
-
-		this.parent.remove( this.object );
+        if (this.parent.children.indexOf (this.object) !== -1)
+		    this.parent.remove( this.object );
+        else 
+            scope.scene.remove( this.object );
 		//this.editor.select( this.parent );
 
 		this.editor.signals.objectRemoved.dispatch( this.object );
