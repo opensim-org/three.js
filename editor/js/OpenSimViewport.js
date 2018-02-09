@@ -709,6 +709,7 @@ var OpenSimViewport = function ( editor ) {
 		widthOfScreenshot = saveWidth * upSample;
 		heightOfScreenshot = saveHeight * upSample;
 		renderer.setSize(widthOfScreenshot, heightOfScreenshot);
+		renderer.clear(); // clear first to keep background color
 		renderer.render(scene, currentCamera);
 		renderer.render(sceneOrtho, sceneOrthoCam);
 		var screenShotHiRes = renderer.domElement.toDataURL();
