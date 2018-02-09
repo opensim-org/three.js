@@ -199,8 +199,10 @@ OpenSimEditor.prototype = {
 			scope.addHelper( child );
 
 		} );
-
-		this.scene.add( object );
+		if (object.parent !== null)
+			object.parent.add(object);
+		else
+			this.scene.add( object );
 
 		this.signals.objectAdded.dispatch( object );
 		this.signals.sceneGraphChanged.dispatch();
