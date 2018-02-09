@@ -1106,6 +1106,36 @@ OpenSimEditor.prototype = {
 	refresh: function() {
 		var changeEvent = { type: 'change' };
 		this.control.dispatchEvent( changeEvent );
-	}
+    },
+    updateModelBBox: function (bbox) {
+        var modelbbox = new THREE.Box3();
+        modelbbox.min.x = bbox[0] * 1000;
+        modelbbox.min.y = bbox[1] * 1000;
+        modelbbox.min.z = bbox[2] * 1000;
+        modelbbox.max.x = bbox[3] * 1000;
+        modelbbox.max.y = bbox[4] * 1000;
+        modelbbox.max.z = bbox[5] * 1000;
+        var radius = Math.max(modelbbox.max.x - modelbbox.min.x, modelbbox.max.y - modelbbox.min.y, modelbbox.max.z - modelbbox.min.z) / 2;
+        var aabbCenter = new THREE.Vector3();
+        modelbbox.center(aabbCenter);
+
+        // Compute offset needed to move the camera back that much needed to center AABB (approx: better if from BB front face)
+        var offset = radius / Math.tan(Math.PI / 180.0 * 25 * 0.5);
+
+        // Compute new camera direction and position
+        var dir = new THREE.Vector3(0.0, 0.0, 1.0);
+        if (this.camera != undefined) {
+            dir.x = this.camera.matrix.elements[8];
+            dir.y = this.camera.matrix.elements[9];
+            dir.z = this.camera.matrix.elements[10];
+        }
+        dir.multiplyScalar(offset);
+        var newPos = new THREE.Vector3();
+        newPos.addVectors(aabbCenter, dir);
+        this.camera.position.set(newPos.x, newPos.y, newPos.z);
+        this.camera.lookAt(aabbCenter);
+        this.signals.defaultCameraApplied.dispatch(aabbCenter);
+
+    }
 
 };

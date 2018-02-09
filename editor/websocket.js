@@ -96,7 +96,11 @@ function onMessage(evt) {
 		parentUuid = msg.command.object.object.parent;
 		editor.execute(cmd);
 		newUuid = cmd.object.uuid;
-		editor.moveObject(editor.objectByUuid(newUuid), editor.objectByUuid(parentUuid));
+        editor.moveObject(editor.objectByUuid(newUuid), editor.objectByUuid(parentUuid));
+        if (msg.command.bbox !== undefined) {
+            // update models bounding box with bbox;
+            editor.updateModelBBox(msg.command.bbox);
+        }
 		editor.refresh();
 		break;
 	 case "PathOperation":
