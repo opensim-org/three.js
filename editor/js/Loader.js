@@ -415,7 +415,7 @@ var Loader = function ( editor ) {
 
 			default:
 
-				alert( 'Unsupported file format (' + extension +  ').' );
+				alert( 'Unsupported file format (' + extension +  '). Only mesh files (stl, obj) are supported.' );
 
 				break;
 
