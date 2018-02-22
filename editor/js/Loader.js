@@ -415,7 +415,7 @@ var Loader = function ( editor ) {
 
 			default:
 
-				alert( 'Unsupported file format (' + extension +  '). Only mesh files (stl, obj) are supported.' );
+				alert( 'Unsupported file format (' + extension +  '). Only mesh files (stl, obj) are supported here. Drop OpenSim files into toolbar instead.' );
 
 				break;
 
