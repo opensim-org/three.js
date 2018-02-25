@@ -39,6 +39,9 @@ function onMessage(evt) {
 	case "Select":
 		editor.selectByUuid( msg.UUID);
 		break;
+	case "Deselect":
+		editor.deselect();
+		break;
 	case "Frame":  
 		if (processing)
 			return;//alert("uuid: " + msg.name);
