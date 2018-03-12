@@ -98,7 +98,8 @@ var OpenSimEditor = function () {
 		defaultCameraApplied: new Signal(),
 		recordingStarted: new Signal(),
 		recordingStopped: new Signal(),
-		hiresRender: new Signal()
+		hiresRender: new Signal(),
+		screenCaptureScaleupChanged: new Signal()
 	};
 
 	this.config = new Config( 'threejs-editor' );
@@ -1033,6 +1034,9 @@ OpenSimEditor.prototype = {
 		sceneLightpos.y += val*1000;
 		else
 		sceneLightpos.z += val*1000;
+	},
+	setScreenCaptureScaleup: function (scaleupFactor){
+		this.signals.screenCaptureScaleupChanged.dispatch(scaleupFactor);
 	},
 	toggleMarkup: function () {
 		oldValue = this.config.getKey('render/debug');

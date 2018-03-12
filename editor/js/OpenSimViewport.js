@@ -651,6 +651,10 @@ var OpenSimViewport = function ( editor ) {
 		else // using hotkey d -> 900 DPI
 			renderHiRes(screenCapUpsamplingFactor + upSample);
 	});
+
+	signals.screenCaptureScaleupChanged.add(function (newFactor) {
+		screenCapUpsamplingFactor = newFactor;
+	});
 	//
 
 	var renderer = null;

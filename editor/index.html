@@ -161,208 +161,213 @@
 			document.body.appendChild( stats.domElement );
 
 			var editor = new OpenSimEditor();
-			
-			// Minimal ui, should move to a different file to avoid clutter
-			var VisualizerKnobs = function() {
-				this.texture = editor.config.getKey('floor');
-				this.height = -0.001;
-				this.backdrop = editor.config.getKey('skybox');
-				color = editor.config.getKey('settings/backgroundcolor');
-				if (color=== undefined)
-					this.backgroundColor = "#888888";
-				else
-					this.backgroundColor = color;
-				// Define render logic ...
-				this.sceneLightX = -0.01;
-				this.sceneLightY = -0.01;
-				this.sceneLightZ = -0.01;
-				this.sceneLightColor = [255, 255, 255];
-				this.sceneLightSelect = function () { editor.select(editor.scene.getObjectByName('SunLight')); }
-				this.modelLightSelect = function () { editor.selectCurrentModelLight(); }
-				this.toggleMarkup = function () { editor.toggleMarkup(); }
-				this.expertModeSelect = function () { editor.setTheme('css/dark.css'); }
-				this.showStats = function () { 
-					var elem = document.getElementById("viewport"); 
-					if (elem.style.bottom=="20px")
-						elem.style.bottom="0px";
-					else
-						elem.style.bottom="20px"; 
-					window.dispatchEvent(new Event('resize'));
-				}
-			};
-			window.onload = function () {
-			    var gui = new dat.GUI(); // create dat.gui 
-			    var knobs = new VisualizerKnobs();
-			    var ground = gui.addFolder('Floor');
-			    var texture = ground.add(knobs, 'texture', ['nofloor', 'redbricks', 'graybricks', 'wood-floor', 'tile']);
-			    var floorHeight = ground.add(knobs, 'height').min(-2.01).max(2.02).step(0.01).listen();
-			    floorHeight.onChange(function (value) {
-			        editor.setFloorHeight(value);
-			    });
-			    texture.onChange(function (value) {
-			        editor.updateGroundPlane(value);
-			    });
-			    //var world = gui.addFolder('World');
-				var backdropColor = gui.addColor(knobs, 'backgroundColor');
-				backdropColor.onChange(function (value) {
-				    editor.updateBackgroundColor(value);
-						//editor.updateBackground('nobackground');
-				});
-				gui.add(knobs, 'sceneLightSelect').name('Scene Light');
-				//var model_control = gui.addFolder('Model');
-				// model_control.add(knobs, 'modelLightSelect').name('Model Light');
-				//gui.add(knobs, 'toggleMarkup').name('Toggle Markup');
-				gui.add(knobs, 'showStats').name('Show FPS');
-				if (getParameterByName('expert') === "1")
-					gui.add(knobs, 'expertModeSelect').name('Expert Mode');
-							
-				// No save/retrieve settings
-				// gui.remember(knobs);
-				gui.closed = true;
-			}
 
-			var viewport = new OpenSimViewport( editor );
-			document.body.appendChild( viewport.dom );
+      // Minimal ui, should move to a different file to avoid clutter
+      var VisualizerKnobs = function() {
+      this.texture = editor.config.getKey('floor');
+      this.height = -0.001;
+      this.backdrop = editor.config.getKey('skybox');
+      color = editor.config.getKey('settings/backgroundcolor');
+      if (color=== undefined)
+      this.backgroundColor = "#888888";
+      else
+      this.backgroundColor = color;
+      // Define render logic ...
+      this.sceneLightX = -0.01;
+      this.sceneLightY = -0.01;
+      this.sceneLightZ = -0.01;
+      this.sceneLightColor = [255, 255, 255];
+      this.sceneLightSelect = function () { editor.select(editor.scene.getObjectByName('SunLight')); }
+      this.modelLightSelect = function () { editor.selectCurrentModelLight(); }
+      this.toggleMarkup = function () { editor.toggleMarkup(); }
+      this.expertModeSelect = function () { editor.setTheme('css/dark.css'); }
+      this.showStats = function () {
+      var elem = document.getElementById("viewport");
+      if (elem.style.bottom=="20px")
+      	elem.style.bottom="0px";
+      else
+      	elem.style.bottom="20px";
+      window.dispatchEvent(new Event('resize'));
+      }
+      this.screenCaptureDPI = 4;
+      };
+      window.onload = function () {
+      var gui = new dat.GUI(); // create dat.gui
+      var knobs = new VisualizerKnobs();
+      var ground = gui.addFolder('Floor');
+      var texture = ground.add(knobs, 'texture', ['nofloor', 'redbricks', 'graybricks', 'wood-floor', 'tile']);
+      var floorHeight = ground.add(knobs, 'height').min(-2.01).max(2.02).step(0.01).listen();
+      floorHeight.onChange(function (value) {
+      editor.setFloorHeight(value);
+      });
+      texture.onChange(function (value) {
+      editor.updateGroundPlane(value);
+      });
+      //var world = gui.addFolder('World');
+      var backdropColor = gui.addColor(knobs, 'backgroundColor');
+      backdropColor.onChange(function (value) {
+      editor.updateBackgroundColor(value);
+      //editor.updateBackground('nobackground');
+      });
+      gui.add(knobs, 'sceneLightSelect').name('Scene Light');
+      //var model_control = gui.addFolder('Model');
+      // model_control.add(knobs, 'modelLightSelect').name('Model Light');
+      //gui.add(knobs, 'toggleMarkup').name('Toggle Markup');
+      gui.add(knobs, 'showStats').name('Show FPS');
+      if (getParameterByName('expert') === "1")
+      gui.add(knobs, 'expertModeSelect').name('Expert Mode');
 
-			var script = new Script( editor );
-			document.body.appendChild( script.dom );
+      // No save/retrieve settings
+      var captureControl =  gui.add(knobs, 'screenCaptureDPI').name('Capture Scaleup').min(1).max(10).step(1).listen();
+      captureControl.onChange(function (value) {
+        editor.setScreenCaptureScaleup(value);
+      });;
+      // gui.remember(knobs);
+      gui.closed = true;
+      }
 
-			var player = new Player( editor );
-			document.body.appendChild( player.dom );
+      var viewport = new OpenSimViewport( editor );
+      document.body.appendChild( viewport.dom );
 
-			var toolbar = new OpenSimToolbar(editor);
-			document.body.appendChild( toolbar.dom );
-			if (getParameterByName('expert') === "1"){
-				var menubar = new Menubar( editor );
-				document.body.appendChild( menubar.dom );
-			}
-			var sidebar = new Sidebar( editor );
-			document.body.appendChild( sidebar.dom );
+      var script = new Script( editor );
+      document.body.appendChild( script.dom );
 
-			/*
-			var dialog = new UI.Dialog();
-			document.body.appendChild( dialog.dom );
-			*/
+      var player = new Player( editor );
+      document.body.appendChild( player.dom );
 
-			//
+      var toolbar = new OpenSimToolbar(editor);
+      document.body.appendChild( toolbar.dom );
+      if (getParameterByName('expert') === "1"){
+      var menubar = new Menubar( editor );
+      document.body.appendChild( menubar.dom );
+      }
+      var sidebar = new Sidebar( editor );
+      document.body.appendChild( sidebar.dom );
 
-			editor.setTheme( editor.config.getKey( 'theme' ) );
+      /*
+      var dialog = new UI.Dialog();
+      document.body.appendChild( dialog.dom );
+      */
 
-			editor.storage.init( function () {
-/*
-				editor.storage.get( function ( state ) {
+      //
 
-					if ( isLoadingFromHash ) return;
+      editor.setTheme( editor.config.getKey( 'theme' ) );
 
-					if ( state !== undefined ) {
+      editor.storage.init( function () {
+      /*
+      editor.storage.get( function ( state ) {
 
-						editor.fromJSON( state );
+      if ( isLoadingFromHash ) return;
 
-					}
+      if ( state !== undefined ) {
 
-					var selected = editor.config.getKey( 'selected' );
+      editor.fromJSON( state );
 
-					if ( selected !== undefined ) {
+      }
 
-						editor.selectByUuid( selected );
+      var selected = editor.config.getKey( 'selected' );
 
-					}
+      if ( selected !== undefined ) {
 
-				} );
-*/
-				//
+      editor.selectByUuid( selected );
 
-				var timeout;
+      }
 
-				function saveState( scene ) {
-                /*
-					if ( editor.config.getKey( 'autosave' ) === false ) {
+      } );
+      */
+      //
 
-						return;
+      var timeout;
 
-					}
+      function saveState( scene ) {
+      /*
+      if ( editor.config.getKey( 'autosave' ) === false ) {
 
-					clearTimeout( timeout );
+      return;
 
-					timeout = setTimeout( function () {
+      }
 
-						editor.signals.savingStarted.dispatch();
+      clearTimeout( timeout );
 
-						timeout = setTimeout( function () {
+      timeout = setTimeout( function () {
 
-							editor.storage.set( editor.toJSON() );
+      editor.signals.savingStarted.dispatch();
 
-							editor.signals.savingFinished.dispatch();
+      timeout = setTimeout( function () {
 
-						}, 100 );
+      editor.storage.set( editor.toJSON() );
 
-					}, 1000 );
-                 */
-				};
+      editor.signals.savingFinished.dispatch();
 
-				var signals = editor.signals;
+      }, 100 );
 
-				signals.editorCleared.add( saveState );
-				signals.geometryChanged.add( saveState );
-				signals.objectAdded.add( saveState );
-				signals.objectChanged.add( saveState );
-				signals.objectRemoved.add( saveState );
-				signals.materialChanged.add( saveState );
-				signals.sceneGraphChanged.add( saveState );
-				signals.scriptChanged.add( saveState );
-				signals.historyChanged.add( saveState );
+      }, 1000 );
+      */
+      };
 
-				signals.showModal.add( function ( content ) {
+      var signals = editor.signals;
 
-					modal.show( content );
+      signals.editorCleared.add( saveState );
+      signals.geometryChanged.add( saveState );
+      signals.objectAdded.add( saveState );
+      signals.objectChanged.add( saveState );
+      signals.objectRemoved.add( saveState );
+      signals.materialChanged.add( saveState );
+      signals.sceneGraphChanged.add( saveState );
+      signals.scriptChanged.add( saveState );
+      signals.historyChanged.add( saveState );
 
-				} );
+      signals.showModal.add( function ( content ) {
 
-			} );
+      modal.show( content );
 
-			//
+      } );
 
-			document.addEventListener( 'dragover', function ( event ) {
+      } );
 
-				event.preventDefault();
-				event.dataTransfer.dropEffect = 'copy';
+      //
 
-			}, false );
+      document.addEventListener( 'dragover', function ( event ) {
 
-			document.addEventListener( 'drop', function ( event ) {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = 'copy';
 
-				event.preventDefault();
+      }, false );
 
-				if ( event.dataTransfer.files.length > 0 ) {
+      document.addEventListener( 'drop', function ( event ) {
 
-					new Loader(editor).loadFile( event.dataTransfer.files[ 0 ] );
+      event.preventDefault();
 
-				}
+      if ( event.dataTransfer.files.length > 0 ) {
 
-			}, false );
+      new Loader(editor).loadFile( event.dataTransfer.files[ 0 ] );
 
-			document.addEventListener( 'keydown', function ( event ) {
+      }
 
-				switch ( event.keyCode ) {
+      }, false );
 
-					case 8: // backspace
+      document.addEventListener( 'keydown', function ( event ) {
 
-						event.preventDefault(); // prevent browser back
+      switch ( event.keyCode ) {
 
-					case 46: // delete
+      case 8: // backspace
 
-						var object = editor.selected;
+      event.preventDefault(); // prevent browser back
 
-						if ( confirm( 'Delete ' + object.name + '?' ) === false ) return;
+      case 46: // delete
 
-						var parent = object.parent;
-						if ( parent !== null ) editor.execute( new RemoveObjectCommand( object ) );
+      var object = editor.selected;
 
-						break;
+      if ( confirm( 'Delete ' + object.name + '?' ) === false ) return;
 
-					case 90: // Register Ctrl-Z for Undo, Ctrl-Shift-Z for Redo
+      var parent = object.parent;
+      if ( parent !== null ) editor.execute( new RemoveObjectCommand( object ) );
 
-						if ( event.ctrlKey && event.shiftKey ) {
+      break;
+
+      case 90: // Register Ctrl-Z for Undo, Ctrl-Shift-Z for Redo
+
+      if ( event.ctrlKey && event.shiftKey ) {
 
 							editor.redo();
 
@@ -398,12 +403,7 @@
 					case 73:
 					case 79:
 						editor.handleKey(event.keyCode);
-
-						break;
-					case 68:
-						editor.signals.hiresRender.dispatch(8);
-						break;
-
+					break;
 				}
 
 			}, false );
