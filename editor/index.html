@@ -162,69 +162,69 @@
 
 			var editor = new OpenSimEditor();
 
-      // Minimal ui, should move to a different file to avoid clutter
-      var VisualizerKnobs = function() {
-      this.texture = editor.config.getKey('floor');
-      this.height = -0.001;
-      this.backdrop = editor.config.getKey('skybox');
-      color = editor.config.getKey('settings/backgroundcolor');
-      if (color=== undefined)
-      this.backgroundColor = "#888888";
-      else
-      this.backgroundColor = color;
-      // Define render logic ...
-      this.sceneLightX = -0.01;
-      this.sceneLightY = -0.01;
-      this.sceneLightZ = -0.01;
-      this.sceneLightColor = [255, 255, 255];
-      this.sceneLightSelect = function () { editor.select(editor.scene.getObjectByName('SunLight')); }
-      this.modelLightSelect = function () { editor.selectCurrentModelLight(); }
-      this.toggleMarkup = function () { editor.toggleMarkup(); }
-      this.expertModeSelect = function () { editor.setTheme('css/dark.css'); }
-      this.showStats = function () {
-      var elem = document.getElementById("viewport");
-      if (elem.style.bottom=="20px")
-      	elem.style.bottom="0px";
-      else
-      	elem.style.bottom="20px";
-      window.dispatchEvent(new Event('resize'));
-      }
-      this.screenCaptureDPI = 4;
-      };
-      window.onload = function () {
-      var gui = new dat.GUI(); // create dat.gui
-      var knobs = new VisualizerKnobs();
-      var ground = gui.addFolder('Floor');
-      var texture = ground.add(knobs, 'texture', ['nofloor', 'redbricks', 'graybricks', 'wood-floor', 'tile']);
-      var floorHeight = ground.add(knobs, 'height').min(-2.01).max(2.02).step(0.01).listen();
-      floorHeight.onChange(function (value) {
-      editor.setFloorHeight(value);
-      });
-      texture.onChange(function (value) {
-      editor.updateGroundPlane(value);
-      });
-      //var world = gui.addFolder('World');
-      var backdropColor = gui.addColor(knobs, 'backgroundColor');
-      backdropColor.onChange(function (value) {
-      editor.updateBackgroundColor(value);
-      //editor.updateBackground('nobackground');
-      });
-      gui.add(knobs, 'sceneLightSelect').name('Scene Light');
-      //var model_control = gui.addFolder('Model');
-      // model_control.add(knobs, 'modelLightSelect').name('Model Light');
-      //gui.add(knobs, 'toggleMarkup').name('Toggle Markup');
-      gui.add(knobs, 'showStats').name('Show FPS');
-      if (getParameterByName('expert') === "1")
-      gui.add(knobs, 'expertModeSelect').name('Expert Mode');
+			// Minimal ui, should move to a different file to avoid clutter
+			var VisualizerKnobs = function() {
+				this.texture = editor.config.getKey('floor');
+				this.height = -0.001;
+				this.backdrop = editor.config.getKey('skybox');
+				color = editor.config.getKey('settings/backgroundcolor');
+				if (color=== undefined)
+					this.backgroundColor = "#888888";
+				else
+					this.backgroundColor = color;
+				// Define render logic ...
+				this.sceneLightX = -0.01;
+				this.sceneLightY = -0.01;
+				this.sceneLightZ = -0.01;
+				this.sceneLightColor = [255, 255, 255];
+				this.sceneLightSelect = function () { editor.select(editor.scene.getObjectByName('SunLight')); }
+				this.modelLightSelect = function () { editor.selectCurrentModelLight(); }
+				this.toggleMarkup = function () { editor.toggleMarkup(); }
+				this.expertModeSelect = function () { editor.setTheme('css/dark.css'); }
+				this.showStats = function () {
+				var elem = document.getElementById("viewport");
+				if (elem.style.bottom=="20px")
+					elem.style.bottom="0px";
+				else
+					elem.style.bottom="20px";
+				window.dispatchEvent(new Event('resize'));
+			}
+			this.screenCaptureDPI = 4;
+			};
+			window.onload = function () {
+			var gui = new dat.GUI(); // create dat.gui
+			var knobs = new VisualizerKnobs();
+			var ground = gui.addFolder('Floor');
+			var texture = ground.add(knobs, 'texture', ['nofloor', 'redbricks', 'graybricks', 'wood-floor', 'tile']);
+			var floorHeight = ground.add(knobs, 'height').min(-2.01).max(2.02).step(0.01).listen();
+			floorHeight.onChange(function (value) {
+				editor.setFloorHeight(value);
+			});
+			texture.onChange(function (value) {
+				editor.updateGroundPlane(value);
+			});
+			//var world = gui.addFolder('World');
+			var backdropColor = gui.addColor(knobs, 'backgroundColor');
+			backdropColor.onChange(function (value) {
+				editor.updateBackgroundColor(value);
+			//editor.updateBackground('nobackground');
+			});
+			gui.add(knobs, 'sceneLightSelect').name('Scene Light');
+			//var model_control = gui.addFolder('Model');
+			// model_control.add(knobs, 'modelLightSelect').name('Model Light');
+			//gui.add(knobs, 'toggleMarkup').name('Toggle Markup');
+			gui.add(knobs, 'showStats').name('Show FPS');
+			if (getParameterByName('expert') === "1")
+				gui.add(knobs, 'expertModeSelect').name('Expert Mode');
 
-      // No save/retrieve settings
-      var captureControl =  gui.add(knobs, 'screenCaptureDPI').name('Capture Scaleup').min(1).max(10).step(1).listen();
-      captureControl.onChange(function (value) {
-        editor.setScreenCaptureScaleup(value);
-      });;
-      // gui.remember(knobs);
-      gui.closed = true;
-      }
+			// No save/retrieve settings
+			var captureControl =  gui.add(knobs, 'screenCaptureDPI').name('Capture Scaleup').min(1).max(10).step(1).listen();
+			captureControl.onChange(function (value) {
+				editor.setScreenCaptureScaleup(value);
+			});;
+			// gui.remember(knobs);
+			gui.closed = true;
+			}
 
       var viewport = new OpenSimViewport( editor );
       document.body.appendChild( viewport.dom );
