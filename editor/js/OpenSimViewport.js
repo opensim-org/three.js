@@ -326,7 +326,8 @@ var OpenSimViewport = function ( editor ) {
 
 	} );
 	signals.backgroundColorChanged.add(function (newColor) {
-	    renderer.setClearColor(newColor);
+		renderer.setClearColor(newColor);
+		clearColor = newColor;
 	    render();
 	});
 	signals.transformModeChanged.add( function ( mode ) {
@@ -726,7 +727,7 @@ var OpenSimViewport = function ( editor ) {
 			document.body.removeChild(link);
 		});
 		renderer.setSize(saveWidth, saveHeight);
-		renderer.clear();
+		//renderer.clear();
 		renderer.setClearColor(clearColor);
 		renderer.render(scene, currentCamera);
 		renderer.render(sceneOrtho, sceneOrthoCam);
