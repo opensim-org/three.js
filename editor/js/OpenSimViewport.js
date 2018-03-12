@@ -27,7 +27,7 @@ var OpenSimViewport = function ( editor ) {
     // AnimationRecording
 	var capturer = undefined;
 	var recording = false;
-
+	var screenCapUpsamplingFactor = 4;
 	var objects = [];
 
 	// helpers
@@ -644,8 +644,11 @@ var OpenSimViewport = function ( editor ) {
 
 	} );
 
-	signals.hiresRender.add(function () {
-		renderHiRes(4);
+	signals.hiresRender.add(function (upSample) {
+		if (upSample===undefined) // From button -> 300 DPI
+			renderHiRes(screenCapUpsamplingFactor);
+		else // using hotkey d -> 900 DPI
+			renderHiRes(screenCapUpsamplingFactor + upSample);
 	});
 	//
 
@@ -706,27 +709,28 @@ var OpenSimViewport = function ( editor ) {
 	function renderHiRes(upSample) {
 		var saveWidth = renderer.getSize().width;
 		var saveHeight = renderer.getSize().height;
-		widthOfScreenshot = saveWidth * upSample;
-		heightOfScreenshot = saveHeight * upSample;
+		var widthOfScreenshot = saveWidth * upSample;
+		var heightOfScreenshot = saveHeight * upSample;
 		renderer.setSize(widthOfScreenshot, heightOfScreenshot);
 		renderer.clear(); // clear first to keep background color
+		renderer.setClearColor(clearColor);
 		renderer.render(scene, currentCamera);
 		renderer.render(sceneOrtho, sceneOrthoCam);
-		var screenShotHiRes = renderer.domElement.toDataURL();
-		renderer.setSize(saveWidth, saveHeight);
-		renderer.render(scene, currentCamera);
-		renderer.render(sceneOrtho, sceneOrthoCam);
-		// save hires image to file
-		var link = document.createElement('a');
-		if (typeof link.download === 'string') {
-			document.body.appendChild(link); 
-			link.download = "opensim_snapshot_"+widthOfScreenshot+"X"+heightOfScreenshot+".png";
-			link.href = screenShotHiRes;
+		renderer.domElement.toBlob(function (blob) {
+			var link = document.createElement('a');
+			link.download = "opensim_snapshot.png";
+			url = URL.createObjectURL(blob);
+			link.href = url
+			document.body.appendChild(link);
 			link.click();
-			document.body.removeChild(link); //remove the link when done
-		} else {
-			location.replace(uri);
-		}
+			document.body.removeChild(link);
+		});
+		renderer.setSize(saveWidth, saveHeight);
+		renderer.clear();
+		renderer.setClearColor(clearColor);
+		renderer.render(scene, currentCamera);
+		renderer.render(sceneOrtho, sceneOrthoCam);
+
 	}
 
 	function render() {
