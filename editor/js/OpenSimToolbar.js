@@ -181,27 +181,10 @@ var OpenSimToolbar = function ( editor ) {
 	    var modelObject = editor.scene.getObjectByName('OpenSimModel');
 	    return (new THREE.Box3().setFromObject(modelObject));
 	};
-        function saveAsImage() {
-            var canvas = document.getElementById("viewport");
-            getImageData = true;
-            //canvas.children[1].render();
-	    var img    = canvas.children[0].toDataURL("image/png");
-	    saveFile(img, "opensim_snapshot.png");
+	function saveAsImage() {
+		editor.signals.hiresRender.dispatch();
 	};
-        // Support saving image to file
-        var saveFile = function (strData, filename) {
-            var link = document.createElement('a');
-            if (typeof link.download === 'string') {
-                document.body.appendChild(link); //Firefox requires the link to be in the body
-                link.download = filename;
-                link.href = strData;
-                link.click();
-                document.body.removeChild(link); //remove the link when done
-            } else {
-                location.replace(uri);
-            }
-        };
-        var startRecord = new UI.Button(false, 'icons/video.png').onClick(function () {
+	var startRecord = new UI.Button(false, 'icons/video.png').onClick(function () {
 		toggleRecord();
 	});
 	startRecord.dom.title = 'Record Start/Stop';

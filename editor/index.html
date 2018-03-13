@@ -161,7 +161,7 @@
 			document.body.appendChild( stats.domElement );
 
 			var editor = new OpenSimEditor();
-			
+
 			// Minimal ui, should move to a different file to avoid clutter
 			var VisualizerKnobs = function() {
 				this.texture = editor.config.getKey('floor');
@@ -181,188 +181,193 @@
 				this.modelLightSelect = function () { editor.selectCurrentModelLight(); }
 				this.toggleMarkup = function () { editor.toggleMarkup(); }
 				this.expertModeSelect = function () { editor.setTheme('css/dark.css'); }
-				this.showStats = function () { 
-					var elem = document.getElementById("viewport"); 
-					if (elem.style.bottom=="20px")
-						elem.style.bottom="0px";
-					else
-						elem.style.bottom="20px"; 
-					window.dispatchEvent(new Event('resize'));
-				}
+				this.showStats = function () {
+				var elem = document.getElementById("viewport");
+				if (elem.style.bottom=="20px")
+					elem.style.bottom="0px";
+				else
+					elem.style.bottom="20px";
+				window.dispatchEvent(new Event('resize'));
+			}
+			this.screenCaptureDPI = 4;
 			};
 			window.onload = function () {
-			    var gui = new dat.GUI(); // create dat.gui 
-			    var knobs = new VisualizerKnobs();
-			    var ground = gui.addFolder('Floor');
-			    var texture = ground.add(knobs, 'texture', ['nofloor', 'redbricks', 'graybricks', 'wood-floor', 'tile']);
-			    var floorHeight = ground.add(knobs, 'height').min(-2.01).max(2.02).step(0.01).listen();
-			    floorHeight.onChange(function (value) {
-			        editor.setFloorHeight(value);
-			    });
-			    texture.onChange(function (value) {
-			        editor.updateGroundPlane(value);
-			    });
-			    //var world = gui.addFolder('World');
-				var backdropColor = gui.addColor(knobs, 'backgroundColor');
-				backdropColor.onChange(function (value) {
-				    editor.updateBackgroundColor(value);
-						//editor.updateBackground('nobackground');
-				});
-				gui.add(knobs, 'sceneLightSelect').name('Scene Light');
-				//var model_control = gui.addFolder('Model');
-				// model_control.add(knobs, 'modelLightSelect').name('Model Light');
-				//gui.add(knobs, 'toggleMarkup').name('Toggle Markup');
-				gui.add(knobs, 'showStats').name('Show FPS');
-				if (getParameterByName('expert') === "1")
-					gui.add(knobs, 'expertModeSelect').name('Expert Mode');
-							
-				// No save/retrieve settings
-				// gui.remember(knobs);
-				gui.closed = true;
+			var gui = new dat.GUI(); // create dat.gui
+			var knobs = new VisualizerKnobs();
+			var ground = gui.addFolder('Floor');
+			var texture = ground.add(knobs, 'texture', ['nofloor', 'redbricks', 'graybricks', 'wood-floor', 'tile']);
+			var floorHeight = ground.add(knobs, 'height').min(-2.01).max(2.02).step(0.01).listen();
+			floorHeight.onChange(function (value) {
+				editor.setFloorHeight(value);
+			});
+			texture.onChange(function (value) {
+				editor.updateGroundPlane(value);
+			});
+			//var world = gui.addFolder('World');
+			var backdropColor = gui.addColor(knobs, 'backgroundColor');
+			backdropColor.onChange(function (value) {
+				editor.updateBackgroundColor(value);
+			//editor.updateBackground('nobackground');
+			});
+			gui.add(knobs, 'sceneLightSelect').name('Scene Light');
+			//var model_control = gui.addFolder('Model');
+			// model_control.add(knobs, 'modelLightSelect').name('Model Light');
+			//gui.add(knobs, 'toggleMarkup').name('Toggle Markup');
+			gui.add(knobs, 'showStats').name('Show FPS');
+			if (getParameterByName('expert') === "1")
+				gui.add(knobs, 'expertModeSelect').name('Expert Mode');
+
+			// No save/retrieve settings
+			var captureControl =  gui.add(knobs, 'screenCaptureDPI').name('Capture Scaleup').min(1).max(10).step(1).listen();
+			captureControl.onChange(function (value) {
+				editor.setScreenCaptureScaleup(value);
+			});;
+			// gui.remember(knobs);
+			gui.closed = true;
 			}
 
-			var viewport = new OpenSimViewport( editor );
-			document.body.appendChild( viewport.dom );
+      var viewport = new OpenSimViewport( editor );
+      document.body.appendChild( viewport.dom );
 
-			var script = new Script( editor );
-			document.body.appendChild( script.dom );
+      var script = new Script( editor );
+      document.body.appendChild( script.dom );
 
-			var player = new Player( editor );
-			document.body.appendChild( player.dom );
+      var player = new Player( editor );
+      document.body.appendChild( player.dom );
 
-			var toolbar = new OpenSimToolbar(editor);
-			document.body.appendChild( toolbar.dom );
-			if (getParameterByName('expert') === "1"){
-				var menubar = new Menubar( editor );
-				document.body.appendChild( menubar.dom );
-			}
-			var sidebar = new Sidebar( editor );
-			document.body.appendChild( sidebar.dom );
+      var toolbar = new OpenSimToolbar(editor);
+      document.body.appendChild( toolbar.dom );
+      if (getParameterByName('expert') === "1"){
+      var menubar = new Menubar( editor );
+      document.body.appendChild( menubar.dom );
+      }
+      var sidebar = new Sidebar( editor );
+      document.body.appendChild( sidebar.dom );
 
-			/*
-			var dialog = new UI.Dialog();
-			document.body.appendChild( dialog.dom );
-			*/
+      /*
+      var dialog = new UI.Dialog();
+      document.body.appendChild( dialog.dom );
+      */
 
-			//
+      //
 
-			editor.setTheme( editor.config.getKey( 'theme' ) );
+      editor.setTheme( editor.config.getKey( 'theme' ) );
 
-			editor.storage.init( function () {
-/*
-				editor.storage.get( function ( state ) {
+      editor.storage.init( function () {
+      /*
+      editor.storage.get( function ( state ) {
 
-					if ( isLoadingFromHash ) return;
+      if ( isLoadingFromHash ) return;
 
-					if ( state !== undefined ) {
+      if ( state !== undefined ) {
 
-						editor.fromJSON( state );
+      editor.fromJSON( state );
 
-					}
+      }
 
-					var selected = editor.config.getKey( 'selected' );
+      var selected = editor.config.getKey( 'selected' );
 
-					if ( selected !== undefined ) {
+      if ( selected !== undefined ) {
 
-						editor.selectByUuid( selected );
+      editor.selectByUuid( selected );
 
-					}
+      }
 
-				} );
-*/
-				//
+      } );
+      */
+      //
 
-				var timeout;
+      var timeout;
 
-				function saveState( scene ) {
-                /*
-					if ( editor.config.getKey( 'autosave' ) === false ) {
+      function saveState( scene ) {
+      /*
+      if ( editor.config.getKey( 'autosave' ) === false ) {
 
-						return;
+      return;
 
-					}
+      }
 
-					clearTimeout( timeout );
+      clearTimeout( timeout );
 
-					timeout = setTimeout( function () {
+      timeout = setTimeout( function () {
 
-						editor.signals.savingStarted.dispatch();
+      editor.signals.savingStarted.dispatch();
 
-						timeout = setTimeout( function () {
+      timeout = setTimeout( function () {
 
-							editor.storage.set( editor.toJSON() );
+      editor.storage.set( editor.toJSON() );
 
-							editor.signals.savingFinished.dispatch();
+      editor.signals.savingFinished.dispatch();
 
-						}, 100 );
+      }, 100 );
 
-					}, 1000 );
-                 */
-				};
+      }, 1000 );
+      */
+      };
 
-				var signals = editor.signals;
+      var signals = editor.signals;
 
-				signals.editorCleared.add( saveState );
-				signals.geometryChanged.add( saveState );
-				signals.objectAdded.add( saveState );
-				signals.objectChanged.add( saveState );
-				signals.objectRemoved.add( saveState );
-				signals.materialChanged.add( saveState );
-				signals.sceneGraphChanged.add( saveState );
-				signals.scriptChanged.add( saveState );
-				signals.historyChanged.add( saveState );
+      signals.editorCleared.add( saveState );
+      signals.geometryChanged.add( saveState );
+      signals.objectAdded.add( saveState );
+      signals.objectChanged.add( saveState );
+      signals.objectRemoved.add( saveState );
+      signals.materialChanged.add( saveState );
+      signals.sceneGraphChanged.add( saveState );
+      signals.scriptChanged.add( saveState );
+      signals.historyChanged.add( saveState );
 
-				signals.showModal.add( function ( content ) {
+      signals.showModal.add( function ( content ) {
 
-					modal.show( content );
+      modal.show( content );
 
-				} );
+      } );
 
-			} );
+      } );
 
-			//
+      //
 
-			document.addEventListener( 'dragover', function ( event ) {
+      document.addEventListener( 'dragover', function ( event ) {
 
-				event.preventDefault();
-				event.dataTransfer.dropEffect = 'copy';
+      event.preventDefault();
+      event.dataTransfer.dropEffect = 'copy';
 
-			}, false );
+      }, false );
 
-			document.addEventListener( 'drop', function ( event ) {
+      document.addEventListener( 'drop', function ( event ) {
 
-				event.preventDefault();
+      event.preventDefault();
 
-				if ( event.dataTransfer.files.length > 0 ) {
+      if ( event.dataTransfer.files.length > 0 ) {
 
-					new Loader(editor).loadFile( event.dataTransfer.files[ 0 ] );
+      new Loader(editor).loadFile( event.dataTransfer.files[ 0 ] );
 
-				}
+      }
 
-			}, false );
+      }, false );
 
-			document.addEventListener( 'keydown', function ( event ) {
+      document.addEventListener( 'keydown', function ( event ) {
 
-				switch ( event.keyCode ) {
+      switch ( event.keyCode ) {
 
-					case 8: // backspace
+      case 8: // backspace
 
-						event.preventDefault(); // prevent browser back
+      event.preventDefault(); // prevent browser back
 
-					case 46: // delete
+      case 46: // delete
 
-						var object = editor.selected;
+      var object = editor.selected;
 
-						if ( confirm( 'Delete ' + object.name + '?' ) === false ) return;
+      if ( confirm( 'Delete ' + object.name + '?' ) === false ) return;
 
-						var parent = object.parent;
-						if ( parent !== null ) editor.execute( new RemoveObjectCommand( object ) );
+      var parent = object.parent;
+      if ( parent !== null ) editor.execute( new RemoveObjectCommand( object ) );
 
-						break;
+      break;
 
-					case 90: // Register Ctrl-Z for Undo, Ctrl-Shift-Z for Redo
+      case 90: // Register Ctrl-Z for Undo, Ctrl-Shift-Z for Redo
 
-						if ( event.ctrlKey && event.shiftKey ) {
+      if ( event.ctrlKey && event.shiftKey ) {
 
 							editor.redo();
 
@@ -398,12 +403,7 @@
 					case 73:
 					case 79:
 						editor.handleKey(event.keyCode);
-
-						break;
-					case 68:
-						editor.signals.hiresRender.dispatch();
-						break;
-
+					break;
 				}
 
 			}, false );
