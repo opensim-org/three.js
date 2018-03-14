@@ -785,6 +785,7 @@ OpenSimEditor.prototype = {
 	},
 
 	updateGroundPlane: function (choice) {
+		var scope = this;
 		this.config.setKey('floor', choice);
 		if (choice == 'nofloor') {
 			if (this.groundPlane !== null) {
@@ -806,6 +807,7 @@ OpenSimEditor.prototype = {
 		        groundMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, map: texture1 });
 		        groundPlane.material = groundMaterial;
 		        groundPlane.needsUpdate = true;
+		        scope.refresh();
             });
 	},
 	updateBackgroundColor: function (newColor) {
