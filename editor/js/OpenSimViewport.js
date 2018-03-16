@@ -400,11 +400,11 @@ var OpenSimViewport = function ( editor ) {
 	    if (isRecording) {
 	    //    capturer.dispose();
 	        capturer = new CCapture({
-	            verbose: true,
-	            display: true,
-	            framerate: 30,
-	            motionBlurFrames: 3,
-	            quality: 80,
+	            verbose: false,
+	            display: false,
+	            framerate: 15,
+	            motionBlurFrames: 0,
+	            quality: 100,
                 name: "opensim_video",
 	            format: 'webm',
 	            workersPath: 'js/',
@@ -434,8 +434,8 @@ var OpenSimViewport = function ( editor ) {
 	    if (capturer !== undefined) 
                capturer = undefined;
          capturer = new CCapture({
-	            verbose: true,
-	            display: true,
+	            verbose: false,
+	            display: false,
 	            framerate: 15,
 	            motionBlurFrames: 0,
 	            quality: 100,
@@ -455,7 +455,7 @@ var OpenSimViewport = function ( editor ) {
 	        capturer.stop();
 	        capturer.save();
 	        capturer = undefined;
-                recording = false;
+            recording = false;
 	    }
 	    // add frame to gif
 	    //gif.render();
@@ -725,10 +725,10 @@ var OpenSimViewport = function ( editor ) {
 			var link = document.createElement('a');
 			link.download = "opensim_snapshot.png";
 			url = URL.createObjectURL(blob);
-			link.href = url
+			link.href = url;
 			document.body.appendChild(link);
 			link.click();
-			document.body.removeChild(link);
+			//document.body.removeChild(link);
 		});
 		renderer.setSize(saveWidth, saveHeight);
 		//renderer.clear();
