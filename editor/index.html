@@ -211,7 +211,7 @@
 			gui.add(knobs, 'showStats').name('Show FPS');
 			if (getParameterByName('expert') === "1")
 				gui.add(knobs, 'expertModeSelect').name('Expert Mode');
-			var captureControl = gui.add(knobs, 'screenCaptureDPI').name('Snapshot Resolution').min(1).max(4).step(1).listen();
+			var captureControl = gui.add(knobs, 'screenCaptureDPI').name('Snapshot DPI').min(1).max(4).step(1).listen();
 			captureControl.onChange(function (value) {
 				editor.setScreenCaptureScaleup(value);
 			});
