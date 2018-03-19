@@ -203,26 +203,18 @@
 			texture.onChange(function (value) {
 				editor.updateGroundPlane(value);
 			});
-			//var world = gui.addFolder('World');
 			var backdropColor = gui.addColor(knobs, 'backgroundColor');
 			backdropColor.onChange(function (value) {
 				editor.updateBackgroundColor(value);
-			//editor.updateBackground('nobackground');
 			});
 			gui.add(knobs, 'sceneLightSelect').name('Scene Light');
-			//var model_control = gui.addFolder('Model');
-			// model_control.add(knobs, 'modelLightSelect').name('Model Light');
-			//gui.add(knobs, 'toggleMarkup').name('Toggle Markup');
 			gui.add(knobs, 'showStats').name('Show FPS');
 			if (getParameterByName('expert') === "1")
 				gui.add(knobs, 'expertModeSelect').name('Expert Mode');
-
-			// No save/retrieve settings
-			var captureControl =  gui.add(knobs, 'screenCaptureDPI').name('Capture Scaleup').min(1).max(10).step(1).listen();
+			var captureControl = gui.add(knobs, 'screenCaptureDPI').name('Snapshot Resolution').min(1).max(4).step(1).listen();
 			captureControl.onChange(function (value) {
 				editor.setScreenCaptureScaleup(value);
-			});;
-			// gui.remember(knobs);
+			});
 			gui.closed = true;
 			}
 
