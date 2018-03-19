@@ -718,7 +718,6 @@ var OpenSimViewport = function ( editor ) {
 		var heightOfScreenshot = saveHeight * upSample;
 		renderer.setSize(widthOfScreenshot, heightOfScreenshot);
 		renderer.clear(); // clear first to keep background color
-		renderer.setClearColor(clearColor);
 		renderer.render(scene, currentCamera);
 		renderer.render(sceneOrtho, sceneOrthoCam);
 		renderer.domElement.toBlob(function (blob) {
@@ -731,8 +730,8 @@ var OpenSimViewport = function ( editor ) {
 			document.body.removeChild(link);
 		});
 		renderer.setSize(saveWidth, saveHeight);
-		//renderer.clear();
-		renderer.setClearColor(clearColor);
+		renderer.clear();
+		//renderer.setClearColor(clearColor);
 		renderer.render(scene, currentCamera);
 		renderer.render(sceneOrtho, sceneOrthoCam);
 
