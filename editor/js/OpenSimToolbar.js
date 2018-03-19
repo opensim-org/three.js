@@ -184,11 +184,19 @@ var OpenSimToolbar = function ( editor ) {
 	function saveAsImage() {
 		editor.signals.hiresRender.dispatch();
 	};
-	var startRecord = new UI.Button(false, 'icons/video.png').onClick(function () {
+	var recordButton = new UI.Button(false, 'icons/video.png');
+	var recordStatus = false;
+	recordButton.onClick(function () {
+		recordStatus = !recordStatus;
+		if (recordStatus) // Dark gray if recording, should be done in CSS
+			recordButton.dom.style.backgroundColor = "#888888";
+		else // default
+			recordButton.dom.style.backgroundColor = "";
 		toggleRecord();
+
 	});
-	startRecord.dom.title = 'Record Start/Stop';
-	buttons.add(startRecord);
+	recordButton.dom.title = 'Record Start/Stop';
+	buttons.add(recordButton);
 	function toggleRecord() {
             editor.toggleRecord();
         }
