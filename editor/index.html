@@ -196,14 +196,15 @@
 			var knobs = new VisualizerKnobs();
 			var ground = gui.addFolder('Floor');
 			var texture = ground.add(knobs, 'texture', ['nofloor', 'redbricks', 'graybricks', 'wood-floor', 'tile']);
-			var floorHeight = ground.add(knobs, 'height').min(-2.01).max(2.02).step(0.01).listen();
+			texture.name('Texture');
+			var floorHeight = ground.add(knobs, 'height').min(-2.01).max(2.02).step(0.01).name('Height').listen();
 			floorHeight.onChange(function (value) {
 				editor.setFloorHeight(value);
 			});
 			texture.onChange(function (value) {
 				editor.updateGroundPlane(value);
 			});
-			var backdropColor = gui.addColor(knobs, 'backgroundColor');
+			var backdropColor = gui.addColor(knobs, 'backgroundColor').name('Background Color');
 			backdropColor.onChange(function (value) {
 				editor.updateBackgroundColor(value);
 			});
@@ -211,7 +212,7 @@
 			gui.add(knobs, 'showStats').name('Show FPS');
 			if (getParameterByName('expert') === "1")
 				gui.add(knobs, 'expertModeSelect').name('Expert Mode');
-			var captureControl = gui.add(knobs, 'screenCaptureDPI').name('Snapshot Resolution').min(1).max(4).step(1).listen();
+			var captureControl = gui.add(knobs, 'screenCaptureDPI').name('Snapshot Quality').min(1).max(4).step(1).listen();
 			captureControl.onChange(function (value) {
 				editor.setScreenCaptureScaleup(value);
 			});
