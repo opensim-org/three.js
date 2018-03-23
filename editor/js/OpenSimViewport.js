@@ -402,7 +402,7 @@ var OpenSimViewport = function ( editor ) {
 	        capturer = new CCapture({
 	            verbose: false,
 	            display: false,
-	            framerate: 15,
+	            framerate: 30,
 	            motionBlurFrames: 0,
 	            quality: 100,
                 name: "opensim_video",
@@ -436,7 +436,7 @@ var OpenSimViewport = function ( editor ) {
          capturer = new CCapture({
 	            verbose: false,
 	            display: false,
-	            framerate: 15,
+	            framerate: 30,
 	            motionBlurFrames: 0,
 	            quality: 100,
                 name: "opensim_video",
@@ -655,6 +655,11 @@ var OpenSimViewport = function ( editor ) {
 	signals.screenCaptureScaleupChanged.add(function (newFactor) {
 		screenCapUpsamplingFactor = newFactor;
 	});
+
+	signals.captureFrame.add(function () {
+	    if (recording && capturer !== undefined)
+	        capturer.capture(renderer.domElement);
+	});
 	//
 
 	var renderer = null;
@@ -770,7 +775,7 @@ var OpenSimViewport = function ( editor ) {
 		            renderer.render(sceneHelpers, camera);
 
 		    }
-		    if (recording) capturer.capture(renderer.domElement);
+		    //if (recording) capturer.capture(renderer.domElement);
 		}
 	}
 
