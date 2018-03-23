@@ -411,31 +411,11 @@
 
 			onWindowResize();
 
-			//
-
-			var isLoadingFromHash = false;
-			var file = 'model.json';
-			var hash = window.location.hash;
-
-			if ( true) {
-
-				//var file = hash.substr( 6 );
-
-				if ( false ) {
-
-					var loader = new THREE.XHRLoader();
-					loader.crossOrigin = '';
-					loader.load( file, function ( text ) {
-						var json = JSON.parse( text );
-						//editor.clear();
-						editor.addfromJSON( json );
-
-					} );
-
-					isLoadingFromHash = true;
-
-				}
-
+			animate();
+			function animate() {
+			    requestAnimationFrame(animate);
+                if (editor.recording)
+			        editor.signals.captureFrame.dispatch();
 			}
 
 		</script>

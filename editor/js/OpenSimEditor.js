@@ -16,7 +16,7 @@ var OpenSimEditor = function () {
 	this.dolly_object = new THREE.Object3D();
 	this.dolly_object.name = 'Dolly';
 	this.dolly_object.position.y = 0;
-		this.recording = false;
+	this.recording = false;
 
 	this.models = [];
 	this.currentModel = undefined; //uuid of current model call getCurrentModel for actualobject
@@ -99,7 +99,8 @@ var OpenSimEditor = function () {
 		recordingStarted: new Signal(),
 		recordingStopped: new Signal(),
 		hiresRender: new Signal(),
-		screenCaptureScaleupChanged: new Signal()
+		screenCaptureScaleupChanged: new Signal(),
+		captureFrame: new Signal(),
 	};
 
 	this.config = new Config( 'threejs-editor' );
