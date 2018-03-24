@@ -14,8 +14,8 @@ var OpenSimViewport = function ( editor ) {
 
 	var scene = editor.scene;
 	var sceneHelpers = editor.sceneHelpers;
-        var sceneOrtho = editor.sceneOrtho;
-        var sceneOrthoCam = editor.sceneOrthoCam;
+	var sceneOrtho = editor.sceneOrtho;
+	var sceneOrthoCam = editor.sceneOrthoCam;
         
 	//var showHelpers = editor.showDebug();
 	var dollyCameraEye = editor.cameraEye;
@@ -40,6 +40,7 @@ var OpenSimViewport = function ( editor ) {
 	var camera = editor.camera;
 	var dollyCamera = editor.dolly_camera;
 	//
+	var clearColor = editor.config.getKey('settings/backgroundcolor');
 
 	var selectionBox = new THREE.BoxHelper();
 	selectionBox.material.depthTest = false;
@@ -296,7 +297,6 @@ var OpenSimViewport = function ( editor ) {
 	    sceneHelpers.visible = show;
 	    render();
 	});
-	var clearColor;
 
 	signals.themeChanged.add( function ( value ) {
 
@@ -315,12 +315,12 @@ var OpenSimViewport = function ( editor ) {
 				clearColor = 0x333333;
 				break;
 			case 'css/minimal.css':
-			    clearColor = 0xf0f5f5;
+			    //clearColor = 0xf0f5f5;
 				break;
 
 		}
 
-		renderer.setClearColor( clearColor );
+		//renderer.setClearColor( clearColor );
 
 		render();
 
@@ -328,6 +328,7 @@ var OpenSimViewport = function ( editor ) {
 	signals.backgroundColorChanged.add(function (newColor) {
 		renderer.setClearColor(newColor);
 		clearColor = newColor;
+		editor.config.setKey('settings/backgroundcolor', newColor);
 	    render();
 	});
 	signals.transformModeChanged.add( function ( mode ) {
