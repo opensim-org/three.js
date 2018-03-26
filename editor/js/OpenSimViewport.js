@@ -403,7 +403,7 @@ var OpenSimViewport = function ( editor ) {
 	        capturer = new CCapture({
 	            verbose: false,
 	            display: false,
-	            framerate: 30,
+	            framerate: 12,
 	            motionBlurFrames: 0,
 	            quality: 100,
                 name: "opensim_video",
@@ -437,7 +437,7 @@ var OpenSimViewport = function ( editor ) {
          capturer = new CCapture({
 	            verbose: false,
 	            display: false,
-	            framerate: 30,
+	            framerate: 12,
 	            motionBlurFrames: 0,
 	            quality: 100,
                 name: "opensim_video",
@@ -656,10 +656,17 @@ var OpenSimViewport = function ( editor ) {
 	signals.screenCaptureScaleupChanged.add(function (newFactor) {
 		screenCapUpsamplingFactor = newFactor;
 	});
-
+	//var curTime = 0;
 	signals.captureFrame.add(function () {
-	    if (recording && capturer !== undefined)
+	    recording = false;
+	    render();
+	    recording = true;
+	    if (capturer !== undefined) {
 	        capturer.capture(renderer.domElement);
+	        //var newTime = performance.now();
+	        //console.log('Capture delta', newTime - curTime);
+	        //curTime = newTime;
+        }
 	});
 	//
 
@@ -744,40 +751,43 @@ var OpenSimViewport = function ( editor ) {
 	}
 
 	function render() {
-	    //console.log('Render called');
-		sceneHelpers.updateMatrixWorld();
-		scene.updateMatrixWorld();
-		stats.update();
-		if (renderer != null) {
-		    renderer.clear();
+	    if (!recording) {
+	        var t0 = performance.now();
+	        sceneHelpers.updateMatrixWorld();
+	        scene.updateMatrixWorld();
+	        stats.update();
+	        if (renderer != null) {
+	            renderer.clear();
 
-		    if (this.animating) {
-		        var time = Date.now() - startTime;
-		        var looptime = animationCycleTime;
-		        var t = (time % looptime) / looptime;
+	            if (this.animating) {
+	                var time = Date.now() - startTime;
+	                var looptime = animationCycleTime;
+	                var t = (time % looptime) / looptime;
 
-		        var pos = editor.dollyPath.getPointAt(t);
-		        //console.log('t='+t);
-		        dollyCamera.position.copy(pos);
-		        animationLookAt.copy(lookAtObject.position);
-		        dollyCamera.lookAt(animationLookAt);
-		        if (showCamOnly === false)
-		            currentCamera = dollyCamera;
-		        else
-		            currentCamera = camera;
-            }
-		    else
-		        currentCamera = camera;
+	                var pos = editor.dollyPath.getPointAt(t);
+	                dollyCamera.position.copy(pos);
+	                animationLookAt.copy(lookAtObject.position);
+	                dollyCamera.lookAt(animationLookAt);
+	                if (showCamOnly === false)
+	                    currentCamera = dollyCamera;
+	                else
+	                    currentCamera = camera;
+	            }
+	            else
+	                currentCamera = camera;
 
-		    renderer.render(scene, currentCamera);
-		    renderer.render(sceneOrtho, sceneOrthoCam);
-		    if (renderer instanceof THREE.RaytracingRenderer === false) {
-		        if (sceneHelpers.visible)
-		            renderer.render(sceneHelpers, camera);
+	            renderer.render(scene, currentCamera);
+	            renderer.render(sceneOrtho, sceneOrthoCam);
+	            if (renderer instanceof THREE.RaytracingRenderer === false) {
+	                if (sceneHelpers.visible)
+	                    renderer.render(sceneHelpers, camera);
 
-		    }
-		    //if (recording) capturer.capture(renderer.domElement);
-		}
+	            }
+	            //if (recording) capturer.capture(renderer.domElement);
+	        }
+	        //var t1 = performance.now();
+	        //console.log('Render time', t1 - t0);
+	    }
 	}
 
 	return container;
