@@ -168,8 +168,10 @@
 				this.height = -0.001;
 				this.backdrop = editor.config.getKey('skybox');
 				color = editor.config.getKey('settings/backgroundcolor');
-				if (color=== undefined)
+				if (color=== undefined){
 					this.backgroundColor = "#888888";
+					editor.updateBackgroundColor(this.backgroundColor);
+				}
 				else
 					this.backgroundColor = color;
 				// Define render logic ...
@@ -188,8 +190,11 @@
 				else
 					elem.style.bottom="20px";
 				window.dispatchEvent(new Event('resize'));
-			}
-			this.screenCaptureDPI = 4;
+				}
+				this.screenCaptureDPI =  editor.config.getKey('settings/captureDPI');
+				if (this.screenCaptureDPI === undefined){
+					editor.config.setKey('settings/captureDPI', 2);
+				}
 			};
 			window.onload = function () {
 			var gui = new dat.GUI(); // create dat.gui
@@ -215,6 +220,7 @@
 			var captureControl = gui.add(knobs, 'screenCaptureDPI').name('Snapshot Quality').min(1).max(4).step(1);
 			captureControl.onChange(function (value) {
 				editor.setScreenCaptureScaleup(value);
+				editor.config.setKey('settings/captureDPI', value);
 			});
 			gui.closed = true;
 			}
