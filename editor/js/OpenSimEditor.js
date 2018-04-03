@@ -598,13 +598,13 @@ OpenSimEditor.prototype = {
 			modelLight.visible = true;
 			this.enableShadows(modeluuid, true);
 		}
-		else{
+		else{ /* Leave color and shadows even if not current model
 			other_uuid = this.models[modindex];
 			nonCurrentModel = editor.objectByUuid(other_uuid);
 			modelLight = nonCurrentModel.getObjectByName('ModelLight');
 			modelLight.color = this.nonCurrentModelColor;
 			modelLight.visible = false;
-			this.enableShadows(other_uuid, false);
+			this.enableShadows(other_uuid, false); */
 		}
 		}
 		this.signals.sceneGraphChanged.dispatch();
