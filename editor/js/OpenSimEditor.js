@@ -22,6 +22,7 @@ var OpenSimEditor = function () {
 	this.currentModel = undefined; //uuid of current model call getCurrentModel for actualobject
 	this.currentModelColor = new THREE.Color(0xffffff);
 	this.nonCurrentModelColor = new THREE.Color(0x888888);
+	this.onlyCurrentModelCastsShadow = false;
 	this.sceneBoundingBox = undefined;
 	this.sceneLight = undefined;
 	// types of objects that are graphically movable
@@ -598,7 +599,7 @@ OpenSimEditor.prototype = {
 			modelLight.visible = true;
 			this.enableShadows(modeluuid, true);
 		}
-		else{
+		else if (this.onlyCurrentModelCastsShadow) { 
 			other_uuid = this.models[modindex];
 			nonCurrentModel = editor.objectByUuid(other_uuid);
 			modelLight = nonCurrentModel.getObjectByName('ModelLight');
