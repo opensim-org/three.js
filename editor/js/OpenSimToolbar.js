@@ -171,7 +171,7 @@ var OpenSimToolbar = function ( editor ) {
 	view_refit.dom.title = 'Fit model(s) in visualizer window using current camera orientation';
 	buttons.add(view_refit);
 
-	var snapshot = new UI.Button(false, 'icons/camera.gif').onClick(function () {
+	var snapshot = new UI.Button(false, 'icons/camera.png').onClick(function () {
             saveAsImage();
 	});
 	snapshot.dom.title = 'Snapshot';
