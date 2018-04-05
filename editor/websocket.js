@@ -109,6 +109,9 @@ function onMessage(evt) {
 	 case "PathOperation":
 		editor.processPathEdit(msg);
 		break;
+	case "scaleGeometry":
+		editor.scaleGeometry(msg);
+		break;
 	case "startAnimation":
 		totalTime=0.0;
 		numFrames = 0;

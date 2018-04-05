@@ -547,6 +547,7 @@ OpenSimEditor.prototype = {
 			// The next 2 line has to be made after helper was added to scene to fix helper display
 			var modelLight = model.getObjectByName('ModelLight');
 			this.helpers[modelLight.id].update();
+			modelLight.userData = "NonEditable";
 			this.signals.sceneGraphChanged.active = true;
 			this.signals.sceneGraphChanged.dispatch();
 			this.viewFitAll();
@@ -1101,6 +1102,18 @@ OpenSimEditor.prototype = {
 	    pathParent.add(newMuscle);
 	    this.refresh();
 	},
+    scaleGeometry: function (scaleJson) {
+        sceneObject = editor.objectByUuid(scaleJson.command.objectUuid);
+        geomObject = sceneObject.geometry;
+        if (geomObject instanceof THREE.SphereGeometry){
+            UUID = geomObject.uuid;
+            newRadius = geomObject.parameters.radius * msg.command.newScale[0];
+            newGeometry = new THREE.SphereGeometry(newRadius);
+            newGeometry.uuid = UUID;
+            sceneObject.geometry = newGeometry;
+            this.signals.geometryChanged.dispatch(sceneObject);
+        }
+    },
 	toggleRecord: function () {
 		if (this.recording){
 			this.signals.recordingStopped.dispatch();
