@@ -708,6 +708,7 @@ OpenSimEditor.prototype = {
 		groundPlane.position.y = -.01;
 		groundPlane.scale.set( 500, 500, 500 );
 		groundPlane.receiveShadow = true;
+		groundPlane.userData = "NonEditable"; // Ground plane is not selectable
 		this.addObject(groundPlane);
 		this.groundPlane = groundPlane;
 	},
@@ -1112,6 +1113,9 @@ OpenSimEditor.prototype = {
             newGeometry.uuid = UUID;
             sceneObject.geometry = newGeometry;
             this.signals.geometryChanged.dispatch(sceneObject);
+        } else if (sceneObject instanceof THREE.ArrowHelper){
+            sceneObject.setLength(1000*msg.command.newScale[0]);
+            this.signals.objectChanged.dispatch(sceneObject);
         }
     },
 	toggleRecord: function () {
