@@ -106,7 +106,10 @@ function onMessage(evt) {
         }
 		editor.refresh();
 		break;
-	 case "PathOperation":
+	case "ReplaceGeometry":
+		editor.replaceGeometry(msg.geometries, msg.uuid);
+		break;
+	case "PathOperation":
 		editor.processPathEdit(msg);
 		break;
 	case "scaleGeometry":

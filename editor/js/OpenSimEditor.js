@@ -1056,6 +1056,16 @@ OpenSimEditor.prototype = {
 		var modelLight = modelObject.getObjectByName('ModelLight');
 		this.select(modelLight);
 	},
+	replaceGeometry: function(geometryJson, uuid) {
+		var sceneObject = this.objectByUuid(uuid);
+		var oldGeometryUUID = sceneObject.geometry.uuid;
+		var geometryLoader = new THREE.OpenSimLoader();
+		geometryJson[0].uuid = oldGeometryUUID;
+		var newgeometries = geometryLoader.parseGeometries(geometryJson);
+		//newgeometries[0].uuid = oldGeometryUUID;
+		sceneObject.geometry = newgeometries[oldGeometryUUID];
+		this.signals.objectChanged.dispatch(sceneObject);
+	},
 	updatePath: function (pathUpdateJson) {
 		var pathObject = this.objectByUuid(pathUpdateJson.uuid);
 		pathObject.material.color.setHex(pathUpdateJson.color);
