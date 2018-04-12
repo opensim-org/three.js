@@ -1,34 +1,103 @@
+import { Sphere } from '../math/Sphere.js';
+import { Ray } from '../math/Ray.js';
+import { Matrix4 } from '../math/Matrix4.js';
+import { Object3D } from '../core/Object3D.js';
+import { Vector3 } from '../math/Vector3.js';
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js';
+import { BufferGeometry } from '../core/BufferGeometry.js';
+import { LineSegments } from './LineSegments.js';
+
 /**
  * @author mrdoob / http://mrdoob.com/
  */
 
-THREE.Line = function ( geometry, material, mode ) {
+function Line( geometry, material, mode ) {
 
 	if ( mode === 1 ) {
 
 		console.warn( 'THREE.Line: parameter THREE.LinePieces no longer supported. Created THREE.LineSegments instead.' );
-		return new THREE.LineSegments( geometry, material );
+		return new LineSegments( geometry, material );
 
 	}
 
-	THREE.Object3D.call( this );
+	Object3D.call( this );
 
 	this.type = 'Line';
 
-	this.geometry = geometry !== undefined ? geometry : new THREE.BufferGeometry();
-	this.material = material !== undefined ? material : new THREE.LineBasicMaterial( { color: Math.random() * 0xffffff } );
+	this.geometry = geometry !== undefined ? geometry : new BufferGeometry();
+	this.material = material !== undefined ? material : new LineBasicMaterial( { color: Math.random() * 0xffffff } );
 
-};
+}
 
-THREE.Line.prototype = Object.assign( Object.create( THREE.Object3D.prototype ), {
+Line.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
-	constructor: THREE.Line,
+	constructor: Line,
+
+	isLine: true,
+
+	computeLineDistances: ( function () {
+
+		var start = new Vector3();
+		var end = new Vector3();
+
+		return function computeLineDistances() {
+
+			var geometry = this.geometry;
+
+			if ( geometry.isBufferGeometry ) {
+
+				// we assume non-indexed geometry
+
+				if ( geometry.index === null ) {
+
+					var positionAttribute = geometry.attributes.position;
+					var lineDistances = [ 0 ];
+
+					for ( var i = 1, l = positionAttribute.count; i < l; i ++ ) {
+
+						start.fromBufferAttribute( positionAttribute, i - 1 );
+						end.fromBufferAttribute( positionAttribute, i );
+
+						lineDistances[ i ] = lineDistances[ i - 1 ];
+						lineDistances[ i ] += start.distanceTo( end );
+
+					}
+
+					geometry.addAttribute( 'lineDistance', new THREE.Float32BufferAttribute( lineDistances, 1 ) );
+
+				} else {
+
+					console.warn( 'THREE.Line.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
+
+				}
+
+			} else if ( geometry.isGeometry ) {
+
+				var vertices = geometry.vertices;
+				var lineDistances = geometry.lineDistances;
+
+				lineDistances[ 0 ] = 0;
+
+				for ( var i = 1, l = vertices.length; i < l; i ++ ) {
+
+					lineDistances[ i ] = lineDistances[ i - 1 ];
+					lineDistances[ i ] += vertices[ i - 1 ].distanceTo( vertices[ i ] );
+
+				}
+
+			}
+
+			return this;
+
+		};
+
+	}() ),
 
 	raycast: ( function () {
 
-		var inverseMatrix = new THREE.Matrix4();
-		var ray = new THREE.Ray();
-		var sphere = new THREE.Sphere();
+		var inverseMatrix = new Matrix4();
+		var ray = new Ray();
+		var sphere = new Sphere();
 
 		return function raycast( raycaster, intersects ) {
 
@@ -52,13 +121,13 @@ THREE.Line.prototype = Object.assign( Object.create( THREE.Object3D.prototype ),
 			inverseMatrix.getInverse( matrixWorld );
 			ray.copy( raycaster.ray ).applyMatrix4( inverseMatrix );
 
-			var vStart = new THREE.Vector3();
-			var vEnd = new THREE.Vector3();
-			var interSegment = new THREE.Vector3();
-			var interRay = new THREE.Vector3();
-			var step = this instanceof THREE.LineSegments ? 2 : 1;
+			var vStart = new Vector3();
+			var vEnd = new Vector3();
+			var interSegment = new Vector3();
+			var interRay = new Vector3();
+			var step = ( this && this.isLineSegments ) ? 2 : 1;
 
-			if ( geometry instanceof THREE.BufferGeometry ) {
+			if ( geometry.isBufferGeometry ) {
 
 				var index = geometry.index;
 				var attributes = geometry.attributes;
@@ -135,7 +204,7 @@ THREE.Line.prototype = Object.assign( Object.create( THREE.Object3D.prototype ),
 
 				}
 
-			} else if ( geometry instanceof THREE.Geometry ) {
+			} else if ( geometry.isGeometry ) {
 
 				var vertices = geometry.vertices;
 				var nbVertices = vertices.length;
@@ -180,3 +249,6 @@ THREE.Line.prototype = Object.assign( Object.create( THREE.Object3D.prototype ),
 	}
 
 } );
+
+
+export { Line };

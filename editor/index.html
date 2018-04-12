@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>OpenSim 4.0 Visualizer 040417</title>
@@ -20,8 +20,36 @@
 
 		<script src="../examples/js/controls/EditorControls.js"></script>
 		<script src="../examples/js/controls/TransformControls.js"></script>
-		<script src="../examples/js/loaders/STLLoader.js"></script>
+
+		<script src="../examples/js/libs/jszip.min.js"></script>
+		<script src="../examples/js/libs/inflate.min.js"></script> <!-- FBX -->
+
+		<script src="../examples/js/loaders/AMFLoader.js"></script>
+		<script src="../examples/js/loaders/AWDLoader.js"></script>
+		<script src="../examples/js/loaders/BabylonLoader.js"></script>
+		<script src="../examples/js/loaders/ColladaLoader.js"></script>
+		<script src="../examples/js/loaders/FBXLoader.js"></script>
+		<script src="../examples/js/loaders/GLTFLoader.js"></script>
+		<script src="../examples/js/loaders/deprecated/LegacyGLTFLoader.js"></script>
+		<script src="../examples/js/loaders/KMZLoader.js"></script>
+		<script src="../examples/js/loaders/MD2Loader.js"></script>
 		<script src="../examples/js/loaders/OBJLoader.js"></script>
+		<script src="../examples/js/loaders/MTLLoader.js"></script>
+		<script src="../examples/js/loaders/PlayCanvasLoader.js"></script>
+		<script src="../examples/js/loaders/PLYLoader.js"></script>
+		<script src="../examples/js/loaders/STLLoader.js"></script>
+		<script src="../examples/js/loaders/TGALoader.js"></script>
+		<script src="../examples/js/loaders/TDSLoader.js"></script>
+		<script src="../examples/js/loaders/UTF8Loader.js"></script>
+		<script src="../examples/js/loaders/VRMLLoader.js"></script>
+		<script src="../examples/js/loaders/VTKLoader.js"></script>
+		<script src="../examples/js/loaders/ctm/lzma.js"></script>
+		<script src="../examples/js/loaders/ctm/ctm.js"></script>
+		<script src="../examples/js/loaders/ctm/CTMLoader.js"></script>
+		<script src="../examples/js/exporters/OBJExporter.js"></script>
+		<script src="../examples/js/exporters/GLTFExporter.js"></script>
+		<script src="../examples/js/exporters/STLExporter.js"></script>
+
 		<script src="../examples/js/renderers/Projector.js"></script>
 		<script src="../examples/js/renderers/CanvasRenderer.js"></script>
 		<script src="../examples/js/renderers/RaytracingRenderer.js"></script>
@@ -65,6 +93,8 @@
 		<script src="js/Player.js"></script>
 		<script src="js/Script.js"></script>
 
+		<script src="../examples/js/vr/WebVR.js"></script>
+
 		<script src="js/Storage.js"></script>
 
 		<script src="js/Editor.js"></script>
@@ -78,6 +108,7 @@
 		<script src="js/Menubar.Add.js"></script>
 		<script src="js/Menubar.Movies.js"></script>
 		<script src="js/Menubar.View.js"></script>
+		<!-- <script src="js/Menubar.View.js"></script> -->
 		<script src="js/Menubar.Examples.js"></script>
 		<script src="js/Menubar.Help.js"></script>
 		<script src="js/Menubar.Status.js"></script>
@@ -86,6 +117,8 @@
 		<script src="js/Sidebar.SceneSettings.js"></script>
 		<script src="js/Sidebar.Project.js"></script>
 		<script src="js/Sidebar.Settings.js"></script>
+		<script src="js/Sidebar.Settings.Shortcuts.js"></script>
+		<script src="js/Sidebar.Settings.Viewport.js"></script>
 		<script src="js/Sidebar.Properties.js"></script>
 		<script src="js/Sidebar.Object.js"></script>
 		<script src="js/Sidebar.Geometry.js"></script>
@@ -136,7 +169,8 @@
 		<script src="js/commands/SetMaterialMapCommand.js"></script>
 		<script src="js/commands/SetSceneCommand.js"></script>
 		<script type="text/javascript" src="websocket.js"></script>
-		<!-- <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="qyqgfqd9j8z890t"></script> -->
+		<script src="js/libs/html2canvas.js"></script>
+		<script src="js/libs/three.html.js"></script>
 
 		<script>
 			function getParameterByName(name, url) {
@@ -325,7 +359,16 @@
 
       } );
 
-      //
+				signals.geometryChanged.add( saveState );
+				signals.objectAdded.add( saveState );
+				signals.objectChanged.add( saveState );
+				signals.objectRemoved.add( saveState );
+				signals.materialChanged.add( saveState );
+				signals.sceneBackgroundChanged.add( saveState );
+				signals.sceneFogChanged.add( saveState );
+				signals.sceneGraphChanged.add( saveState );
+				signals.scriptChanged.add( saveState );
+				signals.historyChanged.add( saveState );
 
       document.addEventListener( 'dragover', function ( event ) {
 
