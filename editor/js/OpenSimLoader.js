@@ -558,7 +558,7 @@ Object.assign( THREE.OpenSimLoader.prototype, {
 
 			    case 'Frame':
 
-                                        object = new THREE.AxisHelper(data.size);
+                                        object = new THREE.AxesHelper(data.size);
 
                                         break;
 

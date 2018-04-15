@@ -422,7 +422,6 @@ var Script = function ( editor ) {
 		}
 
 	} );
-    /*
 	return container;
 
 };
