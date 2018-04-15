@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>OpenSim 4.0 Visualizer 040417</title>
+		<title>OpenSim 4.0 Visualizer 041518</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<script src="stats.min.js"></script>
@@ -205,10 +205,10 @@
 				color = editor.config.getKey('settings/backgroundcolor');
 				if (color=== undefined){
 					this.backgroundColor = "#888888";
-					editor.updateBackgroundColor(this.backgroundColor);
 				}
 				else
 					this.backgroundColor = color;
+				editor.updateBackgroundColor(this.backgroundColor);
 				// Define render logic ...
 				this.sceneLightX = -0.01;
 				this.sceneLightY = -0.01;
