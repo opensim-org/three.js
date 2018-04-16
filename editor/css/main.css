@@ -166,6 +166,10 @@ textarea, input { outline: none; } /* osx */
     text-align: center;
     text-decoration: none;
     font-size: 10px;
+    background-color: Transparent;
+    border: none;
+    overflow: hidden;
+    outline:none;
 }
 #opensim_toolbar button img {
         width: 20px;
