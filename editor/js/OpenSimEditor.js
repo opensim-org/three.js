@@ -717,16 +717,16 @@ OpenSimEditor.prototype = {
 	createWall: function() {
 		var textureLoader = new THREE.TextureLoader();
 		var texture1 = textureLoader.load( "textures/wall.jpg" );
-		var material1 = new THREE.MeshPhongMaterial( { color: 0xffffff, map: texture1 } );
+		var material1 = new THREE.MeshPhongMaterial( { color: 0xffffff, map: texture1, side:2 } );
 		var geometry = new THREE.PlaneBufferGeometry( 1000, 1000 );
 		wallPlane = new THREE.Mesh( geometry, material1 );
 		wallPlane.name = 'Wall';
-		wallPlane.position.x = -300;
+		wallPlane.position.x = 0;
+		wallPlane.position.y = 5000;
         wallPlane.rotation.y = Math.PI / 2;
 		wallPlane.scale.set(10, 10 , 10);
 		wallPlane.receiveShadow = true;
 		this.addObject(wallPlane);
-        wallPlane.visible = false;
 	},
 	createModelsGroup: function () {
 		if (this.modelsGroup == undefined) {
