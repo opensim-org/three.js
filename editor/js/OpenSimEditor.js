@@ -726,6 +726,7 @@ OpenSimEditor.prototype = {
         wallPlane.rotation.y = Math.PI / 2;
 		wallPlane.scale.set(10, 10 , 10);
 		wallPlane.receiveShadow = true;
+		wallPlane.visible = false;
 		this.addObject(wallPlane);
 	},
 	createModelsGroup: function () {
