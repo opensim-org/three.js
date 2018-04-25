@@ -200,8 +200,15 @@ textarea, input { outline: none; } /* osx */
 #opensim_toolbar button img {
         width: 20px;
         height: 20px;
-    }
+}
 
 #opensim_toolbar .text {
     margin-left: 10px;
+}
+
+#my-gui-container{
+    position: absolute; 
+    top: 0; 
+    right: 0;
+    z-index: 100;
 }
