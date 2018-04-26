@@ -254,7 +254,7 @@ Object.assign( THREE.OpenSimLoader.prototype, {
 				    case 'PathGeometry':
                 //CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments, heightSegments, openEnded, thetaStart, thetaLength)
                 // NOTE: number of heightSegments must be equal to the number of bones in the SkinnedMuscle
-								geometry = new THREE.CylinderGeometry(8, 8, 0.1, 8, 2*data.segments-1, true);
+								geometry = new THREE.CylinderGeometry(data.radius, data.radius, 0.1, 8, 2*data.segments-1, true);
 
 				        break;
 
