@@ -199,7 +199,11 @@ var OpenSimToolbar = function ( editor ) {
 	buttons.add(recordButton);
 	function toggleRecord() {
             editor.toggleRecord();
-        }
+    }
+	var globalFrameButton = new UI.Button(false, 'icons/axes.png');
+	globalFrameButton.onClick(function () {
+		editor.toggleGlobalFrame();
+	});
+	buttons.add(globalFrameButton);
 	return container;
-
 }

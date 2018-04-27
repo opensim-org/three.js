@@ -25,6 +25,7 @@ var OpenSimEditor = function () {
 	this.onlyCurrentModelCastsShadow = false;
 	this.sceneBoundingBox = undefined;
 	this.sceneLight = undefined;
+	this.globalFrameGroup = undefined;
 	// types of objects that are graphically movable
 	var supportedOpenSimTypes = ["PathPoint", "Marker"];
 	//this.cameraEye = new THREE.Mesh(new THREE.SphereGeometry(50), new THREE.MeshBasicMaterial({ color: 0xdddddd }));
@@ -149,7 +150,8 @@ var OpenSimEditor = function () {
 	this.createLights();
 	this.createBackground(this.config.getKey('skybox'));
 	this.createGroundPlane(this.config.getKey('floor'));
-    this.createWall();
+	this.createWall();
+	this.createGlobalFrame();
 	this.createDollyPath();
 	this.createModelsGroup();
 	this.createLogoSprite();
@@ -752,11 +754,43 @@ OpenSimEditor.prototype = {
 		wallPlane.name = 'Wall';
 		wallPlane.position.x = 0;
 		wallPlane.position.y = 5000;
-        wallPlane.rotation.y = Math.PI / 2;
+		wallPlane.rotation.y = Math.PI / 2;
 		wallPlane.scale.set(10, 10 , 10);
 		wallPlane.receiveShadow = true;
 		wallPlane.visible = false;
 		this.addObject(wallPlane);
+	},
+	createGlobalFrame() {
+		this.globalFrameGroup = new THREE.Group();
+		this.globalFrameGroup.name = "GroundFrame";
+		this.addObject(this.globalFrameGroup);
+		// Three cylinders of colors RGB in XYZ directions rather than std small AxesHelper
+		var geometryx = new THREE.CylinderGeometry(5, 5, 400, 32);
+		var materialx = new THREE.MeshBasicMaterial({ color: 0xffff0000 });
+		var cylinderx = new THREE.Mesh(geometryx, materialx);
+		cylinderx.name = "Cylinderx";
+		cylinderx.position.x = 200;
+		cylinderx.rotation.z = -1.57;
+		var geometryy = new THREE.CylinderGeometry(5, 5, 400, 32);
+		var materialy = new THREE.MeshBasicMaterial({ color: 0xff00ff00 });
+		var cylindery = new THREE.Mesh(geometryy, materialy);
+		cylindery.name = "Cylindery";
+		cylindery.position.y = 200;
+		var geometryz = new THREE.CylinderGeometry(5, 5, 400, 32);
+		var materialz = new THREE.MeshBasicMaterial({ color: 0xff0000ff });
+		var cylinderz = new THREE.Mesh(geometryz, materialz);
+		cylinderz.name = "Cylinderz";
+		cylinderz.position.z = 200;
+		cylinderz.rotation.x = 1.57;
+		this.globalFrameGroup.add(cylinderx);
+		this.globalFrameGroup.add(cylindery);
+		this.globalFrameGroup.add(cylinderz);
+		this.globalFrameGroup.visible = false;
+	},
+	toggleGlobalFrame(){
+		// flip group visible flag on/off
+		this.globalFrameGroup.visible = !this.globalFrameGroup.visible;
+		this.refresh();
 	},
 	createModelsGroup: function () {
 		if (this.modelsGroup == undefined) {
