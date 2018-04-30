@@ -9,7 +9,7 @@
 	<body ontouchstart="">
 		<link href="css/main.css" rel="stylesheet" />
 		<link id="theme" href="css/minimal.css" rel="stylesheet" />
-
+		<div id="my-gui-container"></div>
 		<script src="../build/three.js"></script>
 		<script src="js/SkinnedMuscle.js"></script>
 		<script src="js/OpenSimLoader.js"></script>
@@ -198,7 +198,7 @@
 				}
 			};
 			window.onload = function () {
-			var gui = new dat.GUI(); // create dat.gui
+			var gui = new dat.GUI({ autoPlace: false }); // create dat.gui
 			var knobs = new VisualizerKnobs();
 			var ground = gui.addFolder('Floor');
 			var texture = ground.add(knobs, 'texture', ['nofloor', 'redbricks', 'graybricks', 'wood-floor', 'tile']);
@@ -224,6 +224,8 @@
 				editor.config.setKey('settings/captureDPI', value);
 			});
 			gui.closed = true;
+      var customContainer = document.getElementById('my-gui-container');
+      customContainer.appendChild(gui.domElement);
 			}
 
       var viewport = new OpenSimViewport( editor );
