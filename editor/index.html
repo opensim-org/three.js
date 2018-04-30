@@ -402,7 +402,8 @@
 					case 40:
 					case 73:
 					case 79:
-						editor.handleKey(event.keyCode);
+					    editor.handleKey(event.keyCode);
+					    event.preventDefault();
 					break;
 				}
 
