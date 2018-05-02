@@ -143,88 +143,113 @@
 				if (!url) url = window.location.href;
 					name = name.replace(/[\[\]]/g, "\\$&");
 				var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-					results = regex.exec(url);
-				if (!results) return null;
-				if (!results[2]) return '';
-				return decodeURIComponent(results[2].replace(/\+/g, " "));
-			}
+      results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+      }
 
-			if (!Detector.webgl) Detector.addGetWebGLMessage();
+      if (!Detector.webgl) Detector.addGetWebGLMessage();
 
-			window.URL = window.URL || window.webkitURL;
-			window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
+      window.URL = window.URL || window.webkitURL;
+      window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
 
-			Number.prototype.format = function (){
-				return this.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-			};
-			//
-			stats = new Stats();
-			document.body.appendChild( stats.domElement );
+      Number.prototype.format = function (){
+      return this.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+      };
+      //
+      stats = new Stats();
+      document.body.appendChild( stats.domElement );
 
-			var editor = new OpenSimEditor();
+      var editor = new OpenSimEditor();
 
-			// Minimal ui, should move to a different file to avoid clutter
-			var VisualizerKnobs = function() {
-				this.texture = editor.config.getKey('floor');
-				this.height = -0.001;
-				this.backdrop = editor.config.getKey('skybox');
-				color = editor.config.getKey('settings/backgroundcolor');
-				if (color=== undefined){
-					this.backgroundColor = "#888888";
-					editor.updateBackgroundColor(this.backgroundColor);
-				}
-				else
-					this.backgroundColor = color;
-				// Define render logic ...
-				this.sceneLightX = -0.01;
-				this.sceneLightY = -0.01;
-				this.sceneLightZ = -0.01;
-				this.sceneLightColor = [255, 255, 255];
-				this.sceneLightSelect = function () { editor.select(editor.scene.getObjectByName('SunLight')); }
-				this.modelLightSelect = function () { editor.selectCurrentModelLight(); }
-				this.toggleMarkup = function () { editor.toggleMarkup(); }
-				this.expertModeSelect = function () { editor.setTheme('css/dark.css'); }
-				this.showStats = function () {
-				var elem = document.getElementById("viewport");
-				if (elem.style.bottom=="20px")
-					elem.style.bottom="0px";
-				else
-					elem.style.bottom="20px";
-				window.dispatchEvent(new Event('resize'));
-				}
-				this.screenCaptureDPI =  editor.config.getKey('settings/captureDPI');
-				if (this.screenCaptureDPI === undefined){
-					editor.config.setKey('settings/captureDPI', 2);
-				}
-			};
-			window.onload = function () {
-			var gui = new dat.GUI(); // create dat.gui
-			var knobs = new VisualizerKnobs();
-			var ground = gui.addFolder('Floor');
-			var texture = ground.add(knobs, 'texture', ['nofloor', 'redbricks', 'graybricks', 'wood-floor', 'tile']);
-			texture.name('Texture');
-			var floorHeight = ground.add(knobs, 'height').min(-2.01).max(2.02).step(0.01).name('Height');
-			floorHeight.onChange(function (value) {
-				editor.setFloorHeight(value);
-			});
-			texture.onChange(function (value) {
-				editor.updateGroundPlane(value);
-			});
-			var backdropColor = gui.addColor(knobs, 'backgroundColor').name('Background Color');
-			backdropColor.onChange(function (value) {
-				editor.updateBackgroundColor(value);
-			});
-			gui.add(knobs, 'sceneLightSelect').name('Scene Light');
-			gui.add(knobs, 'showStats').name('Show FPS');
-			if (getParameterByName('expert') === "1")
-				gui.add(knobs, 'expertModeSelect').name('Expert Mode');
-			var captureControl = gui.add(knobs, 'screenCaptureDPI').name('Snapshot Quality').min(1).max(4).step(1);
-			captureControl.onChange(function (value) {
-				editor.setScreenCaptureScaleup(value);
-				editor.config.setKey('settings/captureDPI', value);
-			});
-			gui.closed = true;
-			}
+      // Minimal ui, should move to a different file to avoid clutter
+      var VisualizerKnobs = function() {
+      // Backdrop
+      this.backdrop = editor.config.getKey('skybox');
+      this.backdropImage = editor.config.getKey('skybox');
+      color = editor.config.getKey('settings/backgroundcolor');
+      if (color=== undefined){
+      this.backgroundColor = "#888888";
+      editor.updateBackgroundColor(this.backgroundColor);
+      }
+      else
+      this.backgroundColor = color;
+      // Floor
+      this.texture = editor.config.getKey('floor');
+      this.height = -0.001;
+      //
+      var light = editor.scene.getObjectByName('SunLight');
+      this.sceneLightX = light.position.x;
+      this.sceneLightY = light.position.y;
+      this.sceneLightZ = light.position.z;
+      this.sceneLightIntensity = 0.2;
+      //
+      this.sceneLightSelect = function () { editor.select(editor.scene.getObjectByName('SunLight')); }
+      this.modelLightSelect = function () { editor.selectCurrentModelLight(); }
+      this.expertModeSelect = function () { editor.setTheme('css/dark.css'); }
+      this.showStats = function () {
+      var elem = document.getElementById("viewport");
+      if (elem.style.bottom=="20px")
+      elem.style.bottom="0px";
+      else
+      elem.style.bottom="20px";
+      window.dispatchEvent(new Event('resize'));
+      }
+      // Screen Capture
+      this.screenCaptureDPI =  editor.config.getKey('settings/captureDPI');
+      if (this.screenCaptureDPI === undefined){
+      editor.config.setKey('settings/captureDPI', 2);
+      }
+      };
+      window.onload = function () {
+      var gui = new dat.GUI(); // create dat.gui
+      var knobs = new VisualizerKnobs();
+      gui.remember(knobs);
+
+      var backdrop = gui.addFolder('Backdrop');
+      var backdropImage = backdrop.add(knobs, 'backdropImage', ['nobackground', 'sky', 'mars', 'pastures', 'city']);
+      backdropImage.name('Image');
+      backdropImage.onChange(function(newImage){
+        editor.updateBackground(newImage);
+        editor.refresh();
+      });
+      var backdropColor = backdrop.addColor(knobs, 'backgroundColor').name('Background Color');
+      backdropColor.onChange(function (value) {
+        editor.updateBackgroundColor(value);
+      });
+
+      var ground = gui.addFolder('Floor');
+      var texture = ground.add(knobs, 'texture', ['nofloor', 'redbricks', 'graybricks', 'wood-floor', 'tile']);
+      texture.name('Texture');
+      var floorHeight = ground.add(knobs, 'height').min(-2.01).max(2.02).step(0.01).name('Height');
+      floorHeight.onChange(function (value) {
+      editor.setFloorHeight(value);
+      });
+      texture.onChange(function (value) {
+      editor.updateGroundPlane(value);
+      });
+
+      var lights = gui.addFolder('Lighting');
+      //lights.add(knobs, 'sceneLightSelect').name('Scene Light');
+      lights.add(knobs, 'sceneLightX');
+      lights.add(knobs, 'sceneLightY');
+      lights.add(knobs, 'sceneLightZ');
+      var lightIntensity = lights.add(knobs, 'sceneLightIntensity').name('Intensity');
+      lightIntensity.name('Intensity');
+      lightIntensity.onChange(function (value) {
+      editor.scene.getObjectByName('SunLight').intensity = value;
+      editor.refresh();
+      });
+      if (getParameterByName('expert') === "1")
+      gui.add(knobs, 'expertModeSelect').name('Expert Mode');
+      var captureControl = gui.add(knobs, 'screenCaptureDPI').name('Snapshot Quality').min(1).max(4).step(1);
+      captureControl.onChange(function (value) {
+      editor.setScreenCaptureScaleup(value);
+      editor.config.setKey('settings/captureDPI', value);
+      });
+      gui.closed = true;
+      }
 
       var viewport = new OpenSimViewport( editor );
       document.body.appendChild( viewport.dom );
@@ -352,8 +377,8 @@
 
       case 8: // backspace
 
-              //event.preventDefault(); // prevent browser back
-            break;
+      //event.preventDefault(); // prevent browser back
+      break;
       case 46: // delete
 
       var object = editor.selected;

@@ -17,7 +17,8 @@ var OpenSimEditor = function () {
 	this.dolly_object.name = 'Dolly';
 	this.dolly_object.position.y = 0;
 	this.recording = false;
-
+	// Container for all the lights, geometry, floor that are part of the scene
+	this.environment = undefined;
 	this.models = [];
 	this.currentModel = undefined; //uuid of current model call getCurrentModel for actualobject
 	this.currentModelColor = new THREE.Color(0xffffff);
@@ -146,7 +147,8 @@ var OpenSimEditor = function () {
 	this.groundPlane = null;
 	this.groundMaterial = null;
 	this.modelsGroup = undefined;
-	
+
+	this.createEnvironment();
 	this.createLights();
 	this.createBackground(this.config.getKey('skybox'));
 	this.createGroundPlane(this.config.getKey('floor'));
@@ -729,7 +731,7 @@ OpenSimEditor.prototype = {
 		wallPlane.scale.set(10, 10 , 10);
 		wallPlane.receiveShadow = true;
 		wallPlane.visible = false;
-		this.addObject(wallPlane);
+		this.environment.add(wallPlane);
 	},
 	createGlobalFrame() {
 		this.globalFrameGroup = new THREE.Group();
@@ -771,31 +773,22 @@ OpenSimEditor.prototype = {
 		this.modelsGroup = modelsGroup;
 		}
 	},
+	createEnvironment: function() {
+		this.environment = new THREE.Group();
+		this.environment.name = "Environment";
+		this.environment.userData = "NonEditable";
+		this.addObject(this.environment);
+	},
 	createLights: function () {
 		amb = new THREE.AmbientLight(0xffffff);
 		amb.name = 'AmbientLight';
 		amb.intensity = 0.2;
 		this.addObject(amb);
 		sceneLightColor = new THREE.Color().setHex(12040119);
- 		directionalLight =  new THREE.DirectionalLight( sceneLightColor);
-// 		directionalLight.castShadow = true;
-// 		directionalLight.name = 'SceneLight';
-// 		directionalLight.shadow.camera.bottom = -2000;
-// 		directionalLight.shadow.camera.far = 8000;
-// 		directionalLight.shadow.camera.left = -2000;
-// 		directionalLight.shadow.camera.right = 2000;
-// 		directionalLight.shadow.camera.top = 2000;
-// 		directionalLight.shadow.mapSize.width = 1024;
-// 		directionalLight.shadow.mapSize.height = 1024;
-		// for debugging. not working directionalLight.shadowCameraVisible = true;
-	//	directionalLight.visible = true;
+		directionalLight = new THREE.DirectionalLight(sceneLightColor);
+		directionalLight.name = 'CameraLight';
 		this.sceneLight = directionalLight;
 		this.addObject(directionalLight);
-		// HemisphericalLight 
-		hemiSphereLight = new THREE.HemisphereLight(10724259, 1, 0);
-		hemiSphereLight.name = 'GlobalLight';
-		hemiSphereLight.intensity = 0.40;
-
 //
         dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
         dirLight.name = 'SunLight';
@@ -803,20 +796,11 @@ OpenSimEditor.prototype = {
         dirLight.color.setHSL( 0.1, 1, 0.95 );
         dirLight.position.set( 1, 3, -1 );
         dirLight.position.multiplyScalar( 500 );
-        this.addObject(dirLight);
+        this.environment.add(dirLight);
 
         dirLight.castShadow = true;
 
-        //dirLight.shadow.mapSize.width = 2048;
-        //dirLight.shadow.mapSize.height = 2048;
-
-        //var d = 5000;
-
-        //dirLight.shadow.camera.left = -d;
-        //dirLight.shadow.camera.right = d;
-        //dirLight.shadow.camera.top = d;
-        //dirLight.shadow.camera.bottom = -d;
- 		dirLight.shadow.camera.bottom = -2000;
+  		dirLight.shadow.camera.bottom = -2000;
  		dirLight.shadow.camera.far = 8000;
  		dirLight.shadow.camera.left = -2000;
  		dirLight.shadow.camera.right = 2000;
@@ -971,6 +955,7 @@ OpenSimEditor.prototype = {
 	    newPos.addVectors(aabbCenter, dir);
 	    this.camera.position.set(newPos.x, newPos.y, newPos.z);
 	    this.camera.lookAt(aabbCenter);
+
 	    this.signals.defaultCameraApplied.dispatch(aabbCenter);
 
 	},
