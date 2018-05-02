@@ -971,6 +971,9 @@ OpenSimEditor.prototype = {
 	    newPos.addVectors(aabbCenter, dir);
 	    this.camera.position.set(newPos.x, newPos.y, newPos.z);
 	    this.camera.lookAt(aabbCenter);
+		// If default view clips model, change far clipping plane
+	    if (radius+offset > this.camera.far)
+	    	this.camera.far = radius + offset + 500;
 	    this.signals.defaultCameraApplied.dispatch(aabbCenter);
 
 	},
