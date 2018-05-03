@@ -678,7 +678,8 @@ OpenSimEditor.prototype = {
 
 	},
 
-	createBackground: function(choice) {
+	createBackground: function (choice) {
+		scope = this;
 		if (choice == 'nobackground') {
 			this.scene.background = new THREE.Color(0xff0000);
 			this.signals.backgroundColorChanged.dispatch(this.scene.background.getHex());
@@ -692,7 +693,7 @@ OpenSimEditor.prototype = {
 		// and then set your CORS config
 		var textureCube = textureloader.load( ["px.jpg",
 		"nx.jpg", "py.jpg", "ny.jpg", 
-		"pz.jpg", "nz.jpg"] );
+		"pz.jpg", "nz.jpg"], function () { scope.refresh(); } );
 		textureCube.format = THREE.RGBFormat;
 		textureloader.mapping = THREE.CubeRefactionMapping;
 		this.scene.background = textureCube;
@@ -813,6 +814,7 @@ OpenSimEditor.prototype = {
 	},
 
 	updateBackground: function (choice) {
+		var scope = this;
 		this.config.setKey('skybox', choice);
 		if (choice == 'nobackground') {
 			//this.skyboxMesh.visible = false;
@@ -955,7 +957,9 @@ OpenSimEditor.prototype = {
 	    newPos.addVectors(aabbCenter, dir);
 	    this.camera.position.set(newPos.x, newPos.y, newPos.z);
 	    this.camera.lookAt(aabbCenter);
-
+		// If default view clips model, change far clipping plane
+	    if (radius+offset > this.camera.far)
+	    	this.camera.far = radius + offset + 500;
 	    this.signals.defaultCameraApplied.dispatch(aabbCenter);
 
 	},
@@ -1071,11 +1075,14 @@ OpenSimEditor.prototype = {
 		}
 		sceneLightpos = this.sceneLight.position;
 		if (param === 'x')
-		sceneLightpos.x += val*1000;
+			sceneLightpos.x = val;
 		else if (param === 'y')
-		sceneLightpos.y += val*1000;
-		else
-		sceneLightpos.z += val*1000;
+			sceneLightpos.y = val;
+		else if (param === 'z')
+			sceneLightpos.z = val;
+		else if (param === 'intensity')
+			this.sceneLight.intensity = val;
+		this.refresh();
 	},
 	setScreenCaptureScaleup: function (scaleupFactor){
 		this.signals.screenCaptureScaleupChanged.dispatch(scaleupFactor);

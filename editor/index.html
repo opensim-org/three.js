@@ -184,6 +184,7 @@
       this.sceneLightY = light.position.y;
       this.sceneLightZ = light.position.z;
       this.sceneLightIntensity = 0.2;
+      this.modelLightIntensity = 0.25;
       //
       this.sceneLightSelect = function () { editor.select(editor.scene.getObjectByName('SunLight')); }
       this.modelLightSelect = function () { editor.selectCurrentModelLight(); }
@@ -208,15 +209,15 @@
       gui.remember(knobs);
 
       var backdrop = gui.addFolder('Backdrop');
+      var backdropColor = backdrop.addColor(knobs, 'backgroundColor').name('Background Color');
+      backdropColor.onChange(function (value) {
+      editor.updateBackgroundColor(value);
+      });
       var backdropImage = backdrop.add(knobs, 'backdropImage', ['nobackground', 'sky', 'mars', 'pastures', 'city']);
       backdropImage.name('Image');
       backdropImage.onChange(function(newImage){
-        editor.updateBackground(newImage);
-        editor.refresh();
-      });
-      var backdropColor = backdrop.addColor(knobs, 'backgroundColor').name('Background Color');
-      backdropColor.onChange(function (value) {
-        editor.updateBackgroundColor(value);
+      editor.updateBackground(newImage);
+      editor.refresh();
       });
 
       var ground = gui.addFolder('Floor');
@@ -232,13 +233,19 @@
 
       var lights = gui.addFolder('Lighting');
       //lights.add(knobs, 'sceneLightSelect').name('Scene Light');
-      lights.add(knobs, 'sceneLightX');
-      lights.add(knobs, 'sceneLightY');
-      lights.add(knobs, 'sceneLightZ');
-      var lightIntensity = lights.add(knobs, 'sceneLightIntensity').name('Intensity');
+      lights.add(knobs, 'sceneLightX').name('Scene Light X').onChange(function(value){
+      editor.updateSceneLight('x', value);
+      });
+      lights.add(knobs, 'sceneLightY').name('Scene Light Y').onChange(function(value){
+      editor.updateSceneLight('y', value);
+      });
+      lights.add(knobs, 'sceneLightZ').name('Scene Light Z').onChange(function(value){
+      editor.updateSceneLight('z', value);
+      });
+      var lightIntensity = lights.add(knobs, 'sceneLightIntensity');
       lightIntensity.name('Intensity');
       lightIntensity.onChange(function (value) {
-      editor.scene.getObjectByName('SunLight').intensity = value;
+      editor.updateSceneLight('intensity', value);
       editor.refresh();
       });
       if (getParameterByName('expert') === "1")
