@@ -17,7 +17,8 @@ var OpenSimEditor = function () {
 	this.dolly_object.name = 'Dolly';
 	this.dolly_object.position.y = 0;
 	this.recording = false;
-
+	// Container for all the lights, geometry, floor that are part of the scene
+	this.environment = undefined;
 	this.models = [];
 	this.currentModel = undefined; //uuid of current model call getCurrentModel for actualobject
 	this.currentModelColor = new THREE.Color(0xffffff);
@@ -25,6 +26,7 @@ var OpenSimEditor = function () {
 	this.onlyCurrentModelCastsShadow = false;
 	this.sceneBoundingBox = undefined;
 	this.sceneLight = undefined;
+	this.modelLightIntensity = 0.25;
 	this.globalFrameGroup = undefined;
 	// types of objects that are graphically movable
 	var supportedOpenSimTypes = ["PathPoint", "Marker"];
@@ -146,7 +148,8 @@ var OpenSimEditor = function () {
 	this.groundPlane = null;
 	this.groundMaterial = null;
 	this.modelsGroup = undefined;
-	
+
+	this.createEnvironment();
 	this.createLights();
 	this.createBackground(this.config.getKey('skybox'));
 	this.createGroundPlane(this.config.getKey('floor'));
@@ -676,7 +679,8 @@ OpenSimEditor.prototype = {
 
 	},
 
-	createBackground: function(choice) {
+	createBackground: function (choice) {
+		scope = this;
 		if (choice == 'nobackground') {
 			this.scene.background = new THREE.Color(0xff0000);
 			this.signals.backgroundColorChanged.dispatch(this.scene.background.getHex());
@@ -690,7 +694,7 @@ OpenSimEditor.prototype = {
 		// and then set your CORS config
 		var textureCube = textureloader.load( ["px.jpg",
 		"nx.jpg", "py.jpg", "ny.jpg", 
-		"pz.jpg", "nz.jpg"] );
+		"pz.jpg", "nz.jpg"], function () { scope.refresh(); } );
 		textureCube.format = THREE.RGBFormat;
 		textureloader.mapping = THREE.CubeRefactionMapping;
 		this.scene.background = textureCube;
@@ -729,7 +733,7 @@ OpenSimEditor.prototype = {
 		wallPlane.scale.set(10, 10 , 10);
 		wallPlane.receiveShadow = true;
 		wallPlane.visible = false;
-		this.addObject(wallPlane);
+		this.environment.add(wallPlane);
 	},
 	createGlobalFrame() {
 		this.globalFrameGroup = new THREE.Group();
@@ -771,31 +775,22 @@ OpenSimEditor.prototype = {
 		this.modelsGroup = modelsGroup;
 		}
 	},
+	createEnvironment: function() {
+		this.environment = new THREE.Group();
+		this.environment.name = "Environment";
+		this.environment.userData = "NonEditable";
+		this.addObject(this.environment);
+	},
 	createLights: function () {
 		amb = new THREE.AmbientLight(0xffffff);
 		amb.name = 'AmbientLight';
 		amb.intensity = 0.2;
 		this.addObject(amb);
 		sceneLightColor = new THREE.Color().setHex(12040119);
- 		directionalLight =  new THREE.DirectionalLight( sceneLightColor);
-// 		directionalLight.castShadow = true;
-// 		directionalLight.name = 'SceneLight';
-// 		directionalLight.shadow.camera.bottom = -2000;
-// 		directionalLight.shadow.camera.far = 8000;
-// 		directionalLight.shadow.camera.left = -2000;
-// 		directionalLight.shadow.camera.right = 2000;
-// 		directionalLight.shadow.camera.top = 2000;
-// 		directionalLight.shadow.mapSize.width = 1024;
-// 		directionalLight.shadow.mapSize.height = 1024;
-		// for debugging. not working directionalLight.shadowCameraVisible = true;
-	//	directionalLight.visible = true;
+		directionalLight = new THREE.DirectionalLight(sceneLightColor);
+		directionalLight.name = 'CameraLight';
 		this.sceneLight = directionalLight;
 		this.addObject(directionalLight);
-		// HemisphericalLight 
-		hemiSphereLight = new THREE.HemisphereLight(10724259, 1, 0);
-		hemiSphereLight.name = 'GlobalLight';
-		hemiSphereLight.intensity = 0.40;
-
 //
         dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
         dirLight.name = 'SunLight';
@@ -803,20 +798,11 @@ OpenSimEditor.prototype = {
         dirLight.color.setHSL( 0.1, 1, 0.95 );
         dirLight.position.set( 1, 3, -1 );
         dirLight.position.multiplyScalar( 500 );
-        this.addObject(dirLight);
+        this.environment.add(dirLight);
 
         dirLight.castShadow = true;
 
-        //dirLight.shadow.mapSize.width = 2048;
-        //dirLight.shadow.mapSize.height = 2048;
-
-        //var d = 5000;
-
-        //dirLight.shadow.camera.left = -d;
-        //dirLight.shadow.camera.right = d;
-        //dirLight.shadow.camera.top = d;
-        //dirLight.shadow.camera.bottom = -d;
- 		dirLight.shadow.camera.bottom = -2000;
+  		dirLight.shadow.camera.bottom = -2000;
  		dirLight.shadow.camera.far = 8000;
  		dirLight.shadow.camera.left = -2000;
  		dirLight.shadow.camera.right = 2000;
@@ -829,6 +815,7 @@ OpenSimEditor.prototype = {
 	},
 
 	updateBackground: function (choice) {
+		var scope = this;
 		this.config.setKey('skybox', choice);
 		if (choice == 'nobackground') {
 			//this.skyboxMesh.visible = false;
@@ -1053,7 +1040,7 @@ OpenSimEditor.prototype = {
 		modelLight =  new THREE.PointLight( {color: this.currentModelColor});
 		//modelLight.castShadow = true;
 		//modelLight.angle = 0.5;
-		modelLight.intensity = 0.25;	
+		modelLight.intensity = this.modelLightIntensity;	
 		modelLight.name = 'ModelLight';
 		/*
 		modelLight.shadow.camera.bottom = -1000;
@@ -1089,11 +1076,24 @@ OpenSimEditor.prototype = {
 		}
 		sceneLightpos = this.sceneLight.position;
 		if (param === 'x')
-		sceneLightpos.x += val*1000;
+			sceneLightpos.x = val;
 		else if (param === 'y')
-		sceneLightpos.y += val*1000;
-		else
-		sceneLightpos.z += val*1000;
+			sceneLightpos.y = val;
+		else if (param === 'z')
+			sceneLightpos.z = val;
+		else if (param === 'intensity')
+			this.sceneLight.intensity = val;
+		this.refresh();
+	},
+	updateModelLightIntensity: function(val) {
+		this.modelLightIntensity = val;
+		// For each model, find the light and update intensity
+		for (var modindex = 0; modindex < this.models.length; modindex++) {
+			nextModel = this.objectByUuid(this.models[modindex]);
+			modelLight = nextModel.getObjectByName('ModelLight');
+			modelLight.intensity = val;
+		}
+		this.refresh();
 	},
 	setScreenCaptureScaleup: function (scaleupFactor){
 		this.signals.screenCaptureScaleupChanged.dispatch(scaleupFactor);
