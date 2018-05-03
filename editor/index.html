@@ -184,7 +184,7 @@
       this.sceneLightY = light.position.y;
       this.sceneLightZ = light.position.z;
       this.sceneLightIntensity = 0.2;
-      this.modelLightIntensity = 0.25;
+      this.modelLightIntensity = editor.modelLightIntensity;
       //
       this.sceneLightSelect = function () { editor.select(editor.scene.getObjectByName('SunLight')); }
       this.modelLightSelect = function () { editor.selectCurrentModelLight(); }
@@ -248,6 +248,10 @@
       editor.updateSceneLight('intensity', value);
       editor.refresh();
       });
+      var modelLightIntensity = lights.add(knobs, 'modelLightIntensity');
+      modelLightIntensity.name('Model Light').onChange(function(value){
+      editor.updateModelLightIntensity(value);
+      });;
       if (getParameterByName('expert') === "1")
       gui.add(knobs, 'expertModeSelect').name('Expert Mode');
       var captureControl = gui.add(knobs, 'screenCaptureDPI').name('Snapshot Quality').min(1).max(4).step(1);

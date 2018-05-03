@@ -26,6 +26,7 @@ var OpenSimEditor = function () {
 	this.onlyCurrentModelCastsShadow = false;
 	this.sceneBoundingBox = undefined;
 	this.sceneLight = undefined;
+	this.modelLightIntensity = 0.25;
 	this.globalFrameGroup = undefined;
 	// types of objects that are graphically movable
 	var supportedOpenSimTypes = ["PathPoint", "Marker"];
@@ -1039,7 +1040,7 @@ OpenSimEditor.prototype = {
 		modelLight =  new THREE.PointLight( {color: this.currentModelColor});
 		//modelLight.castShadow = true;
 		//modelLight.angle = 0.5;
-		modelLight.intensity = 0.25;	
+		modelLight.intensity = this.modelLightIntensity;	
 		modelLight.name = 'ModelLight';
 		/*
 		modelLight.shadow.camera.bottom = -1000;
@@ -1082,6 +1083,16 @@ OpenSimEditor.prototype = {
 			sceneLightpos.z = val;
 		else if (param === 'intensity')
 			this.sceneLight.intensity = val;
+		this.refresh();
+	},
+	updateModelLightIntensity: function(val) {
+		this.modelLightIntensity = val;
+		// For each model, find the light and update intensity
+		for (var modindex = 0; modindex < this.models.length; modindex++) {
+			nextModel = this.objectByUuid(this.models[modindex]);
+			modelLight = nextModel.getObjectByName('ModelLight');
+			modelLight.intensity = val;
+		}
 		this.refresh();
 	},
 	setScreenCaptureScaleup: function (scaleupFactor){
