@@ -127,6 +127,9 @@ function onMessage(evt) {
 		});
 		sendText(json);
 		break;
+     case "getOffsets":
+        sendText(editor.getModelOffsetsJson());
+        break;
    }
    processing = false; // Defensive in case render never finishes/errors
 }
