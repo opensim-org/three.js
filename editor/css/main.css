@@ -197,6 +197,9 @@ textarea, input { outline: none; } /* osx */
     overflow: hidden;
     outline:none;
 }
+#opensim_toolbar button:hover {
+    background-color: #4d78bc; /* Blue */
+}
 #opensim_toolbar button img {
         width: 20px;
         height: 20px;
