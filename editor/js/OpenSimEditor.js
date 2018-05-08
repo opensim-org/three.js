@@ -1225,6 +1225,21 @@ OpenSimEditor.prototype = {
         this.camera.lookAt(aabbCenter);
         this.signals.defaultCameraApplied.dispatch(aabbCenter);
 
+    },
+    getModelOffsetsJson: function() {
+        // Compute and return a json object containing uuids of models and associated positions in scene
+        var offsets = {
+            "type": "transforms",
+            "ObjectType": "Model",
+            uuids: [],
+            positions: []
+        };
+        for ( var modindex = 0; modindex < this.models.length; modindex++ ) {
+            offsets.uuids.push(this.models[modindex]);
+            var nextModel = editor.objectByUuid(this.models[modindex]);
+            offsets.positions.push(nextModel.position);
+        };
+        return JSON.stringify(offsets);
     }
 
 };
