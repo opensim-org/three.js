@@ -556,7 +556,8 @@ OpenSimEditor.prototype = {
 			modelLight.userData = "NonEditable";
 			this.signals.sceneGraphChanged.active = true;
 			this.signals.sceneGraphChanged.dispatch();
-			this.viewFitAll();
+			if (!this.isExperimentalDataModel(model) || this.models.length==1)
+			    this.viewFitAll();
 			this.signals.windowResize.dispatch();
 		}
 	},
@@ -904,7 +905,9 @@ OpenSimEditor.prototype = {
 	getModel: function () {
 		return editor.objectByUuid(this.currentModel);
 	},
-
+	isExperimentalDataModel: function (modelObject) {
+		return modelObject.children[0].name.startsWith('/ExperimentalData');
+	},
 	addMarkerAtPosition: function (testPosition) {
 
 		var sphere = new THREE.SphereGeometry(20, 20, 20);
@@ -997,6 +1000,9 @@ OpenSimEditor.prototype = {
 	// of bounding box and dolly at half hight.
 	adjustSceneAfterModelLoading: function () {
 		var modelObject = this.getModel();
+		// if ExperimentalData, also no offset
+		if (this.isExperimentalDataModel(modelObject) && this.models.length > 1)
+				return;
 		var modelbbox = new THREE.Box3().setFromObject(modelObject);
 		/*
 		var helper = new THREE.BoundingBoxHelper(modelObject, 0xff0000);
