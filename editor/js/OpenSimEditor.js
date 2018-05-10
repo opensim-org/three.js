@@ -1005,6 +1005,8 @@ OpenSimEditor.prototype = {
 		if (modelObject != undefined)
 		modelObject.add(helper);
 	    */
+		if (modelObject.children[0].name.startsWith('/ExperimentalData') && this.models.length > 1)
+			return;
 	    builtinLight = this.scene.getObjectByName('SunLight');
 	    builtinLight.position.copy(new THREE.Vector3(modelbbox.max.x-100, modelbbox.max.y+100, modelbbox.min.z-400));
 	    this.signals.cameraChanged.dispatch(this.camera);
