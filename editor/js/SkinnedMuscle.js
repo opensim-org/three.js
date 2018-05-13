@@ -41,6 +41,11 @@ THREE.SkinnedMuscle = function(geom, material, points, actives) {
 THREE.SkinnedMuscle.prototype = Object.create( THREE.SkinnedMesh.prototype );
 THREE.SkinnedMuscle.prototype.constructor = THREE.SkinnedMuscle;
 
+THREE.SkinnedMuscle.prototype.setColor = function (newColor) {
+	this.material.color.setHex(newColor);
+	pptObject1 = editor.objectByUuid(this.pathpoints[0]);
+	pptObject1.material.color.setHex(newColor);
+};
 THREE.SkinnedMuscle.prototype.updateMatrixWorld = function( force ) {
 // if has pathpoints attribute then it's a muscle
 // Cycle through pathpoints, update their matrixworld

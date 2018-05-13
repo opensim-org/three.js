@@ -1128,7 +1128,7 @@ OpenSimEditor.prototype = {
 	},
 	updatePath: function (pathUpdateJson) {
 		var pathObject = this.objectByUuid(pathUpdateJson.uuid);
-		pathObject.material.color.setHex(pathUpdateJson.color);
+		pathObject.setColor(pathUpdateJson.color);
 	},
 	processPathEdit: function (pathEditJson) {
 	    var pathObject = this.objectByUuid(pathEditJson.uuid);
