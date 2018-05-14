@@ -118,3 +118,11 @@ THREE.SkinnedMuscle.prototype.updateMatrixWorld = function( force ) {
     this.skeleton.update();
     THREE.SkinnedMesh.prototype.updateMatrixWorld.call( this, true );
 };
+THREE.SkinnedMuscle.prototype.setVisible = function ( newValue) {
+    this.visible = newValue;
+    // Now repeat for the pathpoints under this muscle
+    for (var p = 0; p < this.pathpoints.length; p++) {
+        pptObject = editor.objectByUuid(this.pathpoints[p]);
+        pptObject.visible  = newValue;
+    }
+};
