@@ -669,7 +669,19 @@ var OpenSimViewport = function ( editor ) {
         }
 	});
 	//
-
+	signals.objectChanged.add(function (changedObject) {
+		var test = changedObject;
+		// Should handle "movable types only" based on opensimtype
+		// i.e. Marker, PathPoint, eventually everything draggable
+		var offsets = {
+			"type": "transforms",
+			uuids: [],
+			positions: []
+		};
+		offsets.uuids.push(changedObject.uuid);
+		offsets.positions.push(changedObject.position);
+		sendText(JSON.stringify(offsets));
+	});
 	var renderer = null;
 
 	render();
