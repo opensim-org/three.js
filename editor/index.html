@@ -210,7 +210,7 @@
 
       var backdrop = gui.addFolder('Backdrop');
       var backdropColor = backdrop.addColor(knobs, 'backgroundColor').name('Background Color');
-      var backdropImage = backdrop.add(knobs, 'backdropImage', ['nobackground', 'sky', 'mars', 'pastures', 'city']);
+      var backdropImage = backdrop.add(knobs, 'backdropImage', ['nobackground', 'sky', 'canyon', 'pastures', 'city']);
       backdropColor.onChange(function (value) {
       editor.updateBackgroundColor(value);
       backdropImage.setValue('nobackground');
