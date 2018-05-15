@@ -180,9 +180,6 @@
       this.height = -0.001;
       //
       var light = editor.scene.getObjectByName('SunLight');
-      this.sceneLightX = light.position.x;
-      this.sceneLightY = light.position.y;
-      this.sceneLightZ = light.position.z;
       this.sceneLightIntensity = 0.2;
       this.modelLightIntensity = editor.modelLightIntensity;
       //
@@ -212,9 +209,9 @@
       var backdropColor = backdrop.addColor(knobs, 'backgroundColor').name('Background Color');
       var backdropImage = backdrop.add(knobs, 'backdropImage', ['nobackground', 'sky', 'canyon', 'pastures', 'city']);
       backdropColor.onChange(function (value) {
-      editor.updateBackgroundColor(value);
-      backdropImage.setValue('nobackground');
-      backdropImage.updateDisplay();
+		editor.updateBackgroundColor(value);
+		backdropImage.setValue('nobackground');
+		backdropImage.updateDisplay();
       });
       backdropImage.name('Image');
       backdropImage.onChange(function(newImage){
@@ -234,19 +231,7 @@
       });
 
       var lights = gui.addFolder('Lighting');
-      //lights.add(knobs, 'sceneLightSelect').name('Scene Light');
-      lights.add(knobs, 'sceneLightX').name('Scene Light X').onChange(function(value){
-			//editor.select(editor.scene.getObjectByName('SunLight'));
-			editor.updateSceneLight('x', value);
-      });
-      lights.add(knobs, 'sceneLightY').name('Scene Light Y').onChange(function(value){
-			//editor.select(editor.scene.getObjectByName('SunLight'));
-			editor.updateSceneLight('y', value);
-      });
-      lights.add(knobs, 'sceneLightZ').name('Scene Light Z').onChange(function(value){
-			//editor.select(editor.scene.getObjectByName('SunLight'));
-			editor.updateSceneLight('z', value);
-      });
+      lights.add(knobs, 'sceneLightSelect').name('Scene Light');
 	 /*
       var lightIntensity = lights.add(knobs, 'sceneLightIntensity');
       lightIntensity.name('Intensity');
