@@ -534,7 +534,12 @@ var OpenSimViewport = function ( editor ) {
 			editor.helpers[ object.id ].update();
 
 		}
-
+		var json = JSON.stringify({
+			"event": "translate",
+			"uuid": object.uuid,
+			"location": object.position
+		});
+		sendText(json);
 		render();
 
 	} );
