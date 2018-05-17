@@ -819,9 +819,9 @@ OpenSimEditor.prototype = {
 		var scope = this;
 		this.config.setKey('skybox', choice);
 		if (choice == 'nobackground') {
-			//this.skyboxMesh.visible = false;
-			//this.scene.background = new THREE.Color(0xff0000);
-			//this.signals.objectChanged.dispatch( this.scene.background );
+			color = this.config.getKey('settings/backgroundcolor');
+			this.scene.background = new THREE.Color(color);
+			this.signals.backgroundColorChanged.dispatch(this.scene.background.getHex());
 			return;
 		}
 		this.createBackground(choice);

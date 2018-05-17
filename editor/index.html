@@ -211,10 +211,12 @@
 
       var backdrop = gui.addFolder('Backdrop');
       var backdropColor = backdrop.addColor(knobs, 'backgroundColor').name('Background Color');
+      var backdropImage = backdrop.add(knobs, 'backdropImage', ['nobackground', 'sky', 'mars', 'pastures', 'city']);
       backdropColor.onChange(function (value) {
       editor.updateBackgroundColor(value);
+      backdropImage.setValue('nobackground');
+      backdropImage.updateDisplay();
       });
-      var backdropImage = backdrop.add(knobs, 'backdropImage', ['nobackground', 'sky', 'mars', 'pastures', 'city']);
       backdropImage.name('Image');
       backdropImage.onChange(function(newImage){
       editor.updateBackground(newImage);
