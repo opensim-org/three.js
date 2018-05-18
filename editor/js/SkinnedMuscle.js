@@ -7,6 +7,7 @@ THREE.SkinnedMuscle = function(geom, material, points, actives) {
     this.pathpointObjects = [];
     this.actives = actives;
     geom.bones = [];
+    this.firstPoint = null;
 
     for (var i=0; i< 2*points.length-2; i++) {
         var bone = new THREE.Bone();
@@ -43,8 +44,8 @@ THREE.SkinnedMuscle.prototype.constructor = THREE.SkinnedMuscle;
 
 THREE.SkinnedMuscle.prototype.setColor = function (newColor) {
 	this.material.color.setHex(newColor);
-	pptObject1 = editor.objectByUuid(this.pathpoints[0]);
-	pptObject1.material.color.setHex(newColor);
+	if (this.firstPoint !== null)
+	   this.firstPoint.material.color.setHex(newColor);
 };
 THREE.SkinnedMuscle.prototype.updateMatrixWorld = function( force ) {
 // if has pathpoints attribute then it's a muscle
@@ -58,7 +59,9 @@ THREE.SkinnedMuscle.prototype.updateMatrixWorld = function( force ) {
     if (this.pathpointObjects.length != this.pathpoints.length){
         var b = 0;
         for ( var p=0; p < this.pathpoints.length; p++) {
-            var pptObject1 = editor.objectByUuid(this.pathpoints[p]);
+        	var pptObject1 = editor.objectByUuid(this.pathpoints[p]);
+        	if (this.firstPoint === null && p === 0)
+        		this.firstPoint = pptObject1;
             var pptObject2 = editor.objectByUuid(this.pathpoints[p+1]);
 
             if (pptObject1 !== undefined) {
