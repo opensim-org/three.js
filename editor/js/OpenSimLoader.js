@@ -248,7 +248,7 @@ Object.assign( THREE.OpenSimLoader.prototype, {
 					case 'Geometry':
 
 						geometry = geometryLoader.parse( data.data, this.texturePath ).geometry;
-
+						geometry.computeVertexNormals();
 						break;
 
 				    case 'PathGeometry':
