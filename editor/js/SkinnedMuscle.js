@@ -89,7 +89,7 @@ THREE.SkinnedMuscle.prototype.updateMatrixWorld = function( force ) {
     // and alignge the bones (caps of each segment) to be alinged with
     // the vector connecting them.
     var b = 0; // bone (of SkinnedMuscle) index
-    for (var p = 0; p <= this.pathpoints.length-1; p++) {
+    for (var p = 0; p < this.pathpoints.length-1; p++) {
         var thisPathpointObject = this.pathpointObjects[p];
         var nextPathpointObject = this.pathpointObjects[p+1];
 
