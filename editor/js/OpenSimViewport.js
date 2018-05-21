@@ -101,7 +101,13 @@ var OpenSimViewport = function ( editor ) {
 					if ( ! objectPositionOnDown.equals( object.position ) ) {
 
 						editor.execute( new SetPositionCommand( object, object.position, objectPositionOnDown ) );
-
+						//
+						var json = JSON.stringify({
+							"event": "translate",
+							"uuid": object.uuid,
+							"location": object.position
+						});
+						sendText(json);
 					}
 
 					break;
@@ -534,12 +540,6 @@ var OpenSimViewport = function ( editor ) {
 			editor.helpers[ object.id ].update();
 
 		}
-		var json = JSON.stringify({
-			"event": "translate",
-			"uuid": object.uuid,
-			"location": object.position
-		});
-		sendText(json);
 		render();
 
 	} );
