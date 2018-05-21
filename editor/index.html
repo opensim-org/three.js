@@ -180,9 +180,6 @@
       this.height = -0.001;
       //
       var light = editor.scene.getObjectByName('SunLight');
-      this.sceneLightX = light.position.x;
-      this.sceneLightY = light.position.y;
-      this.sceneLightZ = light.position.z;
       this.sceneLightIntensity = 0.2;
       this.modelLightIntensity = editor.modelLightIntensity;
       //
@@ -210,10 +207,12 @@
 
       var backdrop = gui.addFolder('Backdrop');
       var backdropColor = backdrop.addColor(knobs, 'backgroundColor').name('Background Color');
+      var backdropImage = backdrop.add(knobs, 'backdropImage', ['nobackground', 'sky', 'canyon', 'pastures', 'city']);
       backdropColor.onChange(function (value) {
-      editor.updateBackgroundColor(value);
+		editor.updateBackgroundColor(value);
+		backdropImage.setValue('nobackground');
+		backdropImage.updateDisplay();
       });
-      var backdropImage = backdrop.add(knobs, 'backdropImage', ['nobackground', 'sky', 'mars', 'pastures', 'city']);
       backdropImage.name('Image');
       backdropImage.onChange(function(newImage){
       editor.updateBackground(newImage);
@@ -232,22 +231,14 @@
       });
 
       var lights = gui.addFolder('Lighting');
-      //lights.add(knobs, 'sceneLightSelect').name('Scene Light');
-      lights.add(knobs, 'sceneLightX').name('Scene Light X').onChange(function(value){
-      editor.updateSceneLight('x', value);
-      });
-      lights.add(knobs, 'sceneLightY').name('Scene Light Y').onChange(function(value){
-      editor.updateSceneLight('y', value);
-      });
-      lights.add(knobs, 'sceneLightZ').name('Scene Light Z').onChange(function(value){
-      editor.updateSceneLight('z', value);
-      });
+      lights.add(knobs, 'sceneLightSelect').name('Scene Light');
+	 /*
       var lightIntensity = lights.add(knobs, 'sceneLightIntensity');
       lightIntensity.name('Intensity');
       lightIntensity.onChange(function (value) {
       editor.updateSceneLight('intensity', value);
       editor.refresh();
-      });
+      });*/
       var modelLightIntensity = lights.add(knobs, 'modelLightIntensity');
       modelLightIntensity.name('Model Light').onChange(function(value){
       editor.updateModelLightIntensity(value);
@@ -257,7 +248,8 @@
       var captureControl = gui.add(knobs, 'screenCaptureDPI').name('Snapshot Quality').min(1).max(4).step(1);
       captureControl.onChange(function (value) {
       editor.setScreenCaptureScaleup(value);
-      editor.config.setKey('settings/captureDPI', value);
+		editor.config.setKey('settings/captureDPI', value);
+		editor.refresh();
       });
       gui.closed = true;
       }
