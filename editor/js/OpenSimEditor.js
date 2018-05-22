@@ -695,7 +695,9 @@ OpenSimEditor.prototype = {
 		// and then set your CORS config
 		var textureCube = textureloader.load( ["px.jpg",
 		"nx.jpg", "py.jpg", "ny.jpg", 
-		"pz.jpg", "nz.jpg"], function () { scope.refresh(); } );
+		"pz.jpg", "nz.jpg"], function () {
+			scope.refresh();
+		});
 		textureCube.format = THREE.RGBFormat;
 		textureloader.mapping = THREE.CubeRefactionMapping;
 		this.scene.background = textureCube;
@@ -704,8 +706,11 @@ OpenSimEditor.prototype = {
 	createGroundPlane: function(choice) {
 		if (choice == 'nofloor')
 			return;
+		scope = this;
 		var textureLoader = new THREE.TextureLoader();
-		var texture1 = textureLoader.load( "textures/"+choice+".jpg" );
+		var texture1 = textureLoader.load( "textures/"+choice+".jpg", function () {
+			scope.refresh();
+		});
 		var material1 = new THREE.MeshPhongMaterial( { color: 0xffffff, map: texture1 } );
 		texture1.wrapS = texture1.wrapT = THREE.RepeatWrapping;
 		texture1.repeat.set( 64, 64);
@@ -1133,6 +1138,7 @@ OpenSimEditor.prototype = {
 	processPathEdit: function (pathEditJson) {
 	    var pathObject = this.objectByUuid(pathEditJson.uuid);
 	    var pathGeometry = pathObject.geometry;
+	    var radius = pathGeometry.parameters.radiusTop;
 	    var pathMaterial = pathObject.material;
 	    var pathParent = pathObject.parent;
 	    if (pathEditJson.SubOperation === "refresh") {
@@ -1165,7 +1171,7 @@ OpenSimEditor.prototype = {
 	    	parentFrame.add(newMesh);
 	    }
 	    // remove from parent
-	    var newGeometry = new THREE.CylinderGeometry(8, 8, 0.1, 8, 2 * (pathEditJson.points.length-1) - 1, true);
+	    var newGeometry = new THREE.CylinderGeometry(radius, radius, 0.1, 8, 2 * (pathEditJson.points.length-1) - 1, true);
 	    var newMuscle = new THREE.SkinnedMuscle(newGeometry, pathMaterial, pathEditJson.points);
 	    newMuscle.parent = pathParent;
 	    newMuscle.uuid = pathEditJson.uuid;
