@@ -703,9 +703,10 @@ OpenSimEditor.prototype = {
 	
 	createGroundPlane: function(choice) {
 		if (choice == 'nofloor')
-			return;
+            return;
+		var scope = this;
 		var textureLoader = new THREE.TextureLoader();
-		var texture1 = textureLoader.load( "textures/"+choice+".jpg" );
+		var texture1 = textureLoader.load("textures/" + choice + ".jpg", function () { scope.refresh(); } );
 		var material1 = new THREE.MeshPhongMaterial( { color: 0xffffff, map: texture1 } );
 		texture1.wrapS = texture1.wrapT = THREE.RepeatWrapping;
 		texture1.repeat.set( 64, 64);
