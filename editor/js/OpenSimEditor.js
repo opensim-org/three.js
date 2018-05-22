@@ -1034,6 +1034,8 @@ OpenSimEditor.prototype = {
 		}
 		modelObject.position.z = sceneBox.max.z+modelbbox.max.z-modelbbox.min.z;
 		modelObject.getObjectByName('ModelLight').target.updateMatrixWorld();
+		// send message to GUI with computed offsets
+		sendText(this.getModelOffsetsJson());
 	},
 	addModelLight: function(model) {
 		var modelbbox = new THREE.Box3().setFromObject(model);
