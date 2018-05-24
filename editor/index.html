@@ -202,7 +202,7 @@
       }
       };
       window.onload = function () {
-      var gui = new dat.GUI(); // create dat.gui
+          var gui = new dat.GUI({ width: 260 }); // create dat.gui
       var knobs = new VisualizerKnobs();
       gui.remember(knobs);
 

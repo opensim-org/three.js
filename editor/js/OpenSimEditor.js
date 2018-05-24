@@ -705,7 +705,8 @@ OpenSimEditor.prototype = {
 	
 	createGroundPlane: function(choice) {
 		if (choice == 'nofloor')
-			return;
+            return;
+		var scope = this;
 		scope = this;
 		var textureLoader = new THREE.TextureLoader();
 		var texture1 = textureLoader.load( "textures/"+choice+".jpg", function () {
@@ -1039,6 +1040,8 @@ OpenSimEditor.prototype = {
 		}
 		modelObject.position.z = sceneBox.max.z+modelbbox.max.z-modelbbox.min.z;
 		modelObject.getObjectByName('ModelLight').target.updateMatrixWorld();
+		// send message to GUI with computed offsets
+		sendText(this.getModelOffsetsJson());
 	},
 	addModelLight: function(model) {
 		var modelbbox = new THREE.Box3().setFromObject(model);
@@ -1163,7 +1166,13 @@ OpenSimEditor.prototype = {
 	
 	    	var newPointGeometry = newPointJson.geometry;
 	    	var newPointMaterial = newPointJson.material;
-	    	var newMesh = this.objectByUuid(pathEditJson.points[0]).clone();
+	    	var existingPoint = undefined;
+	    	for (var i = 0; i < pathEditJson.points.length; i++) {
+	    		existingPoint = this.objectByUuid(pathEditJson.points[i]);
+	    		if (existingPoint !== undefined)
+	    			break;
+	    	}
+	    	var newMesh = existingPoint.clone();
 	    	newMesh.uuid = newPointJson.uuid;
 	    	var matrix = new THREE.Matrix4();
 	    	matrix.fromArray(newPointJson.matrix);
