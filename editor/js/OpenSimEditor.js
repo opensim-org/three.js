@@ -1163,7 +1163,13 @@ OpenSimEditor.prototype = {
 	
 	    	var newPointGeometry = newPointJson.geometry;
 	    	var newPointMaterial = newPointJson.material;
-	    	var newMesh = this.objectByUuid(pathEditJson.points[0]).clone();
+	    	var existingPoint = undefined;
+	    	for (var i = 0; i < pathEditJson.points.length; i++) {
+	    		existingPoint = this.objectByUuid(pathEditJson.points[i]);
+	    		if (existingPoint !== undefined)
+	    			break;
+	    	}
+	    	var newMesh = existingPoint.clone();
 	    	newMesh.uuid = newPointJson.uuid;
 	    	var matrix = new THREE.Matrix4();
 	    	matrix.fromArray(newPointJson.matrix);
