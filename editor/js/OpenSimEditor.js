@@ -1179,6 +1179,15 @@ OpenSimEditor.prototype = {
 	    	matrix.decompose(newMesh.position, newMesh.quaternion, newMesh.scale);
 	    	parentFrame.add(newMesh);
 	    }
+	    else if (pathEditJson.SubOperation === "delete") {
+	        var oldpptsUuids = pathObject.pathpoints;
+	        var newpptsUuids = pathEditJson.points;
+	        // delete points corresponding to uuids that are in oldpptsUuids but not newpptsUuids
+	        for (var i = 0; i < oldpptsUuids.length; i++) {
+	            if (newpptsUuids.includes(oldpptsUuids[i])!==true)
+	                this.removeObject(this.objectByUuid(oldpptsUuids[i]));
+	        }
+	    }
 	    // remove from parent
 	    var newGeometry = new THREE.CylinderGeometry(radius, radius, 0.1, 8, 2 * (pathEditJson.points.length-1) - 1, true);
 	    var newMuscle = new THREE.SkinnedMuscle(newGeometry, pathMaterial, pathEditJson.points);
