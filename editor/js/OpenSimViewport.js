@@ -101,7 +101,13 @@ var OpenSimViewport = function ( editor ) {
 					if ( ! objectPositionOnDown.equals( object.position ) ) {
 
 						editor.execute( new SetPositionCommand( object, object.position, objectPositionOnDown ) );
-
+						//
+						var json = JSON.stringify({
+							"event": "translate",
+							"uuid": object.uuid,
+							"location": object.position
+						});
+						sendText(json);
 					}
 
 					break;
@@ -534,12 +540,6 @@ var OpenSimViewport = function ( editor ) {
 			editor.helpers[ object.id ].update();
 
 		}
-		var json = JSON.stringify({
-			"event": "translate",
-			"uuid": object.uuid,
-			"location": object.position
-		});
-		sendText(json);
 		render();
 
 	} );
@@ -674,7 +674,19 @@ var OpenSimViewport = function ( editor ) {
         }
 	});
 	//
-
+	signals.objectChanged.add(function (changedObject) {
+		var test = changedObject;
+		// Should handle "movable types only" based on opensimtype
+		// i.e. Marker, PathPoint, eventually everything draggable
+		var offsets = {
+			"type": "transforms",
+			uuids: [],
+			positions: []
+		};
+		offsets.uuids.push(changedObject.uuid);
+		offsets.positions.push(changedObject.position);
+		sendText(JSON.stringify(offsets));
+	});
 	var renderer = null;
 
 	render();

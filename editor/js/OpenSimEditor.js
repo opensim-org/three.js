@@ -695,7 +695,9 @@ OpenSimEditor.prototype = {
 		// and then set your CORS config
 		var textureCube = textureloader.load( ["px.jpg",
 		"nx.jpg", "py.jpg", "ny.jpg", 
-		"pz.jpg", "nz.jpg"], function () { scope.refresh(); } );
+		"pz.jpg", "nz.jpg"], function () {
+			scope.refresh();
+		});
 		textureCube.format = THREE.RGBFormat;
 		textureloader.mapping = THREE.CubeRefactionMapping;
 		this.scene.background = textureCube;
@@ -705,8 +707,12 @@ OpenSimEditor.prototype = {
 		if (choice == 'nofloor')
             return;
 		var scope = this;
+		scope = this;
 		var textureLoader = new THREE.TextureLoader();
-		var texture1 = textureLoader.load("textures/" + choice + ".jpg", function () { scope.refresh(); } );
+		var texture1 = textureLoader.load( "textures/"+choice+".jpg", function () {
+			scope.refresh();
+		});
+
 		var material1 = new THREE.MeshPhongMaterial( { color: 0xffffff, map: texture1 } );
 		texture1.wrapS = texture1.wrapT = THREE.RepeatWrapping;
 		texture1.repeat.set( 64, 64);
@@ -1131,11 +1137,12 @@ OpenSimEditor.prototype = {
 	},
 	updatePath: function (pathUpdateJson) {
 		var pathObject = this.objectByUuid(pathUpdateJson.uuid);
-		pathObject.material.color.setHex(pathUpdateJson.color);
+		pathObject.setColor(pathUpdateJson.color);
 	},
 	processPathEdit: function (pathEditJson) {
 	    var pathObject = this.objectByUuid(pathEditJson.uuid);
 	    var pathGeometry = pathObject.geometry;
+	    var radius = pathGeometry.parameters.radiusTop;
 	    var pathMaterial = pathObject.material;
 	    var pathParent = pathObject.parent;
 	    if (pathEditJson.SubOperation === "refresh") {
@@ -1160,15 +1167,30 @@ OpenSimEditor.prototype = {
 	
 	    	var newPointGeometry = newPointJson.geometry;
 	    	var newPointMaterial = newPointJson.material;
-	    	var newMesh = this.objectByUuid(pathEditJson.points[0]).clone();
+	    	var existingPoint = undefined;
+	    	for (var i = 0; i < pathEditJson.points.length; i++) {
+	    		existingPoint = this.objectByUuid(pathEditJson.points[i]);
+	    		if (existingPoint !== undefined)
+	    			break;
+	    	}
+	    	var newMesh = existingPoint.clone();
 	    	newMesh.uuid = newPointJson.uuid;
 	    	var matrix = new THREE.Matrix4();
 	    	matrix.fromArray(newPointJson.matrix);
 	    	matrix.decompose(newMesh.position, newMesh.quaternion, newMesh.scale);
 	    	parentFrame.add(newMesh);
 	    }
+	    else if (pathEditJson.SubOperation === "delete") {
+	        var oldpptsUuids = pathObject.pathpoints;
+	        var newpptsUuids = pathEditJson.points;
+	        // delete points corresponding to uuids that are in oldpptsUuids but not newpptsUuids
+	        for (var i = 0; i < oldpptsUuids.length; i++) {
+	            if (newpptsUuids.includes(oldpptsUuids[i])!==true)
+	                this.removeObject(this.objectByUuid(oldpptsUuids[i]));
+	        }
+	    }
 	    // remove from parent
-	    var newGeometry = new THREE.CylinderGeometry(8, 8, 0.1, 8, 2 * (pathEditJson.points.length-1) - 1, true);
+	    var newGeometry = new THREE.CylinderGeometry(radius, radius, 0.1, 8, 2 * (pathEditJson.points.length-1) - 1, true);
 	    var newMuscle = new THREE.SkinnedMuscle(newGeometry, pathMaterial, pathEditJson.points);
 	    newMuscle.parent = pathParent;
 	    newMuscle.uuid = pathEditJson.uuid;

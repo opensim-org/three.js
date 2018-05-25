@@ -7,6 +7,7 @@ THREE.SkinnedMuscle = function(geom, material, points, actives) {
     this.pathpointObjects = [];
     this.actives = actives;
     geom.bones = [];
+    this.firstPointMaterial = undefined;
 
     for (var i=0; i< 2*points.length-2; i++) {
         var bone = new THREE.Bone();
@@ -23,13 +24,9 @@ THREE.SkinnedMuscle = function(geom, material, points, actives) {
         var pptIndex = Math.floor((skinIndex+1)/2);
         //var activePoint = this.actives[pptIndex];
         geom.skinIndices.push(new THREE.Vector4(skinIndex, skinIndex+1, skinIndex-1, 0));
-        if(skinIndex > 0 && skinIndex < geom.bones.length-1) {
-           // blend next and previous bone vertices to smoothen transitions
-            geom.skinWeights.push( new THREE.Vector4( 1.0, 0.0, 0.0, 0 ) );
-        }
-        else { //but, strictly enforce the reaching of the end points
-            geom.skinWeights.push( new THREE.Vector4( 1.0, 0, 0, 0 ) );
-        }
+        // Will always use weight of 1, 0, 0, 0 to interpolate pathpoints
+        // Changing weights will make the paths smooth but doesn't interpolate points'
+        geom.skinWeights.push( new THREE.Vector4( 1.0, 0, 0, 0 ) );
     }
     geom.dynamic = true;
     THREE.SkinnedMesh.call( this, geom );
@@ -41,6 +38,11 @@ THREE.SkinnedMuscle = function(geom, material, points, actives) {
 THREE.SkinnedMuscle.prototype = Object.create( THREE.SkinnedMesh.prototype );
 THREE.SkinnedMuscle.prototype.constructor = THREE.SkinnedMuscle;
 
+THREE.SkinnedMuscle.prototype.setColor = function (newColor) {
+	this.material.color.setHex(newColor);
+	if (this.firstPointMaterial !== undefined)
+        this.firstPointMaterial.color.setHex(newColor);
+};
 THREE.SkinnedMuscle.prototype.updateMatrixWorld = function( force ) {
 // if has pathpoints attribute then it's a muscle
 // Cycle through pathpoints, update their matrixworld
@@ -53,7 +55,9 @@ THREE.SkinnedMuscle.prototype.updateMatrixWorld = function( force ) {
     if (this.pathpointObjects.length != this.pathpoints.length){
         var b = 0;
         for ( var p=0; p < this.pathpoints.length; p++) {
-            var pptObject1 = editor.objectByUuid(this.pathpoints[p]);
+        	var pptObject1 = editor.objectByUuid(this.pathpoints[p]);
+            if (this.firstPointMaterial === undefined && pptObject1 !== undefined && p === 0)
+        		this.firstPointMaterial = pptObject1.material;
             var pptObject2 = editor.objectByUuid(this.pathpoints[p+1]);
 
             if (pptObject1 !== undefined) {
@@ -112,4 +116,11 @@ THREE.SkinnedMuscle.prototype.updateMatrixWorld = function( force ) {
     }
     this.skeleton.update();
     THREE.SkinnedMesh.prototype.updateMatrixWorld.call( this, true );
+};
+THREE.SkinnedMuscle.prototype.setVisible = function ( newValue) {
+    this.visible = newValue;
+    // Now repeat for the pathpoints under this muscle
+    for (var p = 0; p < this.pathpoints.length; p++) {
+        this.pathpointObjects[p].visible  = newValue;
+    }
 };
