@@ -1203,7 +1203,7 @@ OpenSimEditor.prototype = {
         geomObject = sceneObject.geometry;
         if (geomObject instanceof THREE.SphereGeometry){
             UUID = geomObject.uuid;
-            newRadius = geomObject.parameters.radius * msg.command.newScale[0];
+            newRadius = msg.command.newScale[0];
             newGeometry = new THREE.SphereGeometry(newRadius);
             newGeometry.uuid = UUID;
             sceneObject.geometry = newGeometry;
