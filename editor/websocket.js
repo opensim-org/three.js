@@ -120,12 +120,7 @@ function onMessage(evt) {
 		numFrames = 0;
 		break;
 	case "endAnimation":
-		var json = JSON.stringify({
-			"type": "info",
-			"numFrames": numFrames,
-			"totalTime": totalTime
-		});
-		sendText(json);
+		// Sending any messages during handling a message causes problems, use callbacks only
 		break;
      case "getOffsets":
         sendText(editor.getModelOffsetsJson());
