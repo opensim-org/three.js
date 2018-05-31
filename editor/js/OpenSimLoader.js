@@ -240,9 +240,10 @@ Object.assign( THREE.OpenSimLoader.prototype, {
 						break;
 
 					case 'BufferGeometry':
-
+						// Meshes from OpenSim GUI end up as either BufferGeometry or Geometry
+						// invoke computeVertexNormals in both cases
 						geometry = bufferGeometryLoader.parse( data );
-
+						geometry.computeVertexNormals();
 						break;
 
 					case 'Geometry':
