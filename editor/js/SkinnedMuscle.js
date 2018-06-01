@@ -8,6 +8,8 @@ THREE.SkinnedMuscle = function(geom, material, points, actives) {
     this.actives = actives;
     geom.bones = [];
     this.firstPointMaterial = undefined;
+    // When off only caps are shown, when on, user defined points are shown (for editing/picking)
+    this.showInnerPathPoints = false;
 
     for (var i=0; i< 2*points.length-2; i++) {
         var bone = new THREE.Bone();
@@ -119,8 +121,14 @@ THREE.SkinnedMuscle.prototype.updateMatrixWorld = function( force ) {
 };
 THREE.SkinnedMuscle.prototype.setVisible = function ( newValue) {
     this.visible = newValue;
-    // Now repeat for the pathpoints under this muscle
-    for (var p = 0; p < this.pathpoints.length; p++) {
-        if (this.actives[p]) this.pathpointObjects[p].visible  = newValue;
+    // Now repeat for the inner pathpoints under this muscle
+    for (var p = 1; p < this.pathpoints.length-1; p++) {
+        if (this.actives[p] && this.showInnerPathPoints)
+            this.pathpointObjects[p].visible = newValue;
+    }
+    // Caps are on by default handle them here to follow the muscle
+    if (this.pathpoints.length > 0) {
+        this.pathpointObjects[0].visible = newValue;
+        this.pathpointObjects[this.pathpoints.length-1].visible = newValue;
     }
 };
