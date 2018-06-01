@@ -121,6 +121,6 @@ THREE.SkinnedMuscle.prototype.setVisible = function ( newValue) {
     this.visible = newValue;
     // Now repeat for the pathpoints under this muscle
     for (var p = 0; p < this.pathpoints.length; p++) {
-        this.pathpointObjects[p].visible  = newValue;
+        if (this.actives[p]) this.pathpointObjects[p].visible  = newValue;
     }
 };
