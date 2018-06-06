@@ -65,8 +65,10 @@ function onMessage(evt) {
 				editor.updatePath(paths[p]);
 			}
 		}
-		editor.refresh();
+		if (msg.render===true) // not undefined
+			editor.refresh();
 		var t1 = performance.now() - t0;
+		//console.log("frame time: " + t1);
 		totalTime +=t1;
 		numFrames++;
 		processing = false;
