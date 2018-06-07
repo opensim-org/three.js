@@ -122,13 +122,15 @@ THREE.SkinnedMuscle.prototype.updateMatrixWorld = function( force ) {
 THREE.SkinnedMuscle.prototype.setVisible = function ( newValue) {
     this.visible = newValue;
     // Now repeat for the inner pathpoints under this muscle
-    for (var p = 1; p < this.pathpoints.length-1; p++) {
+    for (var p = 0; p < this.pathpoints.length; p++) {
         if (this.actives[p] && this.showInnerPathPoints)
             this.pathpointObjects[p].visible = newValue;
     }
-    // Caps are on by default handle them here to follow the muscle
-    if (this.pathpoints.length > 0) {
-        this.pathpointObjects[0].visible = newValue;
-        this.pathpointObjects[this.pathpoints.length-1].visible = newValue;
-    }
 };
+THREE.SkinnedMuscle.prototype.togglePathPoints = function (newValue) {
+    for (var p = 0; p < this.pathpoints.length; p++) {
+        if (this.actives[p])
+            this.pathpointObjects[p].visible = newValue;
+    }
+    
+}

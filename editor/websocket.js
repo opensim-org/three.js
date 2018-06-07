@@ -112,6 +112,9 @@ function onMessage(evt) {
 	case "PathOperation":
 		editor.processPathEdit(msg);
 		break;
+	case "TogglePathPoints":
+		editor.togglePathPoints(msg.uuid, msg.newState);
+		break;
 	case "scaleGeometry":
 		editor.scaleGeometry(msg);
 		break;
