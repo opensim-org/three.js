@@ -35,6 +35,7 @@ THREE.SkinnedMuscle = function(geom, material, points, actives) {
     this.material = material;
     this.material.skinning = true;
     this.frustumCulled = false;
+    this.userData = 'NonEditable';
 };
 
 THREE.SkinnedMuscle.prototype = Object.create( THREE.SkinnedMesh.prototype );
