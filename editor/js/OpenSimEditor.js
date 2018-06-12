@@ -28,8 +28,10 @@ var OpenSimEditor = function () {
 	this.sceneLight = undefined;
 	this.modelLightIntensity = 0.25;
 	this.globalFrameGroup = undefined;
+	this.cache = Object.create(null);
 	// types of objects that are graphically movable
 	var supportedOpenSimTypes = ["PathPoint", "Marker"];
+    this.reportframeTime = false;
 	//this.cameraEye = new THREE.Mesh(new THREE.SphereGeometry(50), new THREE.MeshBasicMaterial({ color: 0xdddddd }));
 	//this.cameraEye.name = 'CameraEye';
 
@@ -558,10 +560,18 @@ OpenSimEditor.prototype = {
 			this.signals.sceneGraphChanged.dispatch();
 			if (!this.isExperimentalDataModel(model) || this.models.length==1)
 			    this.viewFitAll();
+            
 			this.signals.windowResize.dispatch();
+
+			this.buildCache(model);
 		}
 	},
-	
+	buildCache: function( model) {
+	    modelobject.traverse(function (child) {
+	        if (child.type === "Group")
+	            editor.cache[child.uuid] = child;
+	    });
+	},
 	loadModel: function ( modelJsonFileName) {
 		var loader = new THREE.XHRLoader();
 		loader.crossOrigin = '';
@@ -592,11 +602,11 @@ OpenSimEditor.prototype = {
 		this.signals.sceneGraphChanged.dispatch();
 	},
 	setCurrentModel: function ( modeluuid ) {
-		if (this.currentModel == modeluuid) 
-		return; // Nothing to do
+		if (this.currentModel === modeluuid) 
+			return; // Nothing to do
 		this.currentModel = modeluuid;
-		if (this.currentModel == undefined)
-		return;
+		if (this.currentModel === undefined)
+			return;
 		newCurrentModel = editor.objectByUuid(modeluuid);
 		// Dim light for all other models and make the model have shadows, 
 		// Specififc light
@@ -616,7 +626,7 @@ OpenSimEditor.prototype = {
 			this.enableShadows(other_uuid, false);
 		}
 		}
-		this.signals.sceneGraphChanged.dispatch();
+		//this.signals.sceneGraphChanged.dispatch();
 	},
 	toJSON: function () {
 
@@ -656,10 +666,13 @@ OpenSimEditor.prototype = {
 
 	},
 
-	objectByUuid: function ( uuid ) {
-
-		return this.scene.getObjectByProperty( 'uuid', uuid, true );
-
+	objectByUuid: function (uuid) {
+	    var Object = this.cache[uuid];
+	    if (Object !== undefined)
+	        return Object;
+        Object = this.scene.getObjectByProperty( 'uuid', uuid, true );
+        this.cache[uuid] = Object;
+        return Object;
 	},
 
 	execute: function ( cmd, optionalName ) {
@@ -1276,6 +1289,14 @@ OpenSimEditor.prototype = {
         var muscle = editor.objectByUuid(uuid);
         muscle.togglePathPoints(newValue);
         this.signals.objectChanged.dispatch(muscle);
+    },
+    reportRenderTime: function(frameRenderTime) {
+        var info = {
+            "type": "info",
+            "renderTime":frameRenderTime
+        };
+        this.reportframeTime = false;
+        sendText(JSON.stringify(info));
     }
 
 };

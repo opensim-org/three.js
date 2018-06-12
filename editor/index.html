@@ -10,7 +10,7 @@
 		<link href="css/main.css" rel="stylesheet" />
 		<link id="theme" href="css/minimal.css" rel="stylesheet" />
 
-		<script src="../build/three.js"></script>
+		<script src="../build/three.min.js"></script>
 		<script src="js/SkinnedMuscle.js"></script>
 		<script src="js/OpenSimLoader.js"></script>
 		<script src="../examples/js/libs/system.min.js"></script>
@@ -244,8 +244,10 @@
       modelLightIntensity.name('Model Light').onChange(function(value){
       editor.updateModelLightIntensity(value);
       });;
-      if (getParameterByName('expert') === "1")
-      gui.add(knobs, 'expertModeSelect').name('Expert Mode');
+      if (getParameterByName('expert') === "1"){
+        gui.add(knobs, 'expertModeSelect').name('Expert Mode');
+        gui.add(knobs, 'showStats').name('FPS');
+      }
       var captureControl = gui.add(knobs, 'screenCaptureDPI').name('Snapshot Quality').min(1).max(4).step(1);
       captureControl.onChange(function (value) {
       editor.setScreenCaptureScaleup(value);

@@ -802,8 +802,10 @@ var OpenSimViewport = function ( editor ) {
 	            }
 	            //if (recording) capturer.capture(renderer.domElement);
 	        }
-	        //var t1 = performance.now();
-	        //console.log('Render time', t1 - t0);
+                if (editor.reportframeTime){
+                    var t1 = performance.now();
+                    editor.reportRenderTime(t1-t0);
+                }
 	    }
 	}
 

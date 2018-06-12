@@ -7,8 +7,8 @@ var wsUri = "ws://" + document.location.host + "/visEndpoint";
 var websocket = new WebSocket(wsUri);
 
 var processing = false;
-var totalTime = 0.0;
-var numFrames = 0;
+var lastTimeStamp = -1.0;
+var lastModelUuid = 0;
 websocket.onerror = function(evt) { onError(evt) };
 
 function onError(evt) {
@@ -45,6 +45,14 @@ function onMessage(evt) {
 	case "Frame":  
 		if (processing)
 			return;//alert("uuid: " + msg.name);
+		//console.log("frame timestamp: " + msg.time);
+                if (msg.time !== lastTimeStamp && msg.time!==0.0){
+                    lastTimeStamp = msg.time;
+                    lastModelUuid = msg.model;
+                }
+                else if (msg.time!==0.0 && lastModelUuid === msg.model){
+                    break;
+                }
 		processing = true;
 		var t0 = performance.now();
 		// Make sure nothing is selected before applying Frame
@@ -65,10 +73,10 @@ function onMessage(evt) {
 				editor.updatePath(paths[p]);
 			}
 		}
-		editor.refresh();
+		if (msg.render===true) // not undefined
+			editor.refresh();
 		var t1 = performance.now() - t0;
-		totalTime +=t1;
-		numFrames++;
+		//console.log("frame time: " + t1);
 		processing = false;
 		break;
 	case "CloseModel":
@@ -119,16 +127,15 @@ function onMessage(evt) {
 		editor.scaleGeometry(msg);
 		break;
 	case "startAnimation":
-		totalTime=0.0;
-		numFrames = 0;
+        editor.reportframeTime=true;
 		break;
 	case "endAnimation":
 		// Sending any messages during handling a message causes problems, use callbacks only
 		break;
-     case "getOffsets":
-        sendText(editor.getModelOffsetsJson());
-        break;
-   }
-   processing = false; // Defensive in case render never finishes/errors
+	case "getOffsets":
+		sendText(editor.getModelOffsetsJson());
+		break;
+    }
+    processing = false; // Defensive in case render never finishes/errors
 }
 // End test functions
