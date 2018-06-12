@@ -1285,6 +1285,11 @@ OpenSimEditor.prototype = {
         };
         return JSON.stringify(offsets);
     },
+    togglePathPoints: function(uuid, newValue) {
+        var muscle = editor.objectByUuid(uuid);
+        muscle.togglePathPoints(newValue);
+        this.signals.objectChanged.dispatch(muscle);
+    },
     reportRenderTime: function(frameRenderTime) {
         var info = {
             "type": "info",
