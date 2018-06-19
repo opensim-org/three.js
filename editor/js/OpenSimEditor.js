@@ -1158,6 +1158,7 @@ OpenSimEditor.prototype = {
 	    var radius = pathGeometry.parameters.radiusTop;
 	    var pathMaterial = pathObject.material;
 	    var pathParent = pathObject.parent;
+	    var pathPointsOn = pathObject.showInnerPathPoints;
 	    if (pathEditJson.SubOperation === "refresh") {
 	    	var updPoints = pathEditJson.points;
 	    	for (var i = 0; i < updPoints.length; i++) {
@@ -1211,6 +1212,7 @@ OpenSimEditor.prototype = {
 	    pathParent.add(newMuscle);
  	    newMuscle.parent = pathParent;
 	    this.refresh();
+		newMuscle.togglePathPoints(pathPointsOn);
 	},
     scaleGeometry: function (scaleJson) {
         sceneObject = editor.objectByUuid(scaleJson.command.objectUuid);
