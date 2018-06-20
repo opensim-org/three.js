@@ -35,8 +35,10 @@ RemoveObjectCommand.prototype = {
 			scope.removeHelper( child );
 
 		} );
-        if (this.parent.children.indexOf (this.object) !== -1)
+        if (this.parent.children.indexOf (this.object) !== -1) {
 		    this.parent.remove( this.object );
+		    this.editor.cache[this.object.uuid]=null;
+		}
         else 
             scope.scene.remove( this.object );
 		//this.editor.select( this.parent );
