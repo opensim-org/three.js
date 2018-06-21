@@ -7,8 +7,6 @@ var wsUri = "ws://" + document.location.host + "/visEndpoint";
 var websocket = new WebSocket(wsUri);
 
 var processing = false;
-var lastTimeStamp = -1.0;
-var lastModelUuid = 0;
 var last_message_uuid = 0;
 websocket.onerror = function(evt) { onError(evt) };
 
@@ -45,15 +43,8 @@ function onMessage(evt) {
 		break;
 	case "Frame":  
 		if (processing)
-			return;//alert("uuid: " + msg.name);
+			return;
 		//console.log("frame timestamp: " + msg.time);
-                if (msg.time !== lastTimeStamp && msg.time!==0.0){
-                    lastTimeStamp = msg.time;
-                    lastModelUuid = msg.model;
-                }
-                else if (msg.time!==0.0 && lastModelUuid === msg.model){
-                    break;
-                }
 		processing = true;
 		var t0 = performance.now();
 		// Make sure nothing is selected before applying Frame
