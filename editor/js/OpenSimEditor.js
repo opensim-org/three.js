@@ -264,7 +264,7 @@ OpenSimEditor.prototype = {
 		} );
 
 		object.parent.remove( object );
-
+		this.cache[object.uuid] = null;
 		this.signals.objectRemoved.dispatch( object );
 		this.signals.sceneGraphChanged.dispatch();
 
@@ -1158,6 +1158,7 @@ OpenSimEditor.prototype = {
 	    var radius = pathGeometry.parameters.radiusTop;
 	    var pathMaterial = pathObject.material;
 	    var pathParent = pathObject.parent;
+	    var pathPointsOn = pathObject.showInnerPathPoints;
 	    if (pathEditJson.SubOperation === "refresh") {
 	    	var updPoints = pathEditJson.points;
 	    	for (var i = 0; i < updPoints.length; i++) {
@@ -1203,13 +1204,15 @@ OpenSimEditor.prototype = {
 	        }
 	    }
 	    // remove from parent
-	    var newGeometry = new THREE.CylinderGeometry(radius, radius, 0.1, 8, 2 * (pathEditJson.points.length-1) - 1, true);
+	    var newGeometry = new THREE.CylinderGeometry(radius, radius, 0.1, 8, 2 *(pathEditJson.points.length-1) - 1, true);
 	    var newMuscle = new THREE.SkinnedMuscle(newGeometry, pathMaterial, pathEditJson.points);
-	    newMuscle.parent = pathParent;
 	    newMuscle.uuid = pathEditJson.uuid;
+	    this.cache[newMuscle.uuid] = newMuscle;
 	    // add to parent.
 	    pathParent.add(newMuscle);
+ 	    newMuscle.parent = pathParent;
 	    this.refresh();
+		newMuscle.togglePathPoints(pathPointsOn);
 	},
     scaleGeometry: function (scaleJson) {
         sceneObject = editor.objectByUuid(scaleJson.command.objectUuid);

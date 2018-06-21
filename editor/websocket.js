@@ -7,6 +7,7 @@ var wsUri = "ws://" + document.location.host + "/visEndpoint";
 var websocket = new WebSocket(wsUri);
 
 var processing = false;
+var last_message_uuid = 0;
 websocket.onerror = function(evt) { onError(evt) };
 
 function onError(evt) {
@@ -109,7 +110,10 @@ function onMessage(evt) {
 		editor.replaceGeometry(msg.geometries, msg.uuid);
 		break;
 	case "PathOperation":
-		editor.processPathEdit(msg);
+		if (msg.message_uuid !== last_message_uuid){
+			editor.processPathEdit(msg);
+			last_message_uuid = msg.message_uuid;
+		}
 		break;
 	case "TogglePathPoints":
 		editor.togglePathPoints(msg.uuid, msg.newState);
