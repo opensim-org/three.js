@@ -1171,6 +1171,7 @@ OpenSimEditor.prototype = {
                     var pptObject = new THREE.Mesh(geom, mat);
                     pptObject.uuid = pptSpec.uuid;
                     pptObject.name = pptSpec.name;
+                    pptObject.visible = pptSpec.visible;
                     var matrix = new THREE.Matrix4();
                     matrix.fromArray(pptSpec.matrix);
                     matrix.decompose(pptObject.position, pptObject.quaternion, pptObject.scale);
