@@ -1150,9 +1150,52 @@ OpenSimEditor.prototype = {
 	},
 	updatePath: function (pathUpdateJson) {
 		var pathObject = this.objectByUuid(pathUpdateJson.uuid);
-		pathObject.setColor(pathUpdateJson.color);
+		if (pathObject !== null)
+			pathObject.setColor(pathUpdateJson.color);
 	},
 	processPathEdit: function (pathEditJson) {
+            if (pathEditJson.SubOperation === "recreate") {
+                // We'll reuse Materials, may reuse uuid
+                var uuid = pathEditJson.uuid;
+                var pathSpec = pathEditJson.pathSpec;
+                var points = pathSpec.points;
+                var activeArray = [];
+                var pointArray = [];
+                for (var ppIndex=0; ppIndex < points.length; ppIndex++){
+                    var pptSpec = points[ppIndex];
+                    var parentUuid = pptSpec.parent;
+                    var parent = this.objectByUuid(parentUuid);
+                    // create pathPoint and add it to Parent; assign uuid and keep a list 
+                    var geom = this.geometries[ pptSpec.geometry ];
+                    var mat = this.materials[ pptSpec.material ];
+                    var pptObject = new THREE.Mesh(geom, mat);
+                    pptObject.uuid = pptSpec.uuid;
+                    pptObject.name = pptSpec.name;
+                    pptObject.visible = pptSpec.visible;
+                    var matrix = new THREE.Matrix4();
+                    matrix.fromArray(pptSpec.matrix);
+                    matrix.decompose(pptObject.position, pptObject.quaternion, pptObject.scale);
+                    parent.add(pptObject);
+                    this.addObject(pptObject); // this allows objects to be pickable
+                    activeArray.push(pptSpec.status==="active");
+                    pointArray.push(pptObject.uuid);
+                }
+                // Now create GeometryPathConrol for the Geometry
+                // then use it along with passed in material to create SkinnedMuscle
+                // then assign uuid and add it to ground
+                var newGeometry = new THREE.CylinderGeometry(pathSpec.PathGeometry.radius, pathSpec.PathGeometry.radius, 0.1, 8, 2 *(pointArray.length-1) - 1, true);
+                newGeometry.uuid = pathSpec.PathGeometry.uuid;
+                this.geometries[newGeometry.uuid] = newGeometry;
+                var newMuscle = new THREE.SkinnedMuscle(newGeometry, this.materials[pathSpec.material], pointArray, activeArray);
+                newMuscle.uuid = pathEditJson.uuid;
+                this.cache[newMuscle.uuid] = newMuscle;
+                var ground = this.objectByUuid(pathSpec.ground);
+                ground.add(newMuscle);
+                newMuscle.parent = ground;
+                this.addObject(newMuscle);
+                this.refresh();
+                return;
+            }
 	    var pathObject = this.objectByUuid(pathEditJson.uuid);
 	    var pathGeometry = pathObject.geometry;
 	    var radius = pathGeometry.parameters.radiusTop;

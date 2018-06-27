@@ -44,6 +44,9 @@ function onMessage(evt) {
 	case "Frame":  
 		if (processing)
 			return;
+		if (msg.message_uuid === last_message_uuid)
+			return;
+		last_message_uuid = msg.message_uuid;
 		//console.log("frame timestamp: " + msg.time);
 		processing = true;
 		var t0 = performance.now();
@@ -88,10 +91,13 @@ function onMessage(evt) {
 		break;
 	case "execute":
 		//msg.command.object = editor.objectByUuid(msg.UUID);
-		cmd = new window[msg.command.type]();
-		cmd.fromJSON(msg.command);
-		editor.execute(cmd);
-		editor.refresh();
+		if (msg.message_uuid !== last_message_uuid){
+			cmd = new window[msg.command.type]();
+			cmd.fromJSON(msg.command);
+			editor.execute(cmd);
+			editor.refresh();
+			last_message_uuid = msg.message_uuid;
+		}
 		break; 
 	case "addModelObject":
 		cmd = new window[msg.command.type]();
