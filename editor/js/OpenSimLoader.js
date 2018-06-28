@@ -604,6 +604,9 @@ Object.assign( THREE.OpenSimLoader.prototype, {
 					object.children[child].userData = 'NonEditable';
 				}
 			}
+			if ( data.opensimType !== undefined ) {
+					object.opensimType = data.opensimType;
+			}
 			if ( data.children !== undefined ) {
 
 				for ( var child in data.children ) {
