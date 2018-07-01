@@ -81,8 +81,10 @@ function onMessage(evt) {
 		break;
 	case "OpenModel":
 		modeluuid = msg.UUID;
-		editor.loadModel(modeluuid.substring(0,8)+'.json');
-		editor.refresh();
+		if (editor.models.indexOf(modeluuid)===-1){
+			editor.loadModel(modeluuid.substring(0,8)+'.json');
+			editor.refresh();
+		}
 		break;
 	case "SetCurrentModel":
 		modeluuid = msg.UUID;
