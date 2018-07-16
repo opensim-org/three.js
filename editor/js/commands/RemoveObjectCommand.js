@@ -33,11 +33,12 @@ RemoveObjectCommand.prototype = {
 		this.object.traverse( function ( child ) {
 
 			scope.removeHelper( child );
+			scope.cache[child.uuid]=undefined;
 
 		} );
         if (this.parent.children.indexOf (this.object) !== -1) {
 		    this.parent.remove( this.object );
-		    this.editor.cache[this.object.uuid]=null;
+		    //this.editor.cache[this.object.uuid]=undefined;
 		}
         else 
             scope.scene.remove( this.object );
