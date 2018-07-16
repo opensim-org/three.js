@@ -210,7 +210,7 @@ OpenSimEditor.prototype = {
 			scope.addHelper( child );
 
 		} );
-		if (object.parent !== null)
+		if (object.parent !== null && object.parent !== undefined)
 			object.parent.add(object);
 		else
 			this.scene.add( object );
@@ -264,7 +264,7 @@ OpenSimEditor.prototype = {
 		} );
 
 		object.parent.remove( object );
-		this.cache[object.uuid] = null;
+		this.cache[object.uuid] = undefined;
 		this.signals.objectRemoved.dispatch( object );
 		this.signals.sceneGraphChanged.dispatch();
 
@@ -564,6 +564,11 @@ OpenSimEditor.prototype = {
 			this.signals.windowResize.dispatch();
 
 			this.buildCache(model);
+			var msg = {
+			    "type": "acknowledge",
+			    "uuid": model.uuid
+			};
+			sendText(JSON.stringify(msg));
 		}
 	},
 	buildCache: function( model) {
@@ -584,7 +589,7 @@ OpenSimEditor.prototype = {
 	},
 	enableShadows: function (modeluuid, newSetting) {
 		modelobject = editor.objectByUuid(modeluuid);
-		if (modelobject != undefined){
+		if (modelobject !== undefined){
 		modelobject.traverse( function ( child ) {
 			if (child instanceof THREE.Mesh)
 			child.castShadow = newSetting;
@@ -1150,7 +1155,7 @@ OpenSimEditor.prototype = {
 	},
 	updatePath: function (pathUpdateJson) {
 		var pathObject = this.objectByUuid(pathUpdateJson.uuid);
-		if (pathObject !== null)
+		if (pathObject !== undefined)
 			pathObject.setColor(pathUpdateJson.color);
 	},
 	processPathEdit: function (pathEditJson) {
