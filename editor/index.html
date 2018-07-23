@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>OpenSim 4.0 Visualizer 040417</title>
@@ -379,6 +379,9 @@
 
       document.addEventListener( 'keydown', function ( event ) {
 
+	  if ( event.ctrlKey)
+	  	return;
+	  	
       switch ( event.keyCode ) {
 
       case 8: // backspace
