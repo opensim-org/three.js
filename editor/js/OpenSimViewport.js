@@ -409,7 +409,7 @@ var OpenSimViewport = function ( editor ) {
 	        capturer = new CCapture({
 	            verbose: false,
 	            display: false,
-	            framerate: 12,
+	            framerate: 10,
 	            motionBlurFrames: 0,
 	            quality: 100,
                 name: "opensim_video",
@@ -443,7 +443,7 @@ var OpenSimViewport = function ( editor ) {
          capturer = new CCapture({
 	            verbose: false,
 	            display: false,
-	            framerate: 12,
+	            framerate: 10,
 	            motionBlurFrames: 0,
 	            quality: 100,
                 name: "opensim_video",
