@@ -27,7 +27,7 @@ var OpenSimViewport = function ( editor ) {
     // AnimationRecording
 	var capturer = undefined;
 	var recording = false;
-	var screenCapUpsamplingFactor = editor.config.getKey('settings/captureDPI');
+	var screenCapUpsamplingFactor = 2;
 	var objects = [];
 
 	// helpers
