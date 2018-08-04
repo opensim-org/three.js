@@ -27,7 +27,7 @@ var OpenSimViewport = function ( editor ) {
     // AnimationRecording
 	var capturer = undefined;
 	var recording = false;
-	var screenCapUpsamplingFactor = 4;
+	var screenCapUpsamplingFactor = 2;
 	var objects = [];
 
 	// helpers
@@ -409,15 +409,9 @@ var OpenSimViewport = function ( editor ) {
 	        capturer = new CCapture({
 	            verbose: false,
 	            display: false,
-	            framerate: 12,
-	            motionBlurFrames: 0,
-	            quality: 100,
+	            framerate: 30,
                 name: "opensim_video",
-	            format: 'webm',
-	            workersPath: 'js/',
-	            timeLimit: cycleTime*10,
-	            frameLimit: 0,
-	            onProgress: function (p) { progress.style.width = (p * 100) + '%' }
+                format: 'webm-mediarecorder',
 	        });
 	        recording = true;
 	        capturer.start();
@@ -443,15 +437,9 @@ var OpenSimViewport = function ( editor ) {
          capturer = new CCapture({
 	            verbose: false,
 	            display: false,
-	            framerate: 12,
-	            motionBlurFrames: 0,
-	            quality: 100,
+	            framerate: 30,
                 name: "opensim_video",
-	            format: 'webm',
-	            workersPath: 'js/',
-	            timeLimit: 200,
-	            frameLimit: 0,
-	            onProgress: function (p) { progress.style.width = (p * 100) + '%' }
+                format: 'webm-mediarecorder',
 	        });
 	        recording = true;
 	        capturer.start();
