@@ -1150,9 +1150,11 @@ OpenSimEditor.prototype = {
 		geometryJson[0].uuid = oldGeometryUUID;
 		var newgeometries = geometryLoader.parseGeometries(geometryJson);
 		sceneObject.geometry = newgeometries[oldGeometryUUID];
-		var matrix = new THREE.Matrix4();
-		matrix.fromArray(geometryJson[0].matrix);
-		matrix.decompose(sceneObject.position, sceneObject.quaternion, sceneObject.scale);
+		if (geometryJson[0].matrix!== undefined){
+			var matrix = new THREE.Matrix4();
+			matrix.fromArray(geometryJson[0].matrix);
+			matrix.decompose(sceneObject.position, sceneObject.quaternion, sceneObject.scale);
+		}
 		this.signals.objectChanged.dispatch(sceneObject);
 	},
 	updatePath: function (pathUpdateJson) {
