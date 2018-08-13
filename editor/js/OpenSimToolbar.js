@@ -189,7 +189,7 @@ var OpenSimToolbar = function ( editor ) {
 	recordButton.onClick(function () {
 		recordStatus = !recordStatus;
 		if (recordStatus) // Dark gray if recording, should be done in CSS
-			recordButton.dom.style.backgroundColor = "#888888";
+			recordButton.dom.style.backgroundColor = "#FF0808";
 		else // default
 			recordButton.dom.style.backgroundColor = "";
 		toggleRecord();
