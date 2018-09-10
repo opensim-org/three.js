@@ -1185,7 +1185,8 @@ OpenSimEditor.prototype = {
                     matrix.fromArray(pptSpec.matrix);
                     matrix.decompose(pptObject.position, pptObject.quaternion, pptObject.scale);
                     parent.add(pptObject);
-                    this.addObject(pptObject); // this allows objects to be pickable
+                    if (pptObject.name!=="")
+                    	this.addObject(pptObject); // this allows objects to be pickable
                     activeArray.push(pptSpec.status==="active");
                     pointArray.push(pptObject.uuid);
                 }
