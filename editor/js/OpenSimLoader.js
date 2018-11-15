@@ -240,15 +240,16 @@ Object.assign( THREE.OpenSimLoader.prototype, {
 						break;
 
 					case 'BufferGeometry':
-
+						// Meshes from OpenSim GUI end up as either BufferGeometry or Geometry
+						// invoke computeVertexNormals in both cases
 						geometry = bufferGeometryLoader.parse( data );
-
+						geometry.computeVertexNormals();
 						break;
 
 					case 'Geometry':
 
 						geometry = geometryLoader.parse( data.data, this.texturePath ).geometry;
-
+						geometry.computeVertexNormals();
 						break;
 
 				    case 'PathGeometry':
@@ -602,6 +603,9 @@ Object.assign( THREE.OpenSimLoader.prototype, {
 				for ( var child in object.children ) {
 					object.children[child].userData = 'NonEditable';
 				}
+			}
+			if ( data.opensimType !== undefined ) {
+					object.opensimType = data.opensimType;
 			}
 			if ( data.children !== undefined ) {
 

@@ -17,7 +17,8 @@ var OpenSimEditor = function () {
 	this.dolly_object.name = 'Dolly';
 	this.dolly_object.position.y = 0;
 	this.recording = false;
-
+	// Container for all the lights, geometry, floor that are part of the scene
+	this.environment = undefined;
 	this.models = [];
 	this.currentModel = undefined; //uuid of current model call getCurrentModel for actualobject
 	this.currentModelColor = new THREE.Color(0xffffff);
@@ -25,9 +26,12 @@ var OpenSimEditor = function () {
 	this.onlyCurrentModelCastsShadow = false;
 	this.sceneBoundingBox = undefined;
 	this.sceneLight = undefined;
+	this.modelLightIntensity = 0.25;
 	this.globalFrameGroup = undefined;
+	this.cache = Object.create(null);
 	// types of objects that are graphically movable
 	var supportedOpenSimTypes = ["PathPoint", "Marker"];
+    this.reportframeTime = false;
 	//this.cameraEye = new THREE.Mesh(new THREE.SphereGeometry(50), new THREE.MeshBasicMaterial({ color: 0xdddddd }));
 	//this.cameraEye.name = 'CameraEye';
 
@@ -146,7 +150,8 @@ var OpenSimEditor = function () {
 	this.groundPlane = null;
 	this.groundMaterial = null;
 	this.modelsGroup = undefined;
-	
+
+	this.createEnvironment();
 	this.createLights();
 	this.createBackground(this.config.getKey('skybox'));
 	this.createGroundPlane(this.config.getKey('floor'));
@@ -206,7 +211,7 @@ OpenSimEditor.prototype = {
 			scope.addHelper( child );
 
 		} );
-		if (object.parent !== null)
+		if (object.parent !== null && object.parent !== undefined)
 			object.parent.add(object);
 		else
 			this.scene.add( object );
@@ -260,7 +265,7 @@ OpenSimEditor.prototype = {
 		} );
 
 		object.parent.remove( object );
-
+		this.cache[object.uuid] = undefined;
 		this.signals.objectRemoved.dispatch( object );
 		this.signals.sceneGraphChanged.dispatch();
 
@@ -582,11 +587,25 @@ OpenSimEditor.prototype = {
 			modelLight.userData = "NonEditable";
 			this.signals.sceneGraphChanged.active = true;
 			this.signals.sceneGraphChanged.dispatch();
-			this.viewFitAll();
+			if (!this.isExperimentalDataModel(model) || this.models.length==1)
+			    this.viewFitAll();
+            
 			this.signals.windowResize.dispatch();
+
+			this.buildCache(model);
+			var msg = {
+			    "type": "acknowledge",
+			    "uuid": model.uuid
+			};
+			sendText(JSON.stringify(msg));
 		}
 	},
-	
+	buildCache: function( model) {
+	    modelobject.traverse(function (child) {
+	        if (child.type === "Group")
+	            editor.cache[child.uuid] = child;
+	    });
+	},
 	loadModel: function ( modelJsonFileName) {
 		var loader = new THREE.FileLoader();
 		loader.crossOrigin = '';
@@ -599,7 +618,7 @@ OpenSimEditor.prototype = {
 	},
 	enableShadows: function (modeluuid, newSetting) {
 		modelobject = editor.objectByUuid(modeluuid);
-		if (modelobject != undefined){
+		if (modelobject !== undefined){
 		modelobject.traverse( function ( child ) {
 			if (child instanceof THREE.Mesh)
 			child.castShadow = newSetting;
@@ -617,11 +636,11 @@ OpenSimEditor.prototype = {
 		this.signals.sceneGraphChanged.dispatch();
 	},
 	setCurrentModel: function ( modeluuid ) {
-		if (this.currentModel == modeluuid) 
-		return; // Nothing to do
+		if (this.currentModel === modeluuid) 
+			return; // Nothing to do
 		this.currentModel = modeluuid;
-		if (this.currentModel == undefined)
-		return;
+		if (this.currentModel === undefined)
+			return;
 		newCurrentModel = editor.objectByUuid(modeluuid);
 		// Dim light for all other models and make the model have shadows, 
 		// Specififc light
@@ -641,7 +660,7 @@ OpenSimEditor.prototype = {
 			this.enableShadows(other_uuid, false);
 		}
 		}
-		this.signals.sceneGraphChanged.dispatch();
+		//this.signals.sceneGraphChanged.dispatch();
 	},
 	toJSON: function () {
 
@@ -681,10 +700,13 @@ OpenSimEditor.prototype = {
 
 	},
 
-	objectByUuid: function ( uuid ) {
-
-		return this.scene.getObjectByProperty( 'uuid', uuid, true );
-
+	objectByUuid: function (uuid) {
+	    var Object = this.cache[uuid];
+	    if (Object !== undefined)
+	        return Object;
+        Object = this.scene.getObjectByProperty( 'uuid', uuid, true );
+        this.cache[uuid] = Object;
+        return Object;
 	},
 
 	execute: function ( cmd, optionalName ) {
@@ -705,7 +727,8 @@ OpenSimEditor.prototype = {
 
 	},
 
-	createBackground: function(choice) {
+	createBackground: function (choice) {
+		scope = this;
 		if (choice == 'nobackground') {
 			this.scene.background = new THREE.Color(0xff0000);
 			this.signals.backgroundColorChanged.dispatch(this.scene.background.getHex());
@@ -719,7 +742,9 @@ OpenSimEditor.prototype = {
 		// and then set your CORS config
 		var textureCube = textureloader.load( ["px.jpg",
 		"nx.jpg", "py.jpg", "ny.jpg", 
-		"pz.jpg", "nz.jpg"] );
+		"pz.jpg", "nz.jpg"], function () {
+			scope.refresh();
+		});
 		textureCube.format = THREE.RGBFormat;
 		textureloader.mapping = THREE.CubeRefactionMapping;
 		this.scene.background = textureCube;
@@ -727,9 +752,14 @@ OpenSimEditor.prototype = {
 	
 	createGroundPlane: function(choice) {
 		if (choice == 'nofloor')
-			return;
+            return;
+		var scope = this;
+		scope = this;
 		var textureLoader = new THREE.TextureLoader();
-		var texture1 = textureLoader.load( "textures/"+choice+".jpg" );
+		var texture1 = textureLoader.load( "textures/"+choice+".jpg", function () {
+			scope.refresh();
+		});
+
 		var material1 = new THREE.MeshPhongMaterial( { color: 0xffffff, map: texture1 } );
 		texture1.wrapS = texture1.wrapT = THREE.RepeatWrapping;
 		texture1.repeat.set( 64, 64);
@@ -758,7 +788,7 @@ OpenSimEditor.prototype = {
 		wallPlane.scale.set(10, 10 , 10);
 		wallPlane.receiveShadow = true;
 		wallPlane.visible = false;
-		this.addObject(wallPlane);
+		this.environment.add(wallPlane);
 	},
 	createGlobalFrame() {
 		this.globalFrameGroup = new THREE.Group();
@@ -800,31 +830,22 @@ OpenSimEditor.prototype = {
 		this.modelsGroup = modelsGroup;
 		}
 	},
+	createEnvironment: function() {
+		this.environment = new THREE.Group();
+		this.environment.name = "Environment";
+		this.environment.userData = "NonEditable";
+		this.addObject(this.environment);
+	},
 	createLights: function () {
 		amb = new THREE.AmbientLight(0xffffff);
 		amb.name = 'AmbientLight';
 		amb.intensity = 0.2;
 		this.addObject(amb);
 		sceneLightColor = new THREE.Color().setHex(12040119);
- 		directionalLight =  new THREE.DirectionalLight( sceneLightColor);
-// 		directionalLight.castShadow = true;
-// 		directionalLight.name = 'SceneLight';
-// 		directionalLight.shadow.camera.bottom = -2000;
-// 		directionalLight.shadow.camera.far = 8000;
-// 		directionalLight.shadow.camera.left = -2000;
-// 		directionalLight.shadow.camera.right = 2000;
-// 		directionalLight.shadow.camera.top = 2000;
-// 		directionalLight.shadow.mapSize.width = 1024;
-// 		directionalLight.shadow.mapSize.height = 1024;
-		// for debugging. not working directionalLight.shadowCameraVisible = true;
-	//	directionalLight.visible = true;
+		directionalLight = new THREE.DirectionalLight(sceneLightColor);
+		directionalLight.name = 'CameraLight';
 		this.sceneLight = directionalLight;
 		this.addObject(directionalLight);
-		// HemisphericalLight 
-		hemiSphereLight = new THREE.HemisphereLight(10724259, 1, 0);
-		hemiSphereLight.name = 'GlobalLight';
-		hemiSphereLight.intensity = 0.40;
-
 //
         dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
         dirLight.name = 'SunLight';
@@ -832,20 +853,11 @@ OpenSimEditor.prototype = {
         dirLight.color.setHSL( 0.1, 1, 0.95 );
         dirLight.position.set( 1, 3, -1 );
         dirLight.position.multiplyScalar( 500 );
-        this.addObject(dirLight);
+        this.environment.add(dirLight);
 
         dirLight.castShadow = true;
 
-        //dirLight.shadow.mapSize.width = 2048;
-        //dirLight.shadow.mapSize.height = 2048;
-
-        //var d = 5000;
-
-        //dirLight.shadow.camera.left = -d;
-        //dirLight.shadow.camera.right = d;
-        //dirLight.shadow.camera.top = d;
-        //dirLight.shadow.camera.bottom = -d;
- 		dirLight.shadow.camera.bottom = -2000;
+  		dirLight.shadow.camera.bottom = -2000;
  		dirLight.shadow.camera.far = 8000;
  		dirLight.shadow.camera.left = -2000;
  		dirLight.shadow.camera.right = 2000;
@@ -858,11 +870,12 @@ OpenSimEditor.prototype = {
 	},
 
 	updateBackground: function (choice) {
+		var scope = this;
 		this.config.setKey('skybox', choice);
 		if (choice == 'nobackground') {
-			//this.skyboxMesh.visible = false;
-			//this.scene.background = new THREE.Color(0xff0000);
-			//this.signals.objectChanged.dispatch( this.scene.background );
+			color = this.config.getKey('settings/backgroundcolor');
+			this.scene.background = new THREE.Color(color);
+			this.signals.backgroundColorChanged.dispatch(this.scene.background.getHex());
 			return;
 		}
 		this.createBackground(choice);
@@ -947,7 +960,9 @@ OpenSimEditor.prototype = {
 	getModel: function () {
 		return editor.objectByUuid(this.currentModel);
 	},
-
+	isExperimentalDataModel: function (modelObject) {
+		return modelObject.children[0].name.startsWith('/ExperimentalData');
+	},
 	addMarkerAtPosition: function (testPosition) {
 
 		var sphere = new THREE.SphereGeometry(20, 20, 20);
@@ -1001,6 +1016,9 @@ OpenSimEditor.prototype = {
 	    newPos.addVectors(aabbCenter, dir);
 	    this.camera.position.set(newPos.x, newPos.y, newPos.z);
 	    this.camera.lookAt(aabbCenter);
+		// If default view clips model, change far clipping plane
+	    if (radius+offset > this.camera.far)
+	    	this.camera.far = radius + offset + 500;
 	    this.signals.defaultCameraApplied.dispatch(aabbCenter);
 
 	},
@@ -1037,6 +1055,9 @@ OpenSimEditor.prototype = {
 	// of bounding box and dolly at half hight.
 	adjustSceneAfterModelLoading: function () {
 		var modelObject = this.getModel();
+		// if ExperimentalData, also no offset
+		if (this.isExperimentalDataModel(modelObject) && this.models.length > 1)
+				return;
 		var modelbbox = new THREE.Box3().setFromObject(modelObject);
 		/*
 		var helper = new THREE.BoundingBoxHelper(modelObject, 0xff0000);
@@ -1068,6 +1089,8 @@ OpenSimEditor.prototype = {
 		}
 		modelObject.position.z = sceneBox.max.z+modelbbox.max.z-modelbbox.min.z;
 		modelObject.getObjectByName('ModelLight').target.updateMatrixWorld();
+		// send message to GUI with computed offsets
+		sendText(this.getModelOffsetsJson());
 	},
 	addModelLight: function(model) {
 		var modelbbox = new THREE.Box3().setFromObject(model);
@@ -1080,7 +1103,7 @@ OpenSimEditor.prototype = {
 		modelLight =  new THREE.PointLight( {color: this.currentModelColor});
 		//modelLight.castShadow = true;
 		//modelLight.angle = 0.5;
-		modelLight.intensity = 0.25;	
+		modelLight.intensity = this.modelLightIntensity;	
 		modelLight.name = 'ModelLight';
 		/*
 		modelLight.shadow.camera.bottom = -1000;
@@ -1116,11 +1139,24 @@ OpenSimEditor.prototype = {
 		}
 		sceneLightpos = this.sceneLight.position;
 		if (param === 'x')
-		sceneLightpos.x += val*1000;
+			sceneLightpos.x = val;
 		else if (param === 'y')
-		sceneLightpos.y += val*1000;
-		else
-		sceneLightpos.z += val*1000;
+			sceneLightpos.y = val;
+		else if (param === 'z')
+			sceneLightpos.z = val;
+		else if (param === 'intensity')
+			this.sceneLight.intensity = val;
+		this.refresh();
+	},
+	updateModelLightIntensity: function(val) {
+		this.modelLightIntensity = val;
+		// For each model, find the light and update intensity
+		for (var modindex = 0; modindex < this.models.length; modindex++) {
+			nextModel = this.objectByUuid(this.models[modindex]);
+			modelLight = nextModel.getObjectByName('ModelLight');
+			modelLight.intensity = val;
+		}
+		this.refresh();
 	},
 	setScreenCaptureScaleup: function (scaleupFactor){
 		this.signals.screenCaptureScaleupChanged.dispatch(scaleupFactor);
@@ -1143,19 +1179,69 @@ OpenSimEditor.prototype = {
 		var geometryLoader = new THREE.OpenSimLoader();
 		geometryJson[0].uuid = oldGeometryUUID;
 		var newgeometries = geometryLoader.parseGeometries(geometryJson);
-		//newgeometries[0].uuid = oldGeometryUUID;
 		sceneObject.geometry = newgeometries[oldGeometryUUID];
+		if (geometryJson[0].matrix!== undefined){
+			var matrix = new THREE.Matrix4();
+			matrix.fromArray(geometryJson[0].matrix);
+			matrix.decompose(sceneObject.position, sceneObject.quaternion, sceneObject.scale);
+		}
 		this.signals.objectChanged.dispatch(sceneObject);
 	},
 	updatePath: function (pathUpdateJson) {
 		var pathObject = this.objectByUuid(pathUpdateJson.uuid);
-		pathObject.material.color.setHex(pathUpdateJson.color);
+		if (pathObject !== undefined)
+			pathObject.setColor(pathUpdateJson.color);
 	},
 	processPathEdit: function (pathEditJson) {
+            if (pathEditJson.SubOperation === "recreate") {
+                // We'll reuse Materials, may reuse uuid
+                var uuid = pathEditJson.uuid;
+                var pathSpec = pathEditJson.pathSpec;
+                var points = pathSpec.points;
+                var activeArray = [];
+                var pointArray = [];
+                for (var ppIndex=0; ppIndex < points.length; ppIndex++){
+                    var pptSpec = points[ppIndex];
+                    var parentUuid = pptSpec.parent;
+                    var parent = this.objectByUuid(parentUuid);
+                    // create pathPoint and add it to Parent; assign uuid and keep a list 
+                    var geom = this.geometries[ pptSpec.geometry ];
+                    var mat = this.materials[ pptSpec.material ];
+                    var pptObject = new THREE.Mesh(geom, mat);
+                    pptObject.uuid = pptSpec.uuid;
+                    pptObject.name = pptSpec.name;
+                    pptObject.visible = pptSpec.visible;
+                    var matrix = new THREE.Matrix4();
+                    matrix.fromArray(pptSpec.matrix);
+                    matrix.decompose(pptObject.position, pptObject.quaternion, pptObject.scale);
+                    parent.add(pptObject);
+                    if (pptObject.name!=="")
+                    	this.addObject(pptObject); // this allows objects to be pickable
+                    activeArray.push(pptSpec.status==="active");
+                    pointArray.push(pptObject.uuid);
+                }
+                // Now create GeometryPathConrol for the Geometry
+                // then use it along with passed in material to create SkinnedMuscle
+                // then assign uuid and add it to ground
+                var newGeometry = new THREE.CylinderGeometry(pathSpec.PathGeometry.radius, pathSpec.PathGeometry.radius, 0.1, 8, 2 *(pointArray.length-1) - 1, true);
+                newGeometry.uuid = pathSpec.PathGeometry.uuid;
+                this.geometries[newGeometry.uuid] = newGeometry;
+                var newMuscle = new THREE.SkinnedMuscle(newGeometry, this.materials[pathSpec.material], pointArray, activeArray);
+                newMuscle.uuid = pathEditJson.uuid;
+                this.cache[newMuscle.uuid] = newMuscle;
+                var ground = this.objectByUuid(pathSpec.ground);
+                ground.add(newMuscle);
+                newMuscle.parent = ground;
+                this.addObject(newMuscle);
+                this.refresh();
+                return;
+            }
 	    var pathObject = this.objectByUuid(pathEditJson.uuid);
 	    var pathGeometry = pathObject.geometry;
+	    var radius = pathGeometry.parameters.radiusTop;
 	    var pathMaterial = pathObject.material;
 	    var pathParent = pathObject.parent;
+	    var pathPointsOn = pathObject.showInnerPathPoints;
 	    if (pathEditJson.SubOperation === "refresh") {
 	    	var updPoints = pathEditJson.points;
 	    	for (var i = 0; i < updPoints.length; i++) {
@@ -1178,28 +1264,45 @@ OpenSimEditor.prototype = {
 	
 	    	var newPointGeometry = newPointJson.geometry;
 	    	var newPointMaterial = newPointJson.material;
-	    	var newMesh = this.objectByUuid(pathEditJson.points[0]).clone();
+	    	var existingPoint = undefined;
+	    	for (var i = 0; i < pathEditJson.points.length; i++) {
+	    		existingPoint = this.objectByUuid(pathEditJson.points[i]);
+	    		if (existingPoint !== undefined)
+	    			break;
+	    	}
+	    	var newMesh = existingPoint.clone();
 	    	newMesh.uuid = newPointJson.uuid;
 	    	var matrix = new THREE.Matrix4();
 	    	matrix.fromArray(newPointJson.matrix);
 	    	matrix.decompose(newMesh.position, newMesh.quaternion, newMesh.scale);
 	    	parentFrame.add(newMesh);
 	    }
+	    else if (pathEditJson.SubOperation === "delete") {
+	        var oldpptsUuids = pathObject.pathpoints;
+	        var newpptsUuids = pathEditJson.points;
+	        // delete points corresponding to uuids that are in oldpptsUuids but not newpptsUuids
+	        for (var i = 0; i < oldpptsUuids.length; i++) {
+	            if (newpptsUuids.includes(oldpptsUuids[i])!==true)
+	                this.removeObject(this.objectByUuid(oldpptsUuids[i]));
+	        }
+	    }
 	    // remove from parent
-	    var newGeometry = new THREE.CylinderGeometry(8, 8, 0.1, 8, 2 * (pathEditJson.points.length-1) - 1, true);
+	    var newGeometry = new THREE.CylinderGeometry(radius, radius, 0.1, 8, 2 *(pathEditJson.points.length-1) - 1, true);
 	    var newMuscle = new THREE.SkinnedMuscle(newGeometry, pathMaterial, pathEditJson.points);
-	    newMuscle.parent = pathParent;
 	    newMuscle.uuid = pathEditJson.uuid;
+	    this.cache[newMuscle.uuid] = newMuscle;
 	    // add to parent.
 	    pathParent.add(newMuscle);
+ 	    newMuscle.parent = pathParent;
 	    this.refresh();
+		newMuscle.togglePathPoints(pathPointsOn);
 	},
     scaleGeometry: function (scaleJson) {
         sceneObject = editor.objectByUuid(scaleJson.command.objectUuid);
         geomObject = sceneObject.geometry;
         if (geomObject instanceof THREE.SphereGeometry){
             UUID = geomObject.uuid;
-            newRadius = geomObject.parameters.radius * msg.command.newScale[0];
+            newRadius = msg.command.newScale[0];
             newGeometry = new THREE.SphereGeometry(newRadius);
             newGeometry.uuid = UUID;
             sceneObject.geometry = newGeometry;
@@ -1252,6 +1355,34 @@ OpenSimEditor.prototype = {
         this.camera.lookAt(aabbCenter);
         this.signals.defaultCameraApplied.dispatch(aabbCenter);
 
+    },
+    getModelOffsetsJson: function() {
+        // Compute and return a json object containing uuids of models and associated positions in scene
+        var offsets = {
+            "type": "transforms",
+            "ObjectType": "Model",
+            uuids: [],
+            positions: []
+        };
+        for ( var modindex = 0; modindex < this.models.length; modindex++ ) {
+            offsets.uuids.push(this.models[modindex]);
+            var nextModel = editor.objectByUuid(this.models[modindex]);
+            offsets.positions.push(nextModel.position);
+        };
+        return JSON.stringify(offsets);
+    },
+    togglePathPoints: function(uuid, newValue) {
+        var muscle = editor.objectByUuid(uuid);
+        muscle.togglePathPoints(newValue);
+        this.signals.objectChanged.dispatch(muscle);
+    },
+    reportRenderTime: function(frameRenderTime) {
+        var info = {
+            "type": "info",
+            "renderTime":frameRenderTime
+        };
+        this.reportframeTime = false;
+        sendText(JSON.stringify(info));
     }
 
 };

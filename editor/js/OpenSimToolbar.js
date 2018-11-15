@@ -22,7 +22,7 @@ var OpenSimToolbar = function ( editor ) {
 	    viewfromPlusX();
 
 	});
-	viewx.dom.title = 'Front';
+	viewx.dom.title = '-X';
 	buttons.add(viewx);
 	function viewfromPlusX() {
 	    var bbox = computeModelBbox();
@@ -46,7 +46,7 @@ var OpenSimToolbar = function ( editor ) {
 	var viewplusy = new UI.Button(false, 'icons/topView_axes.png').onClick(function () {
 	    viewfromPlusY();
 	});
-	viewplusy.dom.title = 'Top';
+	viewplusy.dom.title = '-Y';
 	buttons.add(viewplusy);
 	function viewfromPlusY() {
 	    var bbox = computeModelBbox();
@@ -65,7 +65,7 @@ var OpenSimToolbar = function ( editor ) {
 	var viewplusz = new UI.Button(false, 'icons/rightView_axes.png').onClick(function () {
 	    viewfromPlusZ();
 	});
-	viewplusz.dom.title = 'Left';
+	viewplusz.dom.title = '-Z';
 	buttons.add(viewplusz);
 	function viewfromPlusZ() {
 
@@ -85,7 +85,7 @@ var OpenSimToolbar = function ( editor ) {
 	var viewminx = new UI.Button(false, 'icons/backView_axes.png').onClick(function () {
 		viewfromMinusX();
 	});
-	viewminx.dom.title = 'Back';
+	viewminx.dom.title = '+X';
 	buttons.add(viewminx);
 	function viewfromMinusX() {
 	    var bbox = computeModelBbox();
@@ -104,7 +104,7 @@ var OpenSimToolbar = function ( editor ) {
 	var viewminy = new UI.Button(false, 'icons/bottomView_axes.png').onClick(function () {
 	    viewfromMinusY();
 	});
-	viewminy.dom.title = 'Bottom';
+	viewminy.dom.title = '+Y';
 	buttons.add(viewminy);
 	function viewfromMinusY() {
 	    var bbox = computeModelBbox();
@@ -123,7 +123,7 @@ var OpenSimToolbar = function ( editor ) {
 	var viewminz = new UI.Button(false, 'icons/leftView_axes.png').onClick(function () {
 	    viewfromMinusZ();
 	});
-	viewminz.dom.title = 'Right';
+	viewminz.dom.title = '+Z';
 	buttons.add(viewminz);
 	function viewfromMinusZ() {
 
@@ -188,8 +188,8 @@ var OpenSimToolbar = function ( editor ) {
 	var recordStatus = false;
 	recordButton.onClick(function () {
 		recordStatus = !recordStatus;
-		if (recordStatus) // Dark gray if recording, should be done in CSS
-			recordButton.dom.style.backgroundColor = "#888888";
+		if (recordStatus) // Dark red if recording, should be done in CSS
+			recordButton.dom.style.backgroundColor = "#FF0808";
 		else // default
 			recordButton.dom.style.backgroundColor = "";
 		toggleRecord();
@@ -201,6 +201,7 @@ var OpenSimToolbar = function ( editor ) {
             editor.toggleRecord();
     }
 	var globalFrameButton = new UI.Button(false, 'icons/axes.png');
+	globalFrameButton.dom.title = 'Global Frame X(Red), Y(Green) Z(Blue)';
 	globalFrameButton.onClick(function () {
 		editor.toggleGlobalFrame();
 	});

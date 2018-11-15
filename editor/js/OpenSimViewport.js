@@ -27,7 +27,7 @@ var OpenSimViewport = function ( editor ) {
     // AnimationRecording
 	var capturer = undefined;
 	var recording = false;
-	var screenCapUpsamplingFactor = 4;
+	var screenCapUpsamplingFactor = 2;
 	var objects = [];
 
 	// helpers
@@ -102,7 +102,13 @@ var OpenSimViewport = function ( editor ) {
 					if ( ! objectPositionOnDown.equals( object.position ) ) {
 
 						editor.execute( new SetPositionCommand( object, object.position, objectPositionOnDown ) );
-
+						//
+						var json = JSON.stringify({
+							"event": "translate",
+							"uuid": object.uuid,
+							"location": object.position
+						});
+						sendText(json);
 					}
 
 					break;
@@ -404,15 +410,9 @@ var OpenSimViewport = function ( editor ) {
 	        capturer = new CCapture({
 	            verbose: false,
 	            display: false,
-	            framerate: 12,
-	            motionBlurFrames: 0,
-	            quality: 100,
+	            framerate: 30,
                 name: "opensim_video",
-	            format: 'webm',
-	            workersPath: 'js/',
-	            timeLimit: cycleTime*10,
-	            frameLimit: 0,
-	            onProgress: function (p) { progress.style.width = (p * 100) + '%' }
+                format: 'webm-mediarecorder',
 	        });
 	        recording = true;
 	        capturer.start();
@@ -438,15 +438,9 @@ var OpenSimViewport = function ( editor ) {
          capturer = new CCapture({
 	            verbose: false,
 	            display: false,
-	            framerate: 12,
-	            motionBlurFrames: 0,
-	            quality: 100,
+	            framerate: 30,
                 name: "opensim_video",
-	            format: 'webm',
-	            workersPath: 'js/',
-	            timeLimit: 200,
-	            frameLimit: 0,
-	            onProgress: function (p) { progress.style.width = (p * 100) + '%' }
+                format: 'webm-mediarecorder',
 	        });
 	        recording = true;
 	        capturer.start();
@@ -537,7 +531,6 @@ var OpenSimViewport = function ( editor ) {
 			editor.helpers[ object.id ].update();
 
 		}
-
 		render();
 
 	} );
@@ -672,7 +665,19 @@ var OpenSimViewport = function ( editor ) {
         }
 	});
 	//
-
+	signals.objectChanged.add(function (changedObject) {
+		var test = changedObject;
+		// Should handle "movable types only" based on opensimtype
+		// i.e. Marker, PathPoint, eventually everything draggable
+		var offsets = {
+			"type": "transforms",
+			uuids: [],
+			positions: []
+		};
+		offsets.uuids.push(changedObject.uuid);
+		offsets.positions.push(changedObject.position);
+		sendText(JSON.stringify(offsets));
+	});
 	var renderer = null;
 
 	render();
@@ -788,8 +793,10 @@ var OpenSimViewport = function ( editor ) {
 	            }
 	            //if (recording) capturer.capture(renderer.domElement);
 	        }
-	        //var t1 = performance.now();
-	        //console.log('Render time', t1 - t0);
+                if (editor.reportframeTime){
+                    var t1 = performance.now();
+                    editor.reportRenderTime(t1-t0);
+                }
 	    }
 	}
 

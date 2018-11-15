@@ -10,7 +10,7 @@
 		<link href="css/main.css" rel="stylesheet" />
 		<link id="theme" href="css/minimal.css" rel="stylesheet" />
 
-		<script src="../build/three.js"></script>
+		<script src="../build/three.min.js"></script>
 		<script src="js/SkinnedMuscle.js"></script>
 		<script src="js/OpenSimLoader.js"></script>
 		<script src="../examples/js/libs/system.min.js"></script>
@@ -155,6 +155,7 @@
 		<script src="js/commands/SetRotationCommand.js"></script>
 		<script src="js/commands/SetScaleCommand.js"></script>
 		<script src="js/commands/SetValueCommand.js"></script>
+		<script src="js/commands/SetValueCommandMuscle.js"></script>
 		<script src="js/commands/SetUuidCommand.js"></script>
 		<script src="js/commands/SetColorCommand.js"></script>
 		<script src="js/commands/SetGeometryCommand.js"></script>
@@ -177,88 +178,118 @@
 				if (!url) url = window.location.href;
 					name = name.replace(/[\[\]]/g, "\\$&");
 				var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-					results = regex.exec(url);
-				if (!results) return null;
-				if (!results[2]) return '';
-				return decodeURIComponent(results[2].replace(/\+/g, " "));
-			}
+      results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+      }
 
-			if (!Detector.webgl) Detector.addGetWebGLMessage();
+      if (!Detector.webgl) Detector.addGetWebGLMessage();
 
-			window.URL = window.URL || window.webkitURL;
-			window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
+      window.URL = window.URL || window.webkitURL;
+      window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
 
-			Number.prototype.format = function (){
-				return this.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-			};
-			//
-			stats = new Stats();
-			document.body.appendChild( stats.domElement );
+      Number.prototype.format = function (){
+      return this.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+      };
+      //
+      stats = new Stats();
+      document.body.appendChild( stats.domElement );
 
-			var editor = new OpenSimEditor();
+      var editor = new OpenSimEditor();
 
-			// Minimal ui, should move to a different file to avoid clutter
-			var VisualizerKnobs = function() {
-				this.texture = editor.config.getKey('floor');
-				this.height = -0.001;
-				this.backdrop = editor.config.getKey('skybox');
-				color = editor.config.getKey('settings/backgroundcolor');
-				if (color=== undefined){
-					this.backgroundColor = "#888888";
-				}
-				else
-					this.backgroundColor = color;
-				editor.updateBackgroundColor(this.backgroundColor);
-				// Define render logic ...
-				this.sceneLightX = -0.01;
-				this.sceneLightY = -0.01;
-				this.sceneLightZ = -0.01;
-				this.sceneLightColor = [255, 255, 255];
-				this.sceneLightSelect = function () { editor.select(editor.scene.getObjectByName('SunLight')); }
-				this.modelLightSelect = function () { editor.selectCurrentModelLight(); }
-				this.toggleMarkup = function () { editor.toggleMarkup(); }
-				this.expertModeSelect = function () { editor.setTheme('css/dark.css'); }
-				this.showStats = function () {
-				var elem = document.getElementById("viewport");
-				if (elem.style.bottom=="20px")
-					elem.style.bottom="0px";
-				else
-					elem.style.bottom="20px";
-				window.dispatchEvent(new Event('resize'));
-				}
-				this.screenCaptureDPI =  editor.config.getKey('settings/captureDPI');
-				if (this.screenCaptureDPI === undefined){
-					editor.config.setKey('settings/captureDPI', 2);
-				}
-			};
-			window.onload = function () {
-			var gui = new dat.GUI(); // create dat.gui
-			var knobs = new VisualizerKnobs();
-			var ground = gui.addFolder('Floor');
-			var texture = ground.add(knobs, 'texture', ['nofloor', 'redbricks', 'graybricks', 'wood-floor', 'tile']);
-			texture.name('Texture');
-			var floorHeight = ground.add(knobs, 'height').min(-2.01).max(2.02).step(0.01).name('Height');
-			floorHeight.onChange(function (value) {
-				editor.setFloorHeight(value);
-			});
-			texture.onChange(function (value) {
-				editor.updateGroundPlane(value);
-			});
-			var backdropColor = gui.addColor(knobs, 'backgroundColor').name('Background Color');
-			backdropColor.onChange(function (value) {
-				editor.updateBackgroundColor(value);
-			});
-			gui.add(knobs, 'sceneLightSelect').name('Scene Light');
-			gui.add(knobs, 'showStats').name('Show FPS');
-			if (getParameterByName('expert') === "1")
-				gui.add(knobs, 'expertModeSelect').name('Expert Mode');
-			var captureControl = gui.add(knobs, 'screenCaptureDPI').name('Snapshot Quality').min(1).max(4).step(1);
-			captureControl.onChange(function (value) {
-				editor.setScreenCaptureScaleup(value);
-				editor.config.setKey('settings/captureDPI', value);
-			});
-			gui.closed = true;
-			}
+      // Minimal ui, should move to a different file to avoid clutter
+      var VisualizerKnobs = function() {
+      // Backdrop
+      this.backdrop = editor.config.getKey('skybox');
+      this.backdropImage = editor.config.getKey('skybox');
+      color = editor.config.getKey('settings/backgroundcolor');
+      if (color=== undefined){
+      this.backgroundColor = "#888888";
+      editor.updateBackgroundColor(this.backgroundColor);
+      }
+      else
+      this.backgroundColor = color;
+      // Floor
+      this.texture = editor.config.getKey('floor');
+      this.height = -0.001;
+      //
+      var light = editor.scene.getObjectByName('SunLight');
+      this.sceneLightIntensity = 0.2;
+      this.modelLightIntensity = editor.modelLightIntensity;
+      //
+      this.sceneLightSelect = function () { editor.select(editor.scene.getObjectByName('SunLight')); }
+      this.modelLightSelect = function () { editor.selectCurrentModelLight(); }
+      this.expertModeSelect = function () { editor.setTheme('css/dark.css'); }
+      this.showStats = function () {
+      var elem = document.getElementById("viewport");
+      if (elem.style.bottom=="20px")
+      elem.style.bottom="0px";
+      else
+      elem.style.bottom="20px";
+      window.dispatchEvent(new Event('resize'));
+      }
+      // Screen Capture
+      this.screenCaptureDPI =  editor.config.getKey('settings/captureDPI');
+      if (this.screenCaptureDPI === undefined){
+      editor.config.setKey('settings/captureDPI', 2);
+      }
+      };
+      window.onload = function () {
+          var gui = new dat.GUI({ width: 260 }); // create dat.gui
+      var knobs = new VisualizerKnobs();
+      gui.remember(knobs);
+
+      var backdrop = gui.addFolder('Backdrop');
+      var backdropColor = backdrop.addColor(knobs, 'backgroundColor').name('Background Color');
+      var backdropImage = backdrop.add(knobs, 'backdropImage', ['nobackground', 'sky', 'canyon', 'pastures', 'city']);
+      backdropColor.onChange(function (value) {
+		editor.updateBackgroundColor(value);
+		backdropImage.setValue('nobackground');
+		backdropImage.updateDisplay();
+      });
+      backdropImage.name('Image');
+      backdropImage.onChange(function(newImage){
+      editor.updateBackground(newImage);
+      editor.refresh();
+      });
+
+      var ground = gui.addFolder('Floor');
+      var texture = ground.add(knobs, 'texture', ['nofloor', 'redbricks', 'graybricks', 'wood-floor', 'tile']);
+      texture.name('Texture');
+      var floorHeight = ground.add(knobs, 'height').min(-2.01).max(2.02).step(0.01).name('Height');
+      floorHeight.onChange(function (value) {
+      editor.setFloorHeight(value);
+      });
+      texture.onChange(function (value) {
+      editor.updateGroundPlane(value);
+      });
+
+      var lights = gui.addFolder('Lighting');
+      lights.add(knobs, 'sceneLightSelect').name('Select Scene Light');
+	 /*
+      var lightIntensity = lights.add(knobs, 'sceneLightIntensity');
+      lightIntensity.name('Intensity');
+      lightIntensity.onChange(function (value) {
+      editor.updateSceneLight('intensity', value);
+      editor.refresh();
+      });*/
+      var modelLightIntensity = lights.add(knobs, 'modelLightIntensity');
+      modelLightIntensity.name('Model Light').onChange(function(value){
+      editor.updateModelLightIntensity(value);
+      });;
+      if (getParameterByName('expert') === "1"){
+        gui.add(knobs, 'expertModeSelect').name('Expert Mode');
+        gui.add(knobs, 'showStats').name('FPS');
+      }
+      var captureControl = gui.add(knobs, 'screenCaptureDPI').name('Snapshot Quality').min(1).max(4).step(1);
+      captureControl.onChange(function (value) {
+      editor.setScreenCaptureScaleup(value);
+		editor.config.setKey('settings/captureDPI', value);
+		editor.refresh();
+      });
+      gui.closed = true;
+      }
 
       var viewport = new OpenSimViewport( editor );
       document.body.appendChild( viewport.dom );
@@ -379,13 +410,17 @@
       }, false );
 
       document.addEventListener( 'keydown', function ( event ) {
-
+	  // Visualizer to ignore key combinations using "ctrl" to avoid breaking GUI hot-keys
+	  if ( event.ctrlKey)
+	  	return;
+	  	
       switch ( event.keyCode ) {
 
       case 8: // backspace
 
-      event.preventDefault(); // prevent browser back
-
+      //event.preventDefault(); // prevent browser back
+      break;
+/*
       case 46: // delete
 
       var object = editor.selected;
@@ -428,13 +463,15 @@
 						editor.signals.transformModeChanged.dispatch( 'scale' );
 
 						break;
+*/
 					case 37: // Delegate ArrowKeys and OpenSim reserved keys to editor
 					case 38:
 					case 39:
 					case 40:
 					case 73:
 					case 79:
-						editor.handleKey(event.keyCode);
+					    editor.handleKey(event.keyCode);
+					    event.preventDefault();
 					break;
 				}
 

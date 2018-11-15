@@ -7,8 +7,7 @@ var wsUri = "ws://" + document.location.host + "/visEndpoint";
 var websocket = new WebSocket(wsUri);
 
 var processing = false;
-var totalTime = 0.0;
-var numFrames = 0;
+var last_message_uuid = 0;
 websocket.onerror = function(evt) { onError(evt) };
 
 function onError(evt) {
@@ -44,7 +43,11 @@ function onMessage(evt) {
 		break;
 	case "Frame":  
 		if (processing)
-			return;//alert("uuid: " + msg.name);
+			return;
+		if (msg.message_uuid === last_message_uuid)
+			return;
+		last_message_uuid = msg.message_uuid;
+		//console.log("frame timestamp: " + msg.time);
 		processing = true;
 		var t0 = performance.now();
 		// Make sure nothing is selected before applying Frame
@@ -65,10 +68,10 @@ function onMessage(evt) {
 				editor.updatePath(paths[p]);
 			}
 		}
-		editor.refresh();
+		if (msg.render===true) // not undefined
+			editor.refresh();
 		var t1 = performance.now() - t0;
-		totalTime +=t1;
-		numFrames++;
+		//console.log("frame time: " + t1);
 		processing = false;
 		break;
 	case "CloseModel":
@@ -78,8 +81,10 @@ function onMessage(evt) {
 		break;
 	case "OpenModel":
 		modeluuid = msg.UUID;
-		editor.loadModel(modeluuid.substring(0,8)+'.json');
-		editor.refresh();
+		if (editor.models.indexOf(modeluuid)===-1){
+			editor.loadModel(modeluuid.substring(0,8)+'.json');
+			editor.refresh();
+		}
 		break;
 	case "SetCurrentModel":
 		modeluuid = msg.UUID;
@@ -88,10 +93,13 @@ function onMessage(evt) {
 		break;
 	case "execute":
 		//msg.command.object = editor.objectByUuid(msg.UUID);
-		cmd = new window[msg.command.type]();
-		cmd.fromJSON(msg.command);
-		editor.execute(cmd);
-		editor.refresh();
+		if (msg.message_uuid !== last_message_uuid){
+			cmd = new window[msg.command.type]();
+			cmd.fromJSON(msg.command);
+			editor.execute(cmd);
+			editor.refresh();
+			last_message_uuid = msg.message_uuid;
+		}
 		break; 
 	case "addModelObject":
 		cmd = new window[msg.command.type]();
@@ -110,24 +118,27 @@ function onMessage(evt) {
 		editor.replaceGeometry(msg.geometries, msg.uuid);
 		break;
 	case "PathOperation":
-		editor.processPathEdit(msg);
+		if (msg.message_uuid !== last_message_uuid){
+			editor.processPathEdit(msg);
+			last_message_uuid = msg.message_uuid;
+		}
+		break;
+	case "TogglePathPoints":
+		editor.togglePathPoints(msg.uuid, msg.newState);
 		break;
 	case "scaleGeometry":
 		editor.scaleGeometry(msg);
 		break;
 	case "startAnimation":
-		totalTime=0.0;
-		numFrames = 0;
+        editor.reportframeTime=true;
 		break;
 	case "endAnimation":
-		var json = JSON.stringify({
-			"type": "info",
-			"numFrames": numFrames,
-			"totalTime": totalTime
-		});
-		sendText(json);
+		// Sending any messages during handling a message causes problems, use callbacks only
 		break;
-   }
-   processing = false; // Defensive in case render never finishes/errors
+	case "getOffsets":
+		sendText(editor.getModelOffsetsJson());
+		break;
+    }
+    processing = false; // Defensive in case render never finishes/errors
 }
 // End test functions
