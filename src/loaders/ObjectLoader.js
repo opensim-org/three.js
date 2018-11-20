@@ -51,6 +51,7 @@ import { BufferGeometryLoader } from './BufferGeometryLoader.js';
 import { JSONLoader } from './JSONLoader.js';
 import { FileLoader } from './FileLoader.js';
 import * as Geometries from '../geometries/Geometries.js';
+import * as Curves from '../extras/curves/Curves.js';
 
 /**
  * @author mrdoob / http://mrdoob.com/
@@ -112,12 +113,14 @@ Object.assign( ObjectLoader.prototype, {
 	setTexturePath: function ( value ) {
 
 		this.texturePath = value;
+		return this;
 
 	},
 
 	setCrossOrigin: function ( value ) {
 
 		this.crossOrigin = value;
+		return this;
 
 	},
 
@@ -360,9 +363,9 @@ Object.assign( ObjectLoader.prototype, {
 
 						var geometryShapes = [];
 
-						for ( var i = 0, l = data.shapes.length; i < l; i ++ ) {
+						for ( var j = 0, jl = data.shapes.length; j < jl; j ++ ) {
 
-							var shape = shapes[ data.shapes[ i ] ];
+							var shape = shapes[ data.shapes[ j ] ];
 
 							geometryShapes.push( shape );
 
@@ -371,6 +374,35 @@ Object.assign( ObjectLoader.prototype, {
 						geometry = new Geometries[ data.type ](
 							geometryShapes,
 							data.curveSegments
+						);
+
+						break;
+
+
+					case 'ExtrudeGeometry':
+					case 'ExtrudeBufferGeometry':
+
+						var geometryShapes = [];
+
+						for ( var j = 0, jl = data.shapes.length; j < jl; j ++ ) {
+
+							var shape = shapes[ data.shapes[ j ] ];
+
+							geometryShapes.push( shape );
+
+						}
+
+						var extrudePath = data.options.extrudePath;
+
+						if ( extrudePath !== undefined ) {
+
+							data.options.extrudePath = new Curves[ extrudePath.type ]().fromJSON( extrudePath );
+
+						}
+
+						geometry = new Geometries[ data.type ](
+							geometryShapes,
+							data.options
 						);
 
 						break;
@@ -398,6 +430,7 @@ Object.assign( ObjectLoader.prototype, {
 				geometry.uuid = data.uuid;
 
 				if ( data.name !== undefined ) geometry.name = data.name;
+				if ( geometry.isBufferGeometry === true && data.userData !== undefined ) geometry.userData = data.userData;
 
 				geometries[ data.uuid ] = geometry;
 
@@ -456,7 +489,11 @@ Object.assign( ObjectLoader.prototype, {
 
 		for ( var i = 0; i < json.length; i ++ ) {
 
-			var clip = AnimationClip.parse( json[ i ] );
+			var data = json[ i ];
+
+			var clip = AnimationClip.parse( data );
+
+			if ( data.uuid !== undefined ) clip.uuid = data.uuid;
 
 			animations.push( clip );
 
@@ -795,10 +832,13 @@ Object.assign( ObjectLoader.prototype, {
 		object.uuid = data.uuid;
 
 		if ( data.name !== undefined ) object.name = data.name;
+
 		if ( data.matrix !== undefined ) {
 
 			object.matrix.fromArray( data.matrix );
-			object.matrix.decompose( object.position, object.quaternion, object.scale );
+
+			if ( data.matrixAutoUpdate !== undefined ) object.matrixAutoUpdate = data.matrixAutoUpdate;
+			if ( object.matrixAutoUpdate ) object.matrix.decompose( object.position, object.quaternion, object.scale );
 
 		} else {
 
