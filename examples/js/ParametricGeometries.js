@@ -9,8 +9,6 @@ THREE.ParametricGeometries = {
 
 	klein: function ( v, u, target ) {
 
-		var result = optionalTarget || new THREE.Vector3();
-
 		u *= Math.PI;
 		v *= 2 * Math.PI;
 
@@ -38,8 +36,6 @@ THREE.ParametricGeometries = {
 
 		return function ( u, v, target ) {
 
-			var result = optionalTarget || new THREE.Vector3();
-
 			var x = u * width;
 			var y = 0;
 			var z = v * height;
@@ -51,8 +47,6 @@ THREE.ParametricGeometries = {
 	},
 
 	mobius: function ( u, t, target ) {
-
-		var result = optionalTarget || new THREE.Vector3();
 
 		// flat mobius strip
 		// http://www.wolframalpha.com/input/?i=M%C3%B6bius+strip+parametric+equations&lk=1&a=ClashPrefs_*Surface.MoebiusStrip.SurfaceProperty.ParametricEquations-
@@ -72,8 +66,6 @@ THREE.ParametricGeometries = {
 	},
 
 	mobius3d: function ( u, t, target ) {
-
-		var result = optionalTarget || new THREE.Vector3();
 
 		// volumetric mobius strip
 
@@ -226,8 +218,6 @@ THREE.ParametricGeometries.SphereGeometry = function ( size, u, v ) {
 
 	function sphere( u, v, target ) {
 
-		var result = optionalTarget || new THREE.Vector3();
-
 		u *= Math.PI;
 		v *= 2 * Math.PI;
 
@@ -256,8 +246,6 @@ THREE.ParametricGeometries.SphereGeometry.prototype.constructor = THREE.Parametr
 THREE.ParametricGeometries.PlaneGeometry = function ( width, depth, segmentsWidth, segmentsDepth ) {
 
 	function plane( u, v, target ) {
-
-		var result = optionalTarget || new THREE.Vector3();
 
 		var x = u * width;
 		var y = 0;

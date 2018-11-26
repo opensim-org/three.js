@@ -1037,6 +1037,3 @@ Object.defineProperties( THREE.OrbitControls.prototype, {
 	}
 
 } );
-
-THREE.ScreenSpacePanning = 0;
-THREE.HorizontalPanning = 1;

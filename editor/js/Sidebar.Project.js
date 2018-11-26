@@ -150,12 +150,12 @@ Sidebar.Project = function ( editor ) {
 
 	function updateRenderer() {
 
-		createRenderer( 'WebGLRenderer', rendererAntialias.getValue(), rendererShadows.getValue() );
+		createRenderer( rendererType.getValue(), rendererAntialias.getValue(), rendererShadows.getValue(), rendererGammaInput.getValue(), rendererGammaOutput.getValue() );
 
 	}
 
 	function createRenderer( type, antialias, shadows, gammaIn, gammaOut ) {
-		
+
 		if ( type === 'WebGLRenderer' && System.support.webgl === false ) {
 
 			type = 'CanvasRenderer';

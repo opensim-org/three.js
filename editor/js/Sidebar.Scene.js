@@ -222,7 +222,7 @@ Sidebar.Scene = function ( editor ) {
 
 		if ( scene.background ) {
 
-			backgroundColor.setHexValue( scene.background.getHex() );
+			// R94 backgroundColor.setHexValue( scene.background.getHex() );
 
 		}
 
