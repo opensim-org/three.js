@@ -117,8 +117,6 @@
 		<script src="js/Menubar.Movies.js"></script>
 		<script src="js/Menubar.View.js"></script>
 		<!-- <script src="js/Menubar.View.js"></script> -->
-		<!-- <script src="js/Menubar.View.js"></script> -->
-		<!-- <script src="js/Menubar.View.js"></script> -->
 		<script src="js/Menubar.Examples.js"></script>
 		<script src="js/Menubar.Help.js"></script>
 		<script src="js/Menubar.Status.js"></script>
@@ -190,11 +188,11 @@
 				if (!url) url = window.location.href;
 					name = name.replace(/[\[\]]/g, "\\$&");
 				var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-      results = regex.exec(url);
-      if (!results) return null;
-      if (!results[2]) return '';
-      return decodeURIComponent(results[2].replace(/\+/g, " "));
-      }
+				results = regex.exec(url);
+				if (!results) return null;
+				if (!results[2]) return '';
+				return decodeURIComponent(results[2].replace(/\+/g, " "));
+			}
 
 			window.URL = window.URL || window.webkitURL;
 			window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;

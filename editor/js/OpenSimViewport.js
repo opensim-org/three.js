@@ -286,7 +286,7 @@ var OpenSimViewport = function ( editor ) {
 	var controls = new THREE.EditorControls( camera, container.dom );
 	controls.addEventListener( 'change', function () {
 
-		transformControls.update();
+		//transformControls.update();
 		signals.cameraChanged.dispatch( camera );
 
 	} );
