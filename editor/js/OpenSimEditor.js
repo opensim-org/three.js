@@ -949,7 +949,7 @@ OpenSimEditor.prototype = {
 			// This used to be AdditiveBlending, but that caused the logo to
 			// very bright white on certain backgrounds.
 			// https://threejs.org/examples/webgl_materials_blending.html
-			spriteMaterial.blending = THREE.NormalBlending;
+			spriteMaterial.transparent = true;
 
 			var sprite = new THREE.Sprite(spriteMaterial);
 			sprite.scale.set(64, 64, 1);
