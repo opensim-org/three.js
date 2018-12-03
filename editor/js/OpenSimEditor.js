@@ -736,7 +736,8 @@ OpenSimEditor.prototype = {
 	createBackground: function (choice) {
 		scope = this;
 		if (choice == 'nobackground') {
-			this.scene.background = new THREE.Color(0xff0000);
+			color = this.config.getKey('settings/backgroundcolor');
+			this.scene.background = new THREE.Color(color);
 			this.signals.backgroundColorChanged.dispatch(this.scene.background.getHex());
 			return;
 		}
