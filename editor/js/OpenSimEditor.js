@@ -112,6 +112,7 @@ var OpenSimEditor = function () {
 	this.config = new Config( 'threejs-editor' );
 	this.history = new History( this );
 	this.storage = new Storage();
+	this.strings = new Strings( this.config );
 	this.loader = new THREE.OpenSimLoader(this);
 
 	this.camera = this.DEFAULT_CAMERA.clone();
@@ -135,6 +136,7 @@ var OpenSimEditor = function () {
 	this.scene.userData = "NonEditable";
 
 	this.scene.name = 'Scene';
+	this.scene.background = new THREE.Color( 0xaaaaaa );
 
 	this.sceneHelpers = new THREE.Scene();
 
@@ -517,6 +519,8 @@ OpenSimEditor.prototype = {
 
 		this.camera.copy( this.DEFAULT_CAMERA );
 		this.dolly_camera.copy(this.DEFAULT_CAMERA);
+		this.scene.background.setHex( 0xaaaaaa );
+		this.scene.fog = null;
 
 		var objects = this.scene.children;
 
@@ -687,6 +691,8 @@ OpenSimEditor.prototype = {
 
 			metadata: {},
 			project: {
+				gammaInput: this.config.getKey( 'project/renderer/gammaInput' ),
+				gammaOutput: this.config.getKey( 'project/renderer/gammaOutput' ),
 				shadows: this.config.getKey( 'project/renderer/shadows' ),
 				editable: this.config.getKey( 'project/editable' ),
 				vr: this.config.getKey( 'project/vr' )
