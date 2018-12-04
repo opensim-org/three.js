@@ -19,7 +19,8 @@ var SetMaterialValueCommand = function ( object, attributeName, newValue, materi
 	this.updatable = true;
 
 	this.object = object;
-	this.material = this.editor.getObjectMaterial( object, materialSlot );
+	if (this.object !== undefined)
+		this.material = this.editor.getObjectMaterial( object, materialSlot );
 
 	this.oldValue = ( this.material !== undefined ) ? this.material[ attributeName ] : undefined;
 	this.newValue = newValue;
@@ -77,7 +78,7 @@ SetMaterialValueCommand.prototype = {
 		this.oldValue = json.oldValue;
 		this.newValue = json.newValue;
 		this.object = this.editor.objectByUuid( json.objectUuid );
-
+		this.material = this.object.material;
 	}
 
 };

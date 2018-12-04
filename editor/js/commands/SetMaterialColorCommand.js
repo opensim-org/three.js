@@ -19,7 +19,8 @@ var SetMaterialColorCommand = function ( object, attributeName, newValue, materi
 	this.updatable = true;
 
 	this.object = object;
-	this.material = this.editor.getObjectMaterial( object, materialSlot );
+	if (this.object !== undefined)
+		this.material = this.editor.getObjectMaterial( object, materialSlot );
 
 	this.oldValue = ( this.material !== undefined ) ? this.material[ attributeName ].getHex() : undefined;
 	this.newValue = newValue;
@@ -81,7 +82,7 @@ SetMaterialColorCommand.prototype = {
 		this.attributeName = json.attributeName;
 		this.oldValue = json.oldValue;
 		this.newValue = json.newValue;
-
+		this.material = this.object.material;
 	}
 
 };
