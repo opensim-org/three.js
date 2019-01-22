@@ -96,7 +96,7 @@ Sidebar.Settings.Shortcuts = function ( editor ) {
 		switch ( event.key.toLowerCase() ) {
 
 			case 'backspace':
-
+				// OpenSim: allow backspace in text boxes
 				//event.preventDefault(); // prevent browser back
 				break;
 
@@ -107,7 +107,8 @@ Sidebar.Settings.Shortcuts = function ( editor ) {
 				if ( object === null ) return;
 
 				var parent = object.parent;
-				if ( parent !== null ) editor.execute( new RemoveObjectCommand( object ) );
+				// OpenSim: disallow deletion of visuals
+				//if ( parent !== null ) editor.execute( new RemoveObjectCommand( object ) );
 
 				break;
 
