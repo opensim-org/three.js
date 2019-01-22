@@ -97,9 +97,8 @@ Sidebar.Settings.Shortcuts = function ( editor ) {
 
 			case 'backspace':
 
-				event.preventDefault(); // prevent browser back
-
-				// fall-through
+				//event.preventDefault(); // prevent browser back
+				break;
 
 			case 'delete':
 
