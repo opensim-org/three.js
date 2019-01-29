@@ -138,6 +138,9 @@ function onMessage(evt) {
 	case "getOffsets":
 		sendText(editor.getModelOffsetsJson());
 		break;
+	case "handleKeyString":
+	    editor.triggerKey(msg.string);
+	    break;
     }
     processing = false; // Defensive in case render never finishes/errors
 }

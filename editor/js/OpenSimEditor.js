@@ -1390,6 +1390,9 @@ OpenSimEditor.prototype = {
         };
         this.reportframeTime = false;
         sendText(JSON.stringify(info));
+    },
+    triggerKey: function (character) {
+        this.handleKey(character.charCodeAt(0));
     }
 
 };
