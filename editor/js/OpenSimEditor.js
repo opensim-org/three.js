@@ -931,7 +931,7 @@ OpenSimEditor.prototype = {
 		return editor.objectByUuid(this.currentModel);
 	},
 	isExperimentalDataModel: function (modelObject) {
-		return modelObject.children[0].name.startsWith('/ExperimentalData');
+		return modelObject.name.startsWith('ExperimentalData');
 	},
 	addMarkerAtPosition: function (testPosition) {
 
