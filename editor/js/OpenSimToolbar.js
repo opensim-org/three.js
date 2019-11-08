@@ -178,7 +178,7 @@ var OpenSimToolbar = function ( editor ) {
 	buttons.add(snapshot);
 
 	function computeModelBbox() {
-	    var modelObject = editor.scene.getObjectByName('OpenSimModel');
+	    var modelObject = editor.getModel();
 	    return (new THREE.Box3().setFromObject(modelObject));
 	};
 	function saveAsImage() {
