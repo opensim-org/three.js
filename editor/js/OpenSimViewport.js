@@ -445,10 +445,11 @@ var OpenSimViewport = function ( editor ) {
 	        capturer.start();
 	});
 
-	signals.recordingStopped.add(function () {
+	signals.recordingStopped.add(function (discard) {
 	    if (capturer !== undefined) {
 	        capturer.stop();
-	        capturer.save();
+	        if (discard === undefined)
+	            capturer.save();
 	        capturer = undefined;
             recording = false;
 	    }

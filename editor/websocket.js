@@ -131,6 +131,8 @@ function onMessage(evt) {
 		break;
 	case "startAnimation":
         editor.reportframeTime=true;
+        editor.sceneHelpers.visible=false;
+        editor.resetCaptureIfNeeded();
 		break;
 	case "endAnimation":
 		// Sending any messages during handling a message causes problems, use callbacks only

@@ -1353,6 +1353,12 @@ OpenSimEditor.prototype = {
         };
         this.reportframeTime = false;
         sendText(JSON.stringify(info));
+    },
+    resetCaptureIfNeeded: function() {
+    	if (this.recording){
+            this.signals.recordingStopped.dispatch(1); // discard frames so far
+    	    this.signals.recordingStarted.dispatch();
+    	}
     }
 
 };
