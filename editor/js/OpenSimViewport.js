@@ -29,7 +29,8 @@ var OpenSimViewport = function ( editor ) {
 	var recording = false;
 	var screenCapUpsamplingFactor = 2;
 	var objects = [];
-
+	var video_format = 'webm-mediarecorder';
+	var frame_rate = 30;
 	// helpers
 
 	var grid = new THREE.GridHelper( 30, 1 );
@@ -409,9 +410,9 @@ var OpenSimViewport = function ( editor ) {
 	        capturer = new CCapture({
 	            verbose: false,
 	            display: false,
-	            framerate: 30,
-                name: "opensim_video",
-                format: 'webm-mediarecorder',
+	            framerate: frame_rate,
+	            name: "opensim_video",
+	            format: video_format,
 	        });
 	        recording = true;
 	        capturer.start();
@@ -421,7 +422,7 @@ var OpenSimViewport = function ( editor ) {
 	});
 	signals.animationStopped.add(function () {
 	    this.animating = false;
-        if (recording) {
+	    if (recording) {
 	        capturer.stop();
 	        capturer.save();
 	        capturer = undefined;
@@ -429,17 +430,22 @@ var OpenSimViewport = function ( editor ) {
 	    }
 
 	});
-
+	signals.optionsChanged.add(function (ed) {
+	      video_format = ed.videoFormat;
+	      frame_rate = ed.frameRate;
+	    }
+	);
 	signals.recordingStarted.add(function () {
 	    // add frame to capture
 	    if (capturer !== undefined) 
                capturer = undefined;
          capturer = new CCapture({
+         	    workersPath :'/threejs/editor/js/libs/',
 	            verbose: false,
 	            display: false,
-	            framerate: 30,
+	            framerate: frame_rate,
                 name: "opensim_video",
-                format: 'webm-mediarecorder',
+                format: video_format,
 	        });
 	        recording = true;
 	        capturer.start();

@@ -31,7 +31,9 @@ var OpenSimEditor = function () {
 	this.cache = Object.create(null);
 	// types of objects that are graphically movable
 	var supportedOpenSimTypes = ["PathPoint", "Marker"];
-    this.reportframeTime = false;
+	this.reportframeTime = false;
+	this.videoFormat = "webm";
+	this.frameRate = 30;
 	//this.cameraEye = new THREE.Mesh(new THREE.SphereGeometry(50), new THREE.MeshBasicMaterial({ color: 0xdddddd }));
 	//this.cameraEye.name = 'CameraEye';
 
@@ -107,6 +109,7 @@ var OpenSimEditor = function () {
 		hiresRender: new Signal(),
 		screenCaptureScaleupChanged: new Signal(),
 		captureFrame: new Signal(),
+		optionsChanged: new Signal()
 	};
 
 	this.config = new Config( 'threejs-editor' );
@@ -1359,6 +1362,20 @@ OpenSimEditor.prototype = {
             this.signals.recordingStopped.dispatch(1); // discard frames so far
     	    this.signals.recordingStarted.dispatch();
     	}
+    },
+    setOption: function(msgData) {
+        //options passed in from GUI
+        switch(msgData.key){
+            case "video_format":
+                value = msgData.value;
+                this.videoFormat = value;
+                this.signals.optionsChanged.dispatch(this);
+                break;
+            case "frame_rate":
+                this.frameRate = parseInt(msgData.value);
+                this.signals.optionsChanged.dispatch(this);
+                break;
+        }
     }
 
 };
