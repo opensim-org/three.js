@@ -107,11 +107,11 @@ function onMessage(evt) {
 		parentUuid = msg.command.object.object.parent;
 		editor.execute(cmd);
 		newUuid = cmd.object.uuid;
-        editor.moveObject(editor.objectByUuid(newUuid), editor.objectByUuid(parentUuid));
-        if (msg.command.bbox !== undefined) {
-            // update models bounding box with bbox;
-            editor.updateModelBBox(msg.command.bbox);
-        }
+		editor.moveObject(editor.objectByUuid(newUuid), editor.objectByUuid(parentUuid));
+		if (msg.command.bbox !== undefined) {
+			// update models bounding box with bbox;
+			editor.updateModelBBox(msg.command.bbox);
+		}
 		editor.refresh();
 		break;
 	case "ReplaceGeometry":
@@ -130,15 +130,18 @@ function onMessage(evt) {
 		editor.scaleGeometry(msg);
 		break;
 	case "startAnimation":
-        editor.reportframeTime=true;
-        editor.sceneHelpers.visible=false;
-        editor.resetCaptureIfNeeded();
+		editor.reportframeTime=true;
+		editor.sceneHelpers.visible=false;
+		editor.resetCaptureIfNeeded();
 		break;
 	case "endAnimation":
 		// Sending any messages during handling a message causes problems, use callbacks only
 		break;
 	case "getOffsets":
 		sendText(editor.getModelOffsetsJson());
+		break;
+	case "setOption":
+		editor.setOption(msg.data);
 		break;
     }
     processing = false; // Defensive in case render never finishes/errors
