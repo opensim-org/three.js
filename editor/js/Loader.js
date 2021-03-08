@@ -576,50 +576,7 @@ var Loader = function ( editor ) {
 
 			case 'geometry':
 
-				var loader = new THREE.JSONLoader();
-				loader.setResourcePath( scope.texturePath );
-
-				var result = loader.parse( data );
-
-				var geometry = result.geometry;
-				var material;
-
-				if ( result.materials !== undefined ) {
-
-					if ( result.materials.length > 1 ) {
-
-						material = new THREE.MultiMaterial( result.materials );
-
-					} else {
-
-						material = result.materials[ 0 ];
-
-					}
-
-				} else {
-
-					material = new THREE.MeshStandardMaterial();
-
-				}
-
-				geometry.sourceType = "ascii";
-				geometry.sourceFile = file.name;
-
-				var mesh;
-
-				if ( geometry.animation && geometry.animation.hierarchy ) {
-
-					mesh = new THREE.SkinnedMesh( geometry, material );
-
-				} else {
-
-					mesh = new THREE.Mesh( geometry, material );
-
-				}
-
-				mesh.name = filename;
-
-				editor.execute( new AddObjectCommand( mesh ) );
+				console.error( 'Loader: "Geometry" is no longer supported.' );
 
 				break;
 
@@ -634,11 +591,11 @@ var Loader = function ( editor ) {
 
 					editor.execute( new SetSceneCommand( result ) );
 
-				} else {
+					} else {
 
 					editor.execute( new AddObjectCommand( result ) );
 
-				}
+					}
 
 				break;
 
@@ -648,7 +605,99 @@ var Loader = function ( editor ) {
 
 				break;
 
+				}
+
+	}
+
+	function createFileMap( files ) {
+
+		var map = {};
+
+		for ( var i = 0; i < files.length; i ++ ) {
+
+			var file = files[ i ];
+			map[ file.name ] = file;
+
 		}
+
+		return map;
+
+				}
+
+	function handleZIP( contents ) {
+
+		var zip = new JSZip( contents );
+
+		// Poly
+
+		if ( zip.files[ 'model.obj' ] && zip.files[ 'materials.mtl' ] ) {
+
+			var materials = new THREE.MTLLoader().parse( zip.file( 'materials.mtl' ).asText() );
+			var object = new THREE.OBJLoader().setMaterials( materials ).parse( zip.file( 'model.obj' ).asText() );
+			editor.execute( new AddObjectCommand( object ) );
+
+		}
+
+		//
+
+		zip.filter( function ( path, file ) {
+
+			var manager = new THREE.LoadingManager();
+			manager.setURLModifier( function ( url ) {
+
+				var file = zip.files[ url ];
+
+				if ( file ) {
+
+					console.log( 'Loading', url );
+
+					var blob = new Blob( [ file.asArrayBuffer() ], { type: 'application/octet-stream' } );
+					return URL.createObjectURL( blob );
+
+				}
+
+				return url;
+
+			} );
+
+			var extension = file.name.split( '.' ).pop().toLowerCase();
+
+			switch ( extension ) {
+
+				case 'fbx':
+
+					var loader = new THREE.FBXLoader( manager );
+					var object = loader.parse( file.asArrayBuffer() );
+
+					editor.execute( new AddObjectCommand( object ) );
+
+				break;
+
+				case 'glb':
+
+					var loader = new THREE.GLTFLoader();
+					loader.parse( file.asArrayBuffer(), '', function ( result ) {
+
+						editor.execute( new AddObjectCommand( result.scene ) );
+
+					} );
+
+				break;
+
+				case 'gltf':
+
+					var loader = new THREE.GLTFLoader( manager );
+					loader.parse( file.asText(), '', function ( result ) {
+
+						editor.execute( new AddObjectCommand( result.scene ) );
+
+					} );
+
+					break;
+
+		}
+
+		} );
 
 	}
 

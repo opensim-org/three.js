@@ -51,6 +51,36 @@ Sidebar.Settings = function ( editor ) {
 		'css/minimal.css': 'minimal'
 	};
 
+	var languageRow = new UI.Row();
+	var language = new UI.Select().setWidth( '150px' );
+	language.setOptions( options );
+
+	if ( config.getKey( 'language' ) !== undefined ) {
+
+		language.setValue( config.getKey( 'language' ) );
+
+	}
+
+	language.onChange( function () {
+
+		var value = this.getValue();
+
+		editor.config.setKey( 'language', value );
+
+	} );
+
+	languageRow.add( new UI.Text( strings.getKey( 'sidebar/settings/language' ) ).setWidth( '90px' ) );
+	languageRow.add( language );
+
+	container.add( languageRow );
+
+	// theme
+
+	var options = {
+		'css/light.css': strings.getKey( 'sidebar/settings/theme/light' ),
+		'css/dark.css': strings.getKey( 'sidebar/settings/theme/dark' )
+	};
+
 	var themeRow = new UI.Row();
 	var theme = new UI.Select().setWidth( '150px' );
 	theme.setOptions( options );
